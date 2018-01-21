@@ -27,5 +27,5 @@ Required hardware:
   * 24LC256 EEPROM for saving settings
 
 Installation:
-+++github++
+github
 commin soon
