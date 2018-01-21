@@ -20,7 +20,7 @@ Contain:
 
 
 Required hardware:
-* Raspberry Pi 3 with min. 16GB SD-Card
+* Raspberry Pi 3 with min. 16GB SD-Card with Debian Stretch Raspbian
 * Pi Camera
 * 7" HDMI Display
 * DHT11 -- GPIO 18
