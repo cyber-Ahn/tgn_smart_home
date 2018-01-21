@@ -40,6 +40,7 @@ Installation:
 * raspi-config / Interfacing Options /P2 SSH  ---- yes  ---- Finished
 * reboot
 * git clone https://github.com/cyber-Ahn/tgn_smart_home.git
+* cd tgn_smart_home
 * sudo bash Setup.sh
 
 Start with start_main_gui.sh
