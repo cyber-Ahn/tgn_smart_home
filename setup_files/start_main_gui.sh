@@ -1,0 +1,1 @@
+sudo python3 /home/pi/python-scripts/main_gui.py
