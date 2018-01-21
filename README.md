@@ -9,6 +9,7 @@ Contain:
 * imagetk
 * tgnLIB.py
 * HA-Bridge
+* PI-Hole
 * xrdp
 * Adafruit_Python_DHT
 * ntp
