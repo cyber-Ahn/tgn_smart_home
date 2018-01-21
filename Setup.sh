@@ -8,12 +8,12 @@
 #Support:        https:caworks-sl.de/TGN
 #==============================================================================
 
-echo -e "#####################################################"
-echo -e "####                                              ###"
+echo -e "##########################################################"
+echo -e "####                                                   ###"
 echo -e "#### tgn_smart_home INSTALLATION FUER DEN RASPBERRY PI ###"
-echo -e "#### by www.caworks-sl.de/TGN                     ###"
-echo -e "####                                              ###"
-echo -e "#####################################################"
+echo -e "#### by www.caworks-sl.de/TGN                          ###"
+echo -e "####                                                   ###"
+echo -e "##########################################################"
 
 echo -e "\n>> Setup Clock"
 dpkg-reconfigure tzdata
