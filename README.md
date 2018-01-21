@@ -1,9 +1,6 @@
 # tgn_smart_home
 Project for a smarthome control with 433MHz transmitter and weather info and pi camera control
 
-UNDER CONSTRUCTION PLEASE WAIT!!!!
-
-
 The setup installs all required libraries and programs.
 Contain:
 * python-matplotlib
