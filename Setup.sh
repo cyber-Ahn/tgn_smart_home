@@ -10,7 +10,7 @@
 
 echo -e "##########################################################"
 echo -e "####                                                   ###"
-echo -e "#### tgn_smart_home INSTALLATION FUER DEN RASPBERRY PI ###"
+echo -e "#### tgn_smart_home INSTALLATION FOR RASPBERRY PI 3    ###"
 echo -e "#### by www.caworks-sl.de/TGN                          ###"
 echo -e "####                                                   ###"
 echo -e "##########################################################"
