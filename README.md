@@ -37,6 +37,8 @@ Installation:
 * raspi-config / Interfacing Options /P5 I2C  ---- yes
 * raspi-config / Interfacing Options /P2 SSH  ---- yes  ---- Finished
 * reboot
+* open Terminal
+* sudo su
 * git clone https://github.com/cyber-Ahn/tgn_smart_home.git
 * cd tgn_smart_home
 * sudo bash Setup.sh
