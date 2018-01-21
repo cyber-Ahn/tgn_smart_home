@@ -37,7 +37,6 @@ Installation:
 * apt-get update
 * apt-get upgrade
 * raspi-config / Interfacing Options /P5 I2C  ---- yes
-* raspi-config / Interfacing Options /P2 SSH  ---- yes
+* raspi-config / Interfacing Options /P2 SSH  ---- yes  ---- Finished
 * reboot
-*
 * 
