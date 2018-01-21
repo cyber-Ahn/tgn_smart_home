@@ -44,6 +44,9 @@ Installation:
 Start with /home/pi/start_main_gui.sh
 
 add to autostart
+
 sudo nano /home/pi/.config/lxsession/LXDE-pi/autostart
+
 after LXDE-pi add line:
+
 @lxterminal -e /home/pi/start_main_gui.sh
