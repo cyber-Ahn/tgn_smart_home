@@ -2,6 +2,7 @@
 Project for a smarthome control with 433MHz transmitter and weather info and pi camera control
 
 The setup installs all required libraries and programs.
+
 Contain:
 * python-matplotlib
 * playsound
