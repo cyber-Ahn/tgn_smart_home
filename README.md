@@ -21,6 +21,7 @@ Contain:
 
 Required hardware:
 * Raspberry Pi 3 with min. 16GB SD-Card with Debian Stretch Raspbian
+* Speacker 3,5mm
 * Pi Camera
 * 7" HDMI Display
 * DHT11 -- GPIO 18
@@ -31,5 +32,8 @@ Required hardware:
   * 24LC256 EEPROM for saving settings
 
 Installation:
-github
-commin soon
+* open Terminal
+* sudo su
+* apt-get update
+* apt-get upgrade
+* 
