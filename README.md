@@ -28,6 +28,7 @@ Required hardware:
 + ON I2C Bus:
   * MCP23017 GPA0 - GPA3 = LED / GPA4 - GPA7 = button
   * 24LC256 EEPROM for saving settings
+  * LCD 2x16 with PCF8574
 
 Installation:
 * open Terminal
