@@ -29,7 +29,7 @@ sleep 5
 
 echo -e ">> Download Libs"
 apt-get install python-matplotlib
-pip install playsound
+apt-get install mpg321
 apt-get install gir1.2-gstreamer-1.0
 apt-get install gir1.2-gst-plugins-base-1.0
 apt-get install python-mysqldb
