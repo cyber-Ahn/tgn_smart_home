@@ -44,6 +44,7 @@ sudo apt-get install build-essential python-dev
 sudo python3 setup.py install
 sleep 3
 cd ..
+rm -fr Adafruit_Python_DHT/
 
 sudo mv /home/pi/tgn_smart_home/setup_files/habridge_install.sh /home/pi/tgn_smart_home
 
