@@ -80,7 +80,7 @@ sudo chmod +x start_main_gui.sh
 sudo rmdir /home/pi/tgn_smart_home/setup_files
 sleep 5
 
-sudo python3 /home/pi/tgn_smart_home/libs/settings.py intsall_rom
+sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
 sleep 5
 
 echo -e ">> Please Reboot System"
