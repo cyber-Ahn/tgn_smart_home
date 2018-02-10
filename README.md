@@ -22,13 +22,13 @@ Required hardware:
 * Speacker 3,5mm
 * Pi Camera
 * 7" HDMI Display
-* DHT11 -- GPIO 18
+* DHT11 -- GPIO 18 (optional)
 * 433Mhz RF Wireless Transmitter-Empfänger-Modul Link-Kit für ARM / MCU -- Transmitter on GPIO 17 /Reciver on GPIO 26
-* PIR motion detector -- GPIO 24
-+ ON I2C Bus:
-  * MCP23017 GPA0 - GPA3 = LED / GPA4 - GPA7 = button
-  * 24LC256 EEPROM for saving settings
-  * LCD 2x16 with PCF8574
+* PIR motion detector -- GPIO 24 (optional)
++ ON I2C Bus:     (all optional)
+  * MCP23017 GPA0 - GPA3 = LED / GPA4 - GPA7 = button -- add: 0x20
+  * 24LC256 EEPROM for saving settings -- add: 0x53 (recommended)
+  * LCD 2x16 with PCF8574 -- add: 0x3f
 
 Installation:
 * open Terminal
