@@ -43,6 +43,8 @@ Installation:
 * git clone https://github.com/cyber-Ahn/tgn_smart_home.git
 * cd tgn_smart_home
 * sudo bash Setup.sh
+* cd libs
+* python3 settings.py weather enter openweather regionkey and api-key 
 
 Start with /home/pi/start_main_gui.sh
 
