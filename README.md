@@ -44,7 +44,8 @@ Installation:
 * cd tgn_smart_home
 * sudo bash Setup.sh
 * cd libs
-* python3 settings.py weather enter openweather regionkey and api-key 
+* python3 settings.py weather ------- enter openweather regionkey and api-key
+* python3 settings.py pushb   ------- enter pushbulletkey (optional)
 
 Start with /home/pi/start_main_gui.sh
 
