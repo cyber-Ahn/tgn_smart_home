@@ -83,4 +83,6 @@ sleep 5
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
 sleep 5
 
-echo -e ">> Please Reboot System"
+echo -e ">> Reboot System"
+sleep 3
+reboot
