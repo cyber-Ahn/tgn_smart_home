@@ -83,6 +83,9 @@ sleep 5
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
 sleep 5
 
+python3 settings.py weather
+python3 settings.py pushb
+
 echo -e ">> Reboot System"
 sleep 3
 reboot
