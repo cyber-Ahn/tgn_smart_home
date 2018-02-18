@@ -32,9 +32,7 @@ apt-get install python-matplotlib
 apt-get install mpg321
 apt-get install gir1.2-gstreamer-1.0
 apt-get install gir1.2-gst-plugins-base-1.0
-apt-get install python-mysqldb
 apt-get install python3-pil.imagetk
-apt-get install mysql-server
 sleep 5
 
 echo -e ">> Install Adafruit_Python_DHT"
