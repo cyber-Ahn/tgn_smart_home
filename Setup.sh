@@ -44,6 +44,14 @@ sleep 3
 cd ..
 rm -fr Adafruit_Python_DHT/
 
+echo -e ">> Install Adafruit_Python_BMP"
+git clone https://github.com/adafruit/Adafruit_Python_BMP 
+cd Adafruit_Python_BMP
+sudo python3 setup.py install
+cd ..
+sleep 3
+rm -fr Adafruit_Python_BMP/
+
 sudo mv /home/pi/tgn_smart_home/setup_files/habridge_install.sh /home/pi/tgn_smart_home
 
 echo -e ">> set authority"
