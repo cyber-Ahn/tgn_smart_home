@@ -1,9 +1,9 @@
 #!/bin/bash
-#title:          tgn_smart_home.sh
-#description:    Automated TGN Scripts Installation Version 1.6
+#title:          tgn_smart_home
+#description:    Automated TGN Smart Home Installation
 #author:         cyber Ahn
 #date:           20180121
-#version:        1.6   
+#version:        1.8
 #usage:          sudo bash Setup.sh
 #Support:        https:caworks-sl.de/TGN
 #==============================================================================
@@ -35,6 +35,8 @@ apt-get install gir1.2-gst-plugins-base-1.0
 apt-get install python3-pil.imagetk
 sleep 5
 
+clear
+
 echo -e ">> Install Adafruit_Python_DHT"
 git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 cd Adafruit_Python_DHT
@@ -43,6 +45,8 @@ sudo python3 setup.py install
 sleep 3
 cd ..
 rm -fr Adafruit_Python_DHT/
+
+clear
 
 echo -e ">> Install Adafruit_Python_BMP"
 git clone https://github.com/adafruit/Adafruit_Python_BMP 
@@ -53,6 +57,8 @@ sleep 3
 rm -fr Adafruit_Python_BMP/
 
 sudo mv /home/pi/tgn_smart_home/setup_files/habridge_install.sh /home/pi/tgn_smart_home
+
+clear
 
 echo -e ">> set authority"
 chmod +x /home/pi/tgn_smart_home/libs/pushbullet.sh
@@ -72,6 +78,8 @@ sleep 2
 pihole -a -p Kevin2711
 sleep 5
 
+clear
+
 echo -e ">> Move backup files"
 sudo mv /home/pi/tgn_smart_home/setup_files/tgnLIB.py /usr/local/lib/python3.5/dist-packages/
 sudo mv /home/pi/tgn_smart_home/setup_files/haset1.bk /home/pi/habridge/data
@@ -89,8 +97,15 @@ sleep 5
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
 sleep 5
 
+clear
+
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py weather
+
+clear
+
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py pushb
+
+clear
 
 echo -e ">> Reboot System"
 sleep 3
