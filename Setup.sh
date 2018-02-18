@@ -4,15 +4,15 @@
 #author:         cyber Ahn
 #date:           20180121
 #version:        1.6   
-#usage:          sudo bash tgnPythoninstaller.sh
+#usage:          sudo bash Setup.sh
 #Support:        https:caworks-sl.de/TGN
 #==============================================================================
 
 echo -e "##########################################################"
 echo -e "####                                                   ###"
 echo -e "#### tgn_smart_home INSTALLATION FOR RASPBERRY PI 3    ###"
-echo -e "#### by www.caworks-sl.de/TGN                          ###"
-echo -e "####                                                   ###"
+echo -e "####               by cyber Ahn                        ###"
+echo -e "####           http://caworks-sl.de                    ###"
 echo -e "##########################################################"
 
 echo -e "\n>> Setup Clock"
