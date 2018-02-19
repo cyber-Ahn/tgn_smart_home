@@ -90,8 +90,11 @@ sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 cd ..
+
+#install speech
+
 sudo chmod +x start_main_gui.sh
-sudo rmdir /home/pi/tgn_smart_home/setup_files
+sudo rm -fr /home/pi/tgn_smart_home/setup_files
 sleep 5
 
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
