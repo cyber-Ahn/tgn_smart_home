@@ -91,7 +91,15 @@ sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 cd ..
 
-#install speech
+echo -e ">> Install SpeechRecognition and LIB's"
+sudo apt-get install flac
+python3 /home/pi/tgn_smart_home/setup_files/PyAudio/setup.py install --skip-build
+sudo apt-get installl libportaudio-dev
+sudo apt-get install python-dev
+sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-dev
+sudo pip3 install SpeechRecognition
+
+clear
 
 sudo chmod +x start_main_gui.sh
 sudo rm -fr /home/pi/tgn_smart_home/setup_files
