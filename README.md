@@ -42,7 +42,7 @@ Installation:
 * sudo su
 * git clone https://github.com/cyber-Ahn/tgn_smart_home.git
 * cd tgn_smart_home
-* sudo bash Setup.sh
+* sudo bash setup.sh
 
 Start with /home/pi/start_main_gui.sh
 
