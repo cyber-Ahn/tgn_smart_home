@@ -93,7 +93,9 @@ cd ..
 
 echo -e ">> Install SpeechRecognition and LIB's"
 sudo apt-get install flac
-python3 /home/pi/tgn_smart_home/setup_files/PyAudio/setup.py install --skip-build
+cd /home/pi/tgn_smart_home/setup_files/PyAudio
+python3 setup.py install --skip-build
+cd /home/pi/tgn_smart_home
 sudo apt-get installl libportaudio-dev
 sudo apt-get install python-dev
 sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-dev
