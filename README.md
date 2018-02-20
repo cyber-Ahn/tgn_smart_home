@@ -15,6 +15,9 @@ Contain:
 * Adafruit_Python_DHT
 * ntp
 * ntpdate
+* PyAudio
+* libportaudio-dev
+* SpeechRecognition
 
 
 Required hardware:
