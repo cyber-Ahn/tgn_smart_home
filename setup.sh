@@ -23,9 +23,13 @@ apt-get install ntpdate
 ntpd -qg
 sleep 3
 
+clear
+
 echo -e ">> Install Remote Desktop"
 apt-get install xrdp
 sleep 5
+
+clear
 
 echo -e ">> Download Libs"
 apt-get install python-matplotlib
@@ -33,6 +37,7 @@ apt-get install mpg321
 apt-get install gir1.2-gstreamer-1.0
 apt-get install gir1.2-gst-plugins-base-1.0
 apt-get install python3-pil.imagetk
+sudo pip3 install thingspeak
 sleep 5
 
 clear
@@ -72,6 +77,8 @@ sleep 1
 sudo rm -r habridge_install.sh
 sleep 5
 
+clear
+
 echo -e ">> Install PiHole"
 curl -sSL https://install.pi-hole.net | bash
 sleep 2
@@ -90,6 +97,8 @@ sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 cd ..
+
+clear
 
 echo -e ">> Install SpeechRecognition and LIB's"
 sudo apt-get install flac
