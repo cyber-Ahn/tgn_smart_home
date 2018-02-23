@@ -73,7 +73,6 @@ def save_settings():
 
 def ini():
 	os.system('clear')
-	subprocess.call('xset dpms force on', shell=True)
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
@@ -935,6 +934,7 @@ class WindowB(Frame):
 		self.display_time=Label(self, text=the_time)
 		self.display_time.grid(row=0, column=1)
 		def change_value_the_time():
+			subprocess.call('xset dpms force on', shell=True)
 			global the_time
 			newtime = time.time()
 			if newtime != the_time:
