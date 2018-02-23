@@ -38,6 +38,7 @@ apt-get install gir1.2-gstreamer-1.0
 apt-get install gir1.2-gst-plugins-base-1.0
 apt-get install python3-pil.imagetk
 sudo pip3 install thingspeak
+sudo pip3 install gTTS
 sleep 5
 
 clear
