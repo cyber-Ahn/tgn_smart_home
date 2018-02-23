@@ -73,6 +73,7 @@ def save_settings():
 
 def ini():
 	os.system('clear')
+	subprocess.call('xset dpms force on', shell=True)
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
