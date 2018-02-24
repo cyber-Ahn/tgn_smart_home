@@ -130,6 +130,10 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py pushb
 
 clear
 
+sudo python3 /home/pi/tgn_smart_home/libs/settings.py thinkspeak
+
+clear
+
 echo -e ">> Reboot System"
 sleep 3
 reboot
