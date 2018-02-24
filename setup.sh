@@ -77,6 +77,7 @@ sudo bash habridge_install.sh
 sleep 1
 sudo rm -r habridge_install.sh
 sleep 5
+sudo chmod +x start_main_gui.sh
 
 clear
 
@@ -113,7 +114,6 @@ sudo pip3 install SpeechRecognition
 
 clear
 
-sudo chmod +x start_main_gui.sh
 sudo rm -fr /home/pi/tgn_smart_home/setup_files
 sleep 5
 
