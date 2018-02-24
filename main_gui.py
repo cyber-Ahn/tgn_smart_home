@@ -385,6 +385,10 @@ def on():
 	if son == 0:
 		soff = 0
 		son = 1
+		global b1
+		global b2
+		global b3
+		global b4
 		msg = "Automatic_on"
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		if s1 == "1":
@@ -410,6 +414,10 @@ def off():
 	if soff == 0:
 		soff = 1
 		son = 0
+		global b1
+		global b2
+		global b3
+		global b4
 		msg = "Automatic_off"
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		if s1 == "1":
