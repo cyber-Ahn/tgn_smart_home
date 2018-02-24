@@ -77,7 +77,6 @@ sudo bash habridge_install.sh
 sleep 1
 sudo rm -r habridge_install.sh
 sleep 5
-sudo chmod +x start_main_gui.sh
 
 clear
 
@@ -99,7 +98,7 @@ sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 cd ..
-
+sudo chmod +x /home/pi/start_main_gui.sh
 clear
 
 echo -e ">> Install SpeechRecognition and LIB's"
