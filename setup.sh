@@ -133,6 +133,18 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py thinkspeak
 
 clear
 
+echo -e "\n>> Install Java"
+sudo mkdir /usr/java
+cd /usr/java
+wget http://www.caworks-sl.de/data/download/jdk-8u144-linux-arm32-vfp-hflt.tar.gz
+sudo tar xf jdk-8u144-linux-arm32-vfp-hflt.tar.gz
+sudo update-alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_144/bin/java 1000
+sudo update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_144/bin/javac 1000
+java -version
+sleep 3
+
+clear
+
 echo -e ">> Reboot System"
 sleep 3
 reboot
