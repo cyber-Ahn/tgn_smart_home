@@ -112,6 +112,15 @@ sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-de
 sudo pip3 install SpeechRecognition
 
 clear
+echo -e ">> Install ddclient (ignore setup infos and click ok)"
+sleep 2
+sudo apt-get install ddclient -y
+sudo nano /etc/ddclient.conf
+ddclient -daemon=0 -debug -verbose -noquiet 2 /etc/ddclient.conf
+sudo /etc/init.d/ddclient restart
+sleep 3
+
+clear
 
 sudo rm -fr /home/pi/tgn_smart_home/setup_files
 sleep 5
