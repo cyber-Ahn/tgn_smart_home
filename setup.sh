@@ -97,6 +97,7 @@ sudo mv /home/pi/tgn_smart_home/setup_files/black.list /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
+sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
 cd ..
 sudo chmod +x /home/pi/start_main_gui.sh
 clear
