@@ -56,4 +56,5 @@ sudo nano /home/pi/.config/lxsession/LXDE-pi/autostart
 
 after LXDE-pi add line:
 
+@lxterminal -e /home/pi/web_interface.sh   (only wehn you will use it)
 @lxterminal -e /home/pi/start_main_gui.sh
