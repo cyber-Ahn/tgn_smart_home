@@ -66,6 +66,19 @@ sudo mv /home/pi/tgn_smart_home/setup_files/habridge_install.sh /home/pi/tgn_sma
 
 clear
 
+echo -e ">> Install Web Interface Libs"
+pip3 install routes
+pip3 install pyopenssl
+git clone https://github.com/simplejson/simplejson.git
+cd simplejson
+python3 setup.py install
+cd ..
+rm -fr simplejson 
+pip3 install cherrypy
+sleep 3
+
+clear
+
 echo -e ">> set authority"
 chmod +x /home/pi/tgn_smart_home/libs/pushbullet.sh
 chmod +x start_gui.sh
