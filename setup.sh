@@ -82,6 +82,7 @@ clear
 echo -e ">> set authority"
 chmod +x /home/pi/tgn_smart_home/libs/pushbullet.sh
 chmod +x start_gui.sh
+chmod +x web_interface.sh
 chmod +x habridge_install.sh
 sleep 5
 
