@@ -4,8 +4,6 @@ import binascii
 
 ROM_ADDRESS = 0x53
 NFC_ADDRESS = 0x24
-pn532 = Pn532_i2c()
-pn532.SAMconfigure()
 spr = "de"
 spr_phat = ""
 
@@ -819,6 +817,8 @@ def prog_rom():
 	time.sleep(3)
 
 def save_nfc():
+	pn532 = Pn532_i2c()
+	pn532.SAMconfigure()
 	print((data[98].rstrip()))
 	card_data = pn532.read_mifare().get_data()
 	name = encode(input((data[99].rstrip())))
@@ -832,6 +832,8 @@ def save_nfc():
 	time.sleep(4)
 
 def remove_nfc():
+	pn532 = Pn532_i2c()
+	pn532.SAMconfigure()
 	print((data[101].rstrip()))
 	card_data = pn532.read_mifare().get_data()
 	card_data = str(binascii.hexlify(card_data))
