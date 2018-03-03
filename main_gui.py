@@ -778,6 +778,8 @@ def all_off():
 	b4=0
 	b5=0
 	b6=0
+	msg = "all_off"
+	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 	send(6,0)
 	time.sleep(1)
 	send(5,0)
@@ -806,6 +808,8 @@ def all_on():
 	b4=1
 	b5=1
 	b6=1
+	msg = "all_on"
+	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 	send(1,1)
 	time.sleep(1)
 	send(2,1)
