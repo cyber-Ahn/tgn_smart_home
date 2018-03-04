@@ -357,7 +357,7 @@ class tgn_smart_home(object):
 
 			<TR>
 			<TH><TH>
-			Swistch:%s
+			Switch:%s
 
 			</TABLE>
 
