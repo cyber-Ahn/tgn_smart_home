@@ -48,7 +48,9 @@ Installation:
 * cd tgn_smart_home
 * sudo bash setup.sh
 
-Start with /home/pi/start_main_gui.sh
+GUI Start with /home/pi/start_main_gui.sh
+
+WEB Interface Start with /home/pi/web_interface.sh
 
 add to autostart
 
