@@ -160,6 +160,10 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py thinkspeak
 
 clear
 
+sudo python3 /home/pi/tgn_smart_home/libs/settings.py webapp
+
+clear
+
 echo -e "\n>> Install Java"
 sudo mkdir /usr/java
 cd /usr/java
