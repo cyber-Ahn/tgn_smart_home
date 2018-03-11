@@ -167,10 +167,10 @@ clear
 echo -e "\n>> Install Java"
 sudo mkdir /usr/java
 cd /usr/java
-wget http://www.caworks-sl.de/data/download/jdk-8u144-linux-arm32-vfp-hflt.tar.gz
-sudo tar xf jdk-8u144-linux-arm32-vfp-hflt.tar.gz
-sudo update-alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_144/bin/java 1000
-sudo update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_144/bin/javac 1000
+wget http://www.caworks-sl.de/data/download/jdk-8u162-linux-arm32-vfp-hflt.tar.gz
+sudo tar xf jdk-8u162-linux-arm32-vfp-hflt.tar.gz
+sudo update-alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_162/bin/java 1000
+sudo update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_162/bin/javac 1000
 java -version
 sleep 3
 
