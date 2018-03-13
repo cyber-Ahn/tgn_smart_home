@@ -33,6 +33,8 @@ Required hardware:
   * 24LC256 EEPROM for saving settings -- add: 0x53 (recommended)
   * LCD 2x16 with PCF8574 -- add: 0x3f
   * PN532 NFC
+  * BMP085
+  * BH1750
 
 Installation:
 * open Terminal
