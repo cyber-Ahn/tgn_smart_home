@@ -2,15 +2,16 @@
 #title:          tgn_smart_home
 #description:    Automated TGN Smart Home Installation
 #author:         cyber Ahn
-#date:           20180121
-#version:        1.8
+#date:           20180315
+#version:        1.9
 #usage:          sudo bash Setup.sh
 #Support:        https:caworks-sl.de/TGN
+#OS:             Debian_Stretch_Raspbian_2017.09
 #==============================================================================
 
 echo -e "##########################################################"
-echo -e "####                                                   ###"
-echo -e "#### tgn_smart_home INSTALLATION FOR RASPBERRY PI 3    ###"
+echo -e "####      tgn_smart_home INSTALLATION FOR              ###"
+echo -e "####           RASPBERRY PI 3 & PI 3 B+                ###"
 echo -e "####               by cyber Ahn                        ###"
 echo -e "####           http://caworks-sl.de                    ###"
 echo -e "##########################################################"
@@ -176,6 +177,6 @@ sleep 3
 
 clear
 
-echo -e ">> Reboot System"
-sleep 3
+echo -e ">> Reboot System in 10 sec"
+sleep 10
 reboot
