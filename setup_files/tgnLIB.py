@@ -581,7 +581,7 @@ def getMAC(interface):
 def allowed_key(id):
 	allowed = "yes"
 	if id == "3aef357118b7ea5d700123785674b45e":
-		if getMAC("eth0") == "b8:27:eb:76:2e:10":
+		if getMAC("eth0") == "b8:27:eb:46:45:02":
 			allowed = "yes"
 		else:
 			allowed = "no"
