@@ -25,10 +25,11 @@ from fcntl import ioctl
 from gtts import gTTS
 from time import gmtime, strftime
 from time import sleep
+from time import localtime
 
 address = 0x51
 register = 0x02
-zone = 1
+zone = 0
 w  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 bus = smbus.SMBus(1)
 
@@ -720,7 +721,7 @@ def pcf8563ReadTime():
 	return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
 
 def setRTC():
-	var1 = strftime("%a-%Y-%m-%d-%H-%M-%S", gmtime())
+	var1 = strftime("%a-%Y-%m-%d-%H-%M-%S", localtime())
 	var2 = var1.split("-")
 	year_s = "0x"+str(int(var2[1]) - 2000)
 	year = int(year_s,16)
