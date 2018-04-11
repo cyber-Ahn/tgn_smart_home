@@ -1143,15 +1143,22 @@ class WindowB(Frame):
 						dataText.append(line)
 				output = '---------------------------------------------------------\n'
 				if is_connected(REMOTE_SERVER)=="Online":
-					if allowed_key(openweatherkey) == "yes":
-						data = weather_info(zipcode,openweatherkey)
-						esp_read = read_esp(esp_address, com_typ)
+    				#ESP not found
+					esp_read = read_esp(esp_address, com_typ)
+					if esp_read != "ESP not found":
 						data_list = esp_read.split("|")
 						esp_temp = format_data(data_list, 1, ":")
 						esp_hum = format_data(data_list, 2, ":")
 						esp_cach = format_data(data_list, 4, ":")
 						esp_ch = esp_cach.split("$")
 						esp_rssi = esp_ch[1]
+					else:
+						esp_temp = "not found"
+						esp_hum = "not found"
+						esp_rssi = "not found"
+
+					if allowed_key(openweatherkey) == "yes":
+						data = weather_info(zipcode,openweatherkey)
 						m_symbol = '\xb0' + 'C'
 						output = output+(dataText[24].rstrip())+data['city']+','+data['country']+'\n'
 						output = output+str(data['temp'])+'°C  '+data['sky']+'\n'
