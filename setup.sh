@@ -165,6 +165,10 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py webapp
 
 clear
 
+sudo python3 /home/pi/tgn_smart_home/libs/settings.py esp
+
+clear
+
 echo -e "\n>> Install Java"
 sudo mkdir /usr/java
 cd /usr/java
