@@ -32,6 +32,13 @@ sleep 5
 
 clear
 
+echo -e ">> addd sources"
+sudo wget -qO - https://packagecloud.io/headmelted/codebuilds/gpgkey | sudo apt-key add -;
+echo "deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi" >> /etc/apt/sources.list
+echo "deb http://archive.raspbian.org/raspbian jessie main contrib non-free rpi" >> /etc/apt/sources.list
+echo "deb https://packagecloud.io/headmelted/codebuilds/raspbian/ jessie main" >> /etc/apt/sources.list
+sudo apt-get update
+
 echo -e ">> Download Libs"
 apt-get install python-matplotlib
 apt-get install mpg321
@@ -41,6 +48,15 @@ apt-get install python3-pil.imagetk
 sudo pip3 install thingspeak
 sudo pip3 install gTTS
 sleep 5
+
+clear
+
+echo -e ">> Install MQTT-Server"
+apt-get install libwebsockets3
+apt-get install libssl1.0.0
+sudo apt-get install mosquitto -y
+sudo apt install mosquitto mosquitto-clients
+pip3 install paho-mqtt
 
 clear
 
@@ -172,7 +188,7 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py esp
 
 clear
 
-echo -e "\n>> Install Java"
+echo -e ">> Install Java"
 sudo mkdir /usr/java
 cd /usr/java
 wget http://www.caworks-sl.de/data/download/jdk-8u162-linux-arm32-vfp-hflt.tar.gz
@@ -181,6 +197,11 @@ sudo update-alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_162/bin
 sudo update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_162/bin/javac 1000
 java -version
 sleep 3
+
+clear
+
+echo -e ">> Install Code-OSS"
+sudo apt-get install code-oss
 
 clear
 
