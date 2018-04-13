@@ -32,13 +32,6 @@ sleep 5
 
 clear
 
-echo -e ">> addd sources"
-sudo wget -qO - https://packagecloud.io/headmelted/codebuilds/gpgkey | sudo apt-key add -;
-echo "deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi" >> /etc/apt/sources.list
-echo "deb http://archive.raspbian.org/raspbian jessie main contrib non-free rpi" >> /etc/apt/sources.list
-echo "deb https://packagecloud.io/headmelted/codebuilds/raspbian/ jessie main" >> /etc/apt/sources.list
-sudo apt-get update
-
 echo -e ">> Download Libs"
 apt-get install python-matplotlib
 apt-get install mpg321
@@ -48,15 +41,6 @@ apt-get install python3-pil.imagetk
 sudo pip3 install thingspeak
 sudo pip3 install gTTS
 sleep 5
-
-clear
-
-echo -e ">> Install MQTT-Server"
-apt-get install libwebsockets3
-apt-get install libssl1.0.0
-sudo apt-get install mosquitto -y
-sudo apt install mosquitto mosquitto-clients
-pip3 install paho-mqtt
 
 clear
 
@@ -200,8 +184,29 @@ sleep 3
 
 clear
 
+echo -e ">> addd sources"
+echo "deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi" >> /etc/apt/sources.list
+echo "deb http://archive.raspbian.org/raspbian jessie main contrib non-free rpi" >> /etc/apt/sources.list
+echo "deb https://packagecloud.io/headmelted/codebuilds/raspbian/ jessie main" >> /etc/apt/sources.list
+sudo apt-get update
+sleep 3
+
+clear
+
+echo -e ">> Install MQTT-Server"
+apt-get install libwebsockets3
+apt-get install libssl1.0.0
+sudo apt-get install mosquitto -y
+sudo apt install mosquitto mosquitto-clients
+pip3 install paho-mqtt
+sleep 3
+sudo mv /home/pi/tgn_smart_home/setup_files/mosquitto.conf /etc/mosquitto/
+
+clear
+
 echo -e ">> Install Code-OSS"
 sudo apt-get install code-oss
+sleep 3
 
 clear
 
