@@ -144,9 +144,6 @@ sleep 3
 
 clear
 
-sudo rm -fr /home/pi/tgn_smart_home/setup_files
-sleep 5
-
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
 sleep 5
 
@@ -203,6 +200,8 @@ sleep 3
 sudo mv /home/pi/tgn_smart_home/setup_files/mosquitto.conf /etc/mosquitto/
 
 clear
+
+sudo rm -fr /home/pi/tgn_smart_home/setup_files
 
 echo -e ">> Install Code-OSS"
 sudo apt-get install code-oss
