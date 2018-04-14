@@ -85,6 +85,7 @@ chmod +x /home/pi/tgn_smart_home/libs/pushbullet.sh
 chmod +x start_gui.sh
 chmod +x web_interface.sh
 chmod +x start_mqtt_shell.sh
+chmod +x start_mqtt_broker.sh
 chmod +x habridge_install.sh
 sleep 5
 
@@ -115,10 +116,12 @@ sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_shell.sh /home/pi
+sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_broker.sh /home/pi
 cd ..
 sudo chmod +x /home/pi/start_main_gui.sh
 sudo chmod +x /home/pi/web_interface.sh
 sudo chmod +x /home/pi/start_mqtt_shell.sh
+sudo chmod +x /home/pi/start_mqtt_broker.sh
 clear
 
 echo -e ">> Install SpeechRecognition and LIB's"
