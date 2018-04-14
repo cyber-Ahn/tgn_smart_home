@@ -1143,19 +1143,40 @@ class WindowB(Frame):
 						dataText.append(line)
 				output = '---------------------------------------------------------\n'
 				if is_connected(REMOTE_SERVER)=="Online":
-    				#ESP not found
-					esp_read = read_esp(esp_address, com_typ)
-					if esp_read != "ESP not found":
-						data_list = esp_read.split("|")
+					#esp_read = read_esp(esp_address, com_typ)
+					#if esp_read != "ESP not found":
+						#data_list = esp_read.split("|")
+						#esp_temp = format_data(data_list, 1, ":")
+						#esp_hum = format_data(data_list, 2, ":")
+						#esp_cach = format_data(data_list, 4, ":")
+						#esp_ch = esp_cach.split("$")
+						#esp_rssi = esp_ch[1]
+					#else:
+						#esp_temp = "not found"
+						#esp_hum = "not found"
+						#esp_rssi = "not found"
+					try:
+						print(">>Load mqtt.temp")
+						f = open("/home/pi/tgn_smart_home/config/mqtt.temp","r")
+					except IOError:
+						print("cannot open mqtt.temp.... file not found")
+						esp_temp = "--"
+						esp_hum = "--"
+						esp_rssi = "--"
+						esp_li = "--"
+					else:
+						data = []
+						for line in f:
+							data.append(line)
+						esp_ca = (data[0].rstrip())
+						data_list = esp_ca.split("|")
 						esp_temp = format_data(data_list, 1, ":")
 						esp_hum = format_data(data_list, 2, ":")
 						esp_cach = format_data(data_list, 4, ":")
 						esp_ch = esp_cach.split("$")
 						esp_rssi = esp_ch[1]
-					else:
-						esp_temp = "not found"
-						esp_hum = "not found"
-						esp_rssi = "not found"
+						esp_li = format_data(data_list, 5, ":")
+					
 
 					if allowed_key(openweatherkey) == "yes":
 						data = weather_info(zipcode,openweatherkey)
@@ -1170,7 +1191,7 @@ class WindowB(Frame):
 						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+" "+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+'ESP Data:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm\n'
+						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+temp_data+" / "+str(readLight())+'Lux\n'
 						global weather_t
