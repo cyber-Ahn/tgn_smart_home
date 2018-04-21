@@ -1,6 +1,7 @@
 # load Libs
 import binascii
 import PIL
+import paho.mqtt.client as mqtt
 import subprocess
 from subprocess import call
 from tkinter import *
@@ -71,8 +72,14 @@ ontime = "10:19|10:21"
 offtime = "10:20|10:22"
 phat = "/home/pi/tgn_smart_home/icons/"
 #ESP8622
-com_typ= "ip"
-esp_address = "100.100.0.100"
+main_topic = "esp_1/#"
+esp_ls = 0
+esp_switch = 70
+esp_switch_b = 90
+esp_temp = "--"
+esp_hum = "--"
+esp_rssi = "--"
+esp_li = "100"
 #PiHole
 api_url = 'http://localhost/admin/api.php'
 #functions
@@ -434,7 +441,6 @@ def ini():
 	except IOError:
     		print("cannot open themes.config.... file not found")
 	else:
-		print(">>set themes")
 		data = []
 		for line in f:
 			data.append(line)
@@ -459,7 +465,6 @@ def ini():
 	if LCDpower == 1:
 		mylcd.lcd_clear()
 	spr_phat="/home/pi/tgn_smart_home/language/"+spr+"/"
-	print(spr_phat)
 	try:
 		f = open(spr_phat+"text.config","r")
 	except IOError:
@@ -622,13 +627,11 @@ def callback9():
 		mcp.output(2, 1)
 	if b1 == 0:
 		msg = "Turn_on_" + buttons[0]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(1,1)
 		b1 = 1
 	else:
 		msg = "Turn_off_" + buttons[0]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(1,0)
 		b1 = 0
@@ -644,13 +647,11 @@ def callback10():
 		mcp.output(2, 1)
 	if b2 == 0:
 		msg = "Turn_on_" + buttons[1]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(2,1)
 		b2 = 1
 	else:
 		msg = "Turn_off_" + buttons[1]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(2,0)
 		b2 = 0
@@ -666,13 +667,11 @@ def callback11():
 		mcp.output(2, 1)
 	if b3 == 0:
 		msg = "Turn_on_" + buttons[2]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(3,1)
 		b3 = 1
 	else:
 		msg = "Turn_off_" + buttons[2]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(3,0)
 		b3 = 0
@@ -688,13 +687,11 @@ def callback12():
 		mcp.output(2, 1)
 	if b4 == 0:
 		msg = "Turn_on_" + buttons[3]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(4,1)
 		b4 = 1
 	else:
 		msg = "Turn_off_" + buttons[3]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(4,0)
 		b4 = 0
@@ -710,13 +707,11 @@ def callback13():
 		mcp.output(2, 1)
 	if b5 == 0:
 		msg = "Turn_on_" + buttons[4]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(5,1)
 		b5 = 1
 	else:
 		msg = "Turn_off_" + buttons[4]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(5,0)
 		b5 = 0
@@ -732,13 +727,11 @@ def callback14():
 		mcp.output(2, 1)
 	if b6 == 0:
 		msg = "Turn_on_" + buttons[5]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(6,1)
 		b6 = 1
 	else:
 		msg = "Turn_off_" + buttons[5]
-		print(msg)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(6,0)
 		b6 = 0
@@ -916,7 +909,6 @@ def callback30():
 	if ifI2C(NFC_ADDRESS) == "found device":
 		pn532 = Pn532_i2c()
 		pn532.SAMconfigure()
-		print("waiting for card")
 		card_data = pn532.read_mifare().get_data()
 		card_data = str(binascii.hexlify(card_data))
 		file = open("/home/pi/tgn_smart_home/config/logfile.log","r")
@@ -928,7 +920,6 @@ def callback30():
 			if cachB[0]==card_data:
 				cachC=cachB[2]
 				cachC=cachC.rstrip()
-				print(cachC)
 				if cachC == "b'59577873583239750a'":
 					all_on()
 				if cachC == "b'595778735832396d5a673d3d0a'":
@@ -1113,6 +1104,20 @@ class Window(Frame):
 				self.display_time.config(text=the_time, font=('times', 20, 'bold'), bg=afbground, fg=fground)
 			self.display_time.after(1000, change_value_the_time)
 		change_value_the_time()
+#broker mesage
+def on_message(client, userdata, message):
+	global esp_temp
+	global esp_hum
+	global esp_rssi
+	global esp_li
+	if(message.topic=="esp_1/temp/sensor_1"):
+		esp_temp = str(message.payload.decode("utf-8"))
+	if(message.topic=="esp_1/temp/sensor_2"):
+		esp_hum = str(message.payload.decode("utf-8"))
+	if(message.topic=="esp_1/wifi/rssi"):
+		esp_rssi = str(message.payload.decode("utf-8"))
+	if(message.topic=="esp_1/analog/sensor_1"):
+		esp_li = str(message.payload.decode("utf-8"))
 # updating window (Weather and PiHole)
 class WindowB(Frame):
 	def __init__(self,master):
@@ -1143,41 +1148,20 @@ class WindowB(Frame):
 						dataText.append(line)
 				output = '---------------------------------------------------------\n'
 				if is_connected(REMOTE_SERVER)=="Online":
-					#esp_read = read_esp(esp_address, com_typ)
-					#if esp_read != "ESP not found":
-						#data_list = esp_read.split("|")
-						#esp_temp = format_data(data_list, 1, ":")
-						#esp_hum = format_data(data_list, 2, ":")
-						#esp_cach = format_data(data_list, 4, ":")
-						#esp_ch = esp_cach.split("$")
-						#esp_rssi = esp_ch[1]
-					#else:
-						#esp_temp = "not found"
-						#esp_hum = "not found"
-						#esp_rssi = "not found"
-					try:
-						print(">>Load mqtt.temp")
-						f = open("/home/pi/tgn_smart_home/config/mqtt.temp","r")
-					except IOError:
-						print("cannot open mqtt.temp.... file not found")
-						esp_temp = "--"
-						esp_hum = "--"
-						esp_rssi = "--"
-						esp_li = "--"
-					else:
-						data = []
-						for line in f:
-							data.append(line)
-						esp_ca = (data[0].rstrip())
-						data_list = esp_ca.split("|")
-						esp_temp = format_data(data_list, 1, ":")
-						esp_hum = format_data(data_list, 2, ":")
-						esp_cach = format_data(data_list, 4, ":")
-						esp_ch = esp_cach.split("$")
-						esp_rssi = esp_ch[1]
-						esp_li = format_data(data_list, 5, ":")
-					
-
+					global esp_ls
+					client = mqtt.Client("P1")
+					client.on_message=on_message
+					client.connect("localhost")
+					client.loop_start()
+					client.subscribe(main_topic)
+					time.sleep(4)
+					client.loop_stop()
+					if esp_ls == 0 and int(esp_li) < esp_switch:
+						esp_ls = 1
+						on()
+					elif esp_ls == 1 and int(esp_li) > esp_switch_b:
+						esp_ls = 0
+						off()
 					if allowed_key(openweatherkey) == "yes":
 						data = weather_info(zipcode,openweatherkey)
 						m_symbol = '\xb0' + 'C'
@@ -1207,7 +1191,6 @@ class WindowB(Frame):
 					output = output+'---------------------------------------------------------\n'
 				output = output+'Ad Blocked:'+str(ADSBLOCKED)+' Client:'+str(CLIENTS)+' DNS Queries:'+str(DNSQUERIES)
 				channel = thingspeak.Channel(id=channel_id, write_key=write_key, api_key=read_key)
-				print(str(channel_id)+"|"+write_key+"|"+read_key)
 				global room_t
 				global room_h
 				global cpu_t
@@ -1235,7 +1218,7 @@ class WindowB(Frame):
 						img.image = render
 						img.config(bg=afbground)
 						img.place(x=0, y=150)
-			self.display_time.after(3600000, change_value_the_time)
+			self.display_time.after(1200000, change_value_the_time)
 		change_value_the_time()
 def st1():
 	global colorSet
@@ -1326,7 +1309,6 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 		for line in f:
 			data.append(line)
 		TextToSpeech((data[4].rstrip()),spr)
-print(">>Load GUI")
 root = Tk()
 #fullscreen mode
 WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
