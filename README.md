@@ -62,6 +62,4 @@ after LXDE-pi add line:
 
 @lxterminal -e /home/pi/start_mqtt_broker.sh
 
-@lxterminal -e /home/pi/start_mqtt_shell.sh
-
 @lxterminal -e /home/pi/start_main_gui.sh
