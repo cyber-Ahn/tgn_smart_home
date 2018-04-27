@@ -92,6 +92,7 @@ def save_settings():
 	write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
 
 def ini():
+	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
 	os.system('clear')
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
@@ -109,8 +110,10 @@ def ini():
 		mcp.pullup(6, 1)
 		mcp.pullup(7, 1)
 		print(">>MCP23017 configured")
+		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
 		print(">>MCP23017 not found")
+		client.publish("tgn/i2c/mcp","offline",qos=0,retain=True)
 	#LCD
 	print(">>initialize LCD Display")
 	if ifI2C(LCD_ADDRESS) == "found device":
@@ -126,8 +129,10 @@ def ini():
 		mylcd.lcd_display_string("TGN Smart Home", 1, 1)
 		mylcd.lcd_display_string("V1.6 Loading....", 2, 0)
 		print(">>LCD Display configured")
+		client.publish("tgn/i2c/lcd","online",qos=0,retain=True)
 	else:
 		print(">>LCD Display not found")
+		client.publish("tgn/i2c/lcd","offline",qos=0,retain=True)
 	global ontime
 	global offtime
 	global s1
@@ -173,8 +178,10 @@ def ini():
 	global esp_address
 	if ifI2C(address) == "found device":
 		RTCpower = 1
+		client.publish("tgn/i2c/rtc","online",qos=0,retain=True)
 	print(">>initialize EEPROM")
 	if ifI2C(ROM_ADDRESS) == "found device":
+		client.publish("tgn/i2c/eeprom","online",qos=0,retain=True)
 		start_add_U = 0xcf
 		index = 0
 		pushbulletkey = ""
@@ -272,6 +279,12 @@ def ini():
 		buttons.append(b4A)
 		buttons.append(b5A)
 		buttons.append(b6A)
+		client.publish("tgn/buttons/name/1",b1A,qos=0,retain=True)
+		client.publish("tgn/buttons/name/2",b2A,qos=0,retain=True)
+		client.publish("tgn/buttons/name/3",b3A,qos=0,retain=True)
+		client.publish("tgn/buttons/name/4",b4A,qos=0,retain=True)
+		client.publish("tgn/buttons/name/5",b5A,qos=0,retain=True)
+		client.publish("tgn/buttons/name/6",b6A,qos=0,retain=True)
 		s1 = read_eeprom(1,ROM_ADDRESS,0x00,0x08)
 		s2 = read_eeprom(1,ROM_ADDRESS,0x00,0x09)
 		s3 = read_eeprom(1,ROM_ADDRESS,0x00,0x0a)
@@ -298,16 +311,22 @@ def ini():
 			start_add_B = start_add_B + 1
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x01)
 		b1=int(dataX)
+		client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x02)
 		b2=int(dataX)
+		client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x03)
 		b3=int(dataX)
+		client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x04)
 		b4=int(dataX)
+		client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x05)
 		b5=int(dataX)
+		client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x06)
 		b6=int(dataX)
+		client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x07)
 		colorSet=int(dataX)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x67)
@@ -331,6 +350,7 @@ def ini():
 			index = index + 1
 			start_add_I = start_add_I + 1
 		version = ver
+		client.publish("tgn/version",version,qos=0,retain=True)
 		start_add_V = 0x01
 		index = 0
 		channel_id = ""
@@ -417,6 +437,7 @@ def ini():
 			start_add_AE = start_add_AE + 1
 	else:
 		print(">>EEPROM not found")
+		client.publish("tgn/i2c/eeprom","offline",qos=0,retain=True)
 	if MCPpower == 1:
 		print(">>MCP23017 test Input and Output")
 		print("%d: %x" % (4, mcp.input(4) >> 4))
@@ -465,6 +486,7 @@ def ini():
 	if LCDpower == 1:
 		mylcd.lcd_clear()
 	spr_phat="/home/pi/tgn_smart_home/language/"+spr+"/"
+	client.publish("tgn/language",spr,qos=0,retain=True)
 	try:
 		f = open(spr_phat+"text.config","r")
 	except IOError:
@@ -495,17 +517,21 @@ def on():
 			send(1,1)
 			time.sleep(1)
 			b1 = 1
+			client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
 		if s2 == "1":
 			send(2,1)
 			time.sleep(1)
 			b2 = 1
+			client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
 		if s3 == "1":
 			send(3,1)
 			time.sleep(1)
 			b3 = 1
+			client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
 		if s4 == "1":
 			send(4,1)
 			b4 = 1
+			client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
 	save_settings()
 
 def off():
@@ -524,17 +550,21 @@ def off():
 			send(1,0)
 			time.sleep(1)
 			b1 = 0
+			client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
 		if s2 == "1":
 			send(2,0)
 			time.sleep(1)
 			b2 = 0
+			client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
 		if s3 == "1":
 			send(3,0)
 			time.sleep(1)
 			b3 = 0
+			client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
 		if s4 == "1":
 			send(4,0)
 			b4 = 0
+			client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
 	save_settings()
 
 def sound():
@@ -630,11 +660,13 @@ def callback9():
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(1,1)
 		b1 = 1
+		client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
 	else:
 		msg = "Turn_off_" + buttons[0]
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(1,0)
 		b1 = 0
+		client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
 	write_eeprom(1,ROM_ADDRESS,0x00,0x01,str(b1))
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -650,11 +682,13 @@ def callback10():
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(2,1)
 		b2 = 1
+		client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
 	else:
 		msg = "Turn_off_" + buttons[1]
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(2,0)
 		b2 = 0
+		client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
 	write_eeprom(1,ROM_ADDRESS,0x00,0x02,str(b2))
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -670,11 +704,13 @@ def callback11():
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(3,1)
 		b3 = 1
+		client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
 	else:
 		msg = "Turn_off_" + buttons[2]
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(3,0)
 		b3 = 0
+		client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
 	write_eeprom(1,ROM_ADDRESS,0x00,0x03,str(b3))
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -690,11 +726,13 @@ def callback12():
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(4,1)
 		b4 = 1
+		client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
 	else:
 		msg = "Turn_off_" + buttons[3]
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(4,0)
 		b4 = 0
+		client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
 	write_eeprom(1,ROM_ADDRESS,0x00,0x04,str(b4))
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -710,11 +748,13 @@ def callback13():
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(5,1)
 		b5 = 1
+		client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
 	else:
 		msg = "Turn_off_" + buttons[4]
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(5,0)
 		b5 = 0
+		client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
 	write_eeprom(1,ROM_ADDRESS,0x00,0x05,str(b5))
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -730,11 +770,13 @@ def callback14():
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(6,1)
 		b6 = 1
+		client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
 	else:
 		msg = "Turn_off_" + buttons[5]
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		send(6,0)
 		b6 = 0
+		client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
 	write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -873,6 +915,12 @@ def all_off():
 	send(1,0)
 	time.sleep(1)
 	save_settings()
+	client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
+	client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
+	client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
+	client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
+	client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
+	client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
 def all_on():
 	sound()
 	subprocess.call('xset dpms force on', shell=True)
@@ -903,6 +951,12 @@ def all_on():
 	send(6,1)
 	time.sleep(1)
 	save_settings()
+	client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
+	client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
+	client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
+	client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
+	client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
+	client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
 	time.sleep(1)
 
 def callback30():
@@ -1058,6 +1112,7 @@ class Window(Frame):
 					if mcp.input(6) >> 6 == 1:
 						callback24()
 				stats = textswitch
+				client.publish("tgn/ip",get_ip(),qos=0,retain=True)
 				if b1 == 0:
 					stats=stats+'OFF|'
 				if b1 == 1:
@@ -1149,9 +1204,7 @@ class WindowB(Frame):
 				output = '---------------------------------------------------------\n'
 				if is_connected(REMOTE_SERVER)=="Online":
 					global esp_ls
-					client = mqtt.Client("P1")
 					client.on_message=on_message
-					client.connect("localhost")
 					client.loop_start()
 					client.subscribe(main_topic)
 					time.sleep(4)
@@ -1186,6 +1239,15 @@ class WindowB(Frame):
 						weather_c = int(data['cloudiness'])
 						weather_w = float(data['wind'])
 						weather_h = int(data['humidity'])
+						client.publish("tgn/weather/temp",weather_t,qos=0,retain=True)
+						client.publish("tgn/weather/clouds",weather_c,qos=0,retain=True)
+						client.publish("tgn/weather/wind",weather_w,qos=0,retain=True)
+						client.publish("tgn/weather/humidity",weather_h,qos=0,retain=True)
+						client.publish("tgn/pihole/adBlock",ADSBLOCKED,qos=0,retain=True)
+						client.publish("tgn/pihole/queries",DNSQUERIES,qos=0,retain=True)
+						client.publish("tgn/pihole/clients",CLIENTS,qos=0,retain=True)
+						client.publish("tgn/room/temp",temp_data,qos=0,retain=True)
+						client.publish("tgn/room/light",readLight(),qos=0,retain=True)
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
 					output = output+'---------------------------------------------------------\n'
@@ -1293,6 +1355,8 @@ def spt6():
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 #Main Prog
+client = mqtt.Client("TGN Smart Home")
+client.connect(get_ip())
 ini()
 if LCDpower == 1:
 	mylcd.lcd_display_string("TGN Smart Home", 1, 1)
