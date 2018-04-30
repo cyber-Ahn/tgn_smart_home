@@ -1280,7 +1280,7 @@ class WindowB(Frame):
 						img.image = render
 						img.config(bg=afbground)
 						img.place(x=0, y=150)
-			self.display_time.after(600000, change_value_the_time)
+			self.display_time.after(660000, change_value_the_time)
 		change_value_the_time()
 def st1():
 	global colorSet
