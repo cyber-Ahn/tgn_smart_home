@@ -1207,7 +1207,7 @@ class WindowB(Frame):
 					client.on_message=on_message
 					client.loop_start()
 					client.subscribe(main_topic)
-					time.sleep(4)
+					time.sleep(1)
 					client.loop_stop()
 					if esp_ls == 0 and int(esp_li) < esp_switch:
 						esp_ls = 1
@@ -1280,7 +1280,7 @@ class WindowB(Frame):
 						img.image = render
 						img.config(bg=afbground)
 						img.place(x=0, y=150)
-			self.display_time.after(1200000, change_value_the_time)
+			self.display_time.after(600000, change_value_the_time)
 		change_value_the_time()
 def st1():
 	global colorSet
