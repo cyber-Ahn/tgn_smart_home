@@ -72,7 +72,7 @@ ontime = "10:19|10:21"
 offtime = "10:20|10:22"
 phat = "/home/pi/tgn_smart_home/icons/"
 #ESP8622
-main_topic = "esp_1/#"
+main_topic = "tgn/esp_1/#"
 esp_ls = 0
 esp_switch = 70
 esp_switch_b = 90
@@ -1165,13 +1165,13 @@ def on_message(client, userdata, message):
 	global esp_hum
 	global esp_rssi
 	global esp_li
-	if(message.topic=="esp_1/temp/sensor_1"):
+	if(message.topic=="tgn/esp_1/temp/sensor_1"):
 		esp_temp = str(message.payload.decode("utf-8"))
-	if(message.topic=="esp_1/temp/sensor_2"):
+	if(message.topic=="tgn/esp_1/temp/sensor_2"):
 		esp_hum = str(message.payload.decode("utf-8"))
-	if(message.topic=="esp_1/wifi/rssi"):
+	if(message.topic=="tgn/esp_1/wifi/rssi"):
 		esp_rssi = str(message.payload.decode("utf-8"))
-	if(message.topic=="esp_1/analog/sensor_1"):
+	if(message.topic=="tgn/esp_1/analog/sensor_1"):
 		esp_li = str(message.payload.decode("utf-8"))
 # updating window (Weather and PiHole)
 class WindowB(Frame):
