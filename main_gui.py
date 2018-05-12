@@ -1043,7 +1043,7 @@ class Window(Frame):
 					if mcp.input(6) >> 6 == 1:
 						callback24()
 				stats = textswitch
-				client.publish("tgn/ip",get_ip(),qos=0,retain=True)
+				client.publish("tgn/cpu/temp",str(round(getCpuTemperature(),1)),qos=0,retain=True)
 				if b1 == 0:
 					stats=stats+'OFF|'
 				if b1 == 1:
