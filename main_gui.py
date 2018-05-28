@@ -89,6 +89,7 @@ def ini():
 	os.system('clear')
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
+	client.publish("tgn/esp_1/analog/sensor_1","100",qos=0,retain=True)
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
