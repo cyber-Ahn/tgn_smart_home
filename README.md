@@ -48,8 +48,8 @@ Required hardware:
   * BMP085
   * BH1750
  + optional:
-  * NodeMcu with DHT22, Fotoresitor and Small Display
-  * Android Phone for Smart Home App
+   * NodeMcu with DHT22, Fotoresitor and Small Display
+   * Android Phone for Smart Home App
 
 Installation:
 * open Terminal
