@@ -1,27 +1,39 @@
 # tgn_smart_home
-Project for a smarthome control with 433MHz transmitter and weather info and pi camera control
+Project for a smarthome control with 433MHz transmitter, weather info, pi camera control, optional NodeMCU and Android App
 
 The setup installs all required libraries and programs.
 
 Contain:
-* python-matplotlib
-* playsound
-* gstreamer-1.0
-* imagetk
-* tgnLIB.py
-* HA-Bridge
-* PI-Hole
 * xrdp
+* python-matplotlib
+* mpg321
+* gir1.2-gstreamer-1.0
+* gir1.2-gst-plugins-base-1.0
+* python3-pil.imagetk
+* thingspeak
+* gTTS
 * Adafruit_Python_DHT
-* ntp
-* ntpdate
-* PyAudio
-* libportaudio-dev
+* Adafruit_Python_BMP
+* habridge
+* routes
+* pyopenssl
+* simplejson
+* cherrypy
+* pushbullet
+* pi-hole
+* tgnLIB.py
+* flac
+* libportaudio
 * SpeechRecognition
+* ddclient
+* libwebsockets3
+* libssl1.0.0
+* mosquitto server
+* paho-mqtt
 
 
 Required hardware:
-* Raspberry Pi 3 with min. 16GB SD-Card with Debian Stretch Raspbian
+* Raspberry Pi 3 with min. 16GB SD-Card installed Debian Stretch Raspbian 2017.09 and Python 3.5
 * Speacker 3,5mm
 * Pi Camera
 * 7" HDMI Display
@@ -35,6 +47,9 @@ Required hardware:
   * PN532 NFC
   * BMP085
   * BH1750
+ + optional:
+  * NodeMcu with DHT22, Fotoresitor and Small Display
+  * Android Phone for Smart Home App
 
 Installation:
 * open Terminal
