@@ -50,6 +50,7 @@ Required hardware:
  + optional:
    * NodeMcu with DHT22, Fotoresitor and Small Display
    * Android Phone for Smart Home App
+   * NodeMcu with Fotoresistor and PIR Sensor
 
 Installation:
 * open Terminal
