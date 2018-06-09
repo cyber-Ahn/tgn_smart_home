@@ -1090,7 +1090,7 @@ class Window(Frame):
 				if esp_b1_2 == "on" and int(esp_li_2) < esp_switch_2 and esp_ls_2 == 0:
 					esp_ls_2 = 1
 					on_esp_2_sig()
-				if  esp_ls_2 == 1 and (esp_b1_2 == "off" or int(esp_li_2) > esp_switch_2):
+				if  esp_ls_2 == 1 and (esp_b1_2 == "off" or int(esp_li_2) > esp_switch_b):
 					esp_ls_2 = 0
 					off_esp_2_sig()
 				if MCPpower == 1:
