@@ -56,7 +56,7 @@ afground = "black"
 afbground = "black"
 buttona = "red"
 buttonb = "black"
-colorSet = 1
+colorSet = 7
 s1 = "0"
 s2 = "0"
 s3 = "0"
@@ -614,6 +614,7 @@ def callback6():
 	stream()
 def callback7():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/digi-cam.py"
+	TextToSpeech("Start cam",spr)
 	os.system(setn)
 def callback8():
 	sound()
@@ -1013,33 +1014,40 @@ def on_message(client, userdata, message):
 			b6 = int(message.payload.decode("utf-8"))
 			send(6,b6)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
+			TextToSpeech(buttons[5],spr)
 	if(message.topic=="tgn/buttons/status/5"):
 		if(int(message.payload.decode("utf-8")) != b5):
 			b5 = int(message.payload.decode("utf-8"))
 			send(5,b5)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x05,str(b5))
+			TextToSpeech(buttons[4],spr)
 	if(message.topic=="tgn/buttons/status/4"):
 		if(int(message.payload.decode("utf-8")) != b4):
 			b4 = int(message.payload.decode("utf-8"))
 			send(4,b4)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x04,str(b4))
+			TextToSpeech(buttons[3],spr)
 	if(message.topic=="tgn/buttons/status/3"):
 		if(int(message.payload.decode("utf-8")) != b3):
 			b3 = int(message.payload.decode("utf-8"))
 			send(3,b3)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x03,str(b3))
+			TextToSpeech(buttons[2],spr)
 	if(message.topic=="tgn/buttons/status/2"):
 		if(int(message.payload.decode("utf-8")) != b2):
 			b2 = int(message.payload.decode("utf-8"))
 			send(2,b2)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x02,str(b2))
+			TextToSpeech(buttons[1],spr)
 	if(message.topic=="tgn/buttons/status/1"):
 		if(int(message.payload.decode("utf-8")) != b1):
 			b1 = int(message.payload.decode("utf-8"))
 			send(1,b1)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x01,str(b1))
+			TextToSpeech(buttons[0],spr)
 	if(message.topic=="tgn/system/shutdown"):
 		if(int(message.payload.decode("utf-8")) == 1):
+			TextToSpeech("Shutdown",spr)
 			sound()
 			if MCPpower == 1:
 				mcp.output(3, 0)
@@ -1048,6 +1056,7 @@ def on_message(client, userdata, message):
 			call(['shutdown', '-h', 'now'], shell=False)
 	if(message.topic=="tgn/system/reboot"):
 		if(int(message.payload.decode("utf-8")) == 1):
+			TextToSpeech("Reboot",spr)
 			sound()
 			if MCPpower == 1:
 				mcp.output(3, 0)
@@ -1222,6 +1231,8 @@ class WindowB(Frame):
 						client.publish("tgn/pihole/clients",CLIENTS,qos=0,retain=True)
 						client.publish("tgn/room/temp",temp_data,qos=0,retain=True)
 						client.publish("tgn/room/light",readLight(),qos=0,retain=True)
+						we_out = "Temperature "+str(weather_t)+"°C Max Temperature "+str(data['temp_max'])+" °C Sky "+data['sky']+" Windspeed "+str(data['wind'])
+						TextToSpeech(we_out,spr)
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
 					output = output+'---------------------------------------------------------\n'
@@ -1289,6 +1300,12 @@ def st5():
 def st6():
 	global colorSet
 	colorSet = 6
+	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
+	time.sleep(1)
+	os.execv(sys.executable, ['python3'] + sys.argv)
+def st7():
+	global colorSet
+	colorSet = 7
 	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
@@ -1410,6 +1427,7 @@ colmenu.add_command(label=(data[51].rstrip()), command=st3)
 colmenu.add_command(label=(data[52].rstrip()), command=st4)
 colmenu.add_command(label=(data[53].rstrip()), command=st5)
 colmenu.add_command(label=(data[54].rstrip()), command=st6)
+colmenu.add_command(label="Gray/Gray", command=st7)
 
 rommenu = Menu(menu)
 menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
