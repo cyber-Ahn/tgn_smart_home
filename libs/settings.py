@@ -464,7 +464,7 @@ def prog_rom():
 	b6A = 0
 	screen = 0
 	su = 1
-	colorSet = 1
+	colorSet = 7
 	sleep_t = "600"
 	start = "22:0"
 	end = "6:0"
