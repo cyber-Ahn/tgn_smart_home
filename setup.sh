@@ -24,6 +24,8 @@ apt-get install ntpdate
 ntpd -qg
 sleep 3
 
+apt-get update
+
 clear
 
 echo -e ">> Install Remote Desktop"
