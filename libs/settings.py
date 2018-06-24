@@ -462,7 +462,7 @@ def prog_rom():
 	b4A = 0
 	b5A = 0
 	b6A = 0
-	screen = 0
+	screen = 1
 	su = 1
 	colorSet = 7
 	sleep_t = "600"
@@ -481,7 +481,7 @@ def prog_rom():
 	chanl = "43245"
 	wkey = "8WQB01T3F5JE0EZ"
 	rkey = "PJGJDHMEUU1TAXQ"
-	spr = 1
+	spr = 2
 	port_w = "9090"
 	ip_w = "192.168.0.94"
 	pw_w = "1234"
