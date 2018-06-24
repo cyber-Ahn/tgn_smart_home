@@ -72,6 +72,7 @@ mylcd = ""
 ontime = "10:19|10:21"
 offtime = "10:20|10:22"
 phat = "/home/pi/tgn_smart_home/icons/"
+color_button =[]
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
@@ -1267,48 +1268,6 @@ class WindowB(Frame):
 						img.place(x=0, y=100)
 			self.display_time.after(1200000, change_value_the_time)
 		change_value_the_time()
-def st1():
-	global colorSet
-	colorSet = 1
-	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
-	time.sleep(1)
-	os.execv(sys.executable, ['python3'] + sys.argv)
-def st2():
-	global colorSet
-	colorSet = 2
-	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
-	time.sleep(1)
-	os.execv(sys.executable, ['python3'] + sys.argv)
-def st3():
-	global colorSet
-	colorSet = 3
-	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
-	time.sleep(1)
-	os.execv(sys.executable, ['python3'] + sys.argv)
-def st4():
-	global colorSet
-	colorSet = 4
-	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
-	time.sleep(1)
-	os.execv(sys.executable, ['python3'] + sys.argv)
-def st5():
-	global colorSet
-	colorSet = 5
-	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
-	time.sleep(1)
-	os.execv(sys.executable, ['python3'] + sys.argv)
-def st6():
-	global colorSet
-	colorSet = 6
-	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
-	time.sleep(1)
-	os.execv(sys.executable, ['python3'] + sys.argv)
-def st7():
-	global colorSet
-	colorSet = 7
-	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
-	time.sleep(1)
-	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt1():
 	global spr
 	spr = "de"
@@ -1345,6 +1304,7 @@ def spt6():
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(6))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
+
 #Main Prog
 client = mqtt.Client("TGN Smart Home")
 client.connect(get_ip())
@@ -1421,13 +1381,71 @@ colmenu = Menu(menu)
 menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
 colmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
 stylemenu.add_cascade(label=(data[48].rstrip()), menu=colmenu)
-colmenu.add_command(label=(data[49].rstrip()), command=st1)
-colmenu.add_command(label=(data[50].rstrip()), command=st2)
-colmenu.add_command(label=(data[51].rstrip()), command=st3)
-colmenu.add_command(label=(data[52].rstrip()), command=st4)
-colmenu.add_command(label=(data[53].rstrip()), command=st5)
-colmenu.add_command(label=(data[54].rstrip()), command=st6)
-colmenu.add_command(label="Gray/Gray", command=st7)
+try:
+	print(">>Load themes.config")
+	f = open("/home/pi/tgn_smart_home/config/themes.config","r")
+except IOError:
+    print("cannot open themes.config.... file not found")
+else:
+    data_ca = []
+    color_button = [] 
+    for line in f:
+        data_ca.append(line)
+    cou = 0
+    for x in data_ca:
+        index = data_ca[cou].find("#")
+        if index == 0:
+            bu_cach = data_ca[cou].rstrip()
+            bu_cach = bu_cach[1:]
+            color_button.append(bu_cach) 
+        cou = cou + 1
+index_bu = len(color_button)
+if index_bu >= 1:    
+	colmenu.add_command(label=color_button[0], command=lambda: key(1))
+if index_bu >= 2:    
+	colmenu.add_command(label=color_button[1], command=lambda: key(2))
+if index_bu >= 3:    
+	colmenu.add_command(label=color_button[2], command=lambda: key(3))
+if index_bu >= 4:    
+	colmenu.add_command(label=color_button[3], command=lambda: key(4))
+if index_bu >= 5:    
+	colmenu.add_command(label=color_button[4], command=lambda: key(5))
+if index_bu >= 6:    
+	colmenu.add_command(label=color_button[5], command=lambda: key(6))
+if index_bu >= 7:    
+	colmenu.add_command(label=color_button[6], command=lambda: key(7))
+if index_bu >= 8:    
+	colmenu.add_command(label=color_button[7], command=lambda: key(8))
+if index_bu >= 9:    
+	colmenu.add_command(label=color_button[8], command=lambda: key(9))
+if index_bu >= 10:    
+	colmenu.add_command(label=color_button[9], command=lambda: key(10))
+if index_bu >= 11:    
+	colmenu.add_command(label=color_button[10], command=lambda: key(11))
+if index_bu >= 12:    
+	colmenu.add_command(label=color_button[11], command=lambda: key(12))
+if index_bu >= 13:    
+	colmenu.add_command(label=color_button[12], command=lambda: key(13))
+if index_bu >= 14:    
+	colmenu.add_command(label=color_button[13], command=lambda: key(14))
+if index_bu >= 15:    
+	colmenu.add_command(label=color_button[14], command=lambda: key(15))
+if index_bu >= 16:    
+	colmenu.add_command(label=color_button[15], command=lambda: key(16))
+if index_bu >= 17:    
+	colmenu.add_command(label=color_button[16], command=lambda: key(17))
+if index_bu >= 18:    
+	colmenu.add_command(label=color_button[17], command=lambda: key(18))
+if index_bu >= 19:    
+	colmenu.add_command(label=color_button[18], command=lambda: key(19))
+if index_bu >= 20:    
+	colmenu.add_command(label=color_button[19], command=lambda: key(20))
+def key(method):
+	global colorSet
+	colorSet = method
+	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
+	time.sleep(1)
+	os.execv(sys.executable, ['python3'] + sys.argv)
 
 rommenu = Menu(menu)
 menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
