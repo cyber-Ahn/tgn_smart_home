@@ -48,6 +48,7 @@ weather_t = -0.41
 weather_c = 0
 weather_w = 4.1
 weather_h = 10
+we_cach = "no data"
 cpu_t = 57.458
 bground = "black"
 fground = "green"
@@ -978,6 +979,9 @@ def callback39():
 		start_add_AC = start_add_AC + 1
 	os.execv(sys.executable, ['python3'] + sys.argv)
 
+def callback40():
+    TextToSpeech(we_cach,spr)
+
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
@@ -1064,6 +1068,9 @@ def on_message(client, userdata, message):
 			mylcd.lcd_clear()
 			mylcd.backlight(0)
 			call(['reboot', '-h', 'now'], shell=False)
+	if(message.topic=="tgn/system/weather"):
+		if(int(message.payload.decode("utf-8")) == 1):
+			callback40()
 
 def on_esp_2_sig():
 	msg = "ESP_2_on"
@@ -1232,8 +1239,8 @@ class WindowB(Frame):
 						client.publish("tgn/pihole/clients",CLIENTS,qos=0,retain=True)
 						client.publish("tgn/room/temp",temp_data,qos=0,retain=True)
 						client.publish("tgn/room/light",readLight(),qos=0,retain=True)
-						we_out = "Temperature "+str(weather_t)+"°C Max Temperature "+str(data['temp_max'])+" °C Sky "+data['sky']+" Windspeed "+str(data['wind'])
-						TextToSpeech(we_out,spr)
+						global we_cach
+						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" °C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
 					output = output+'---------------------------------------------------------\n'
@@ -1607,9 +1614,11 @@ buttonFrame3 = Frame(leftFrame)
 buttonFrame3.configure(background=bground)
 buttonFrame3.grid(row=3, column=0, padx=10, pady=3)
 
-B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=15, command=callback20)
+B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=12, command=callback20)
 B1.grid(row=0, column=0, padx=10, pady=3) 
-B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=15, command=callback21)
+B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=12, command=callback21)
 B2.grid(row=0, column=1, padx=10, pady=3)
+B2 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=12, command=callback40)
+B2.grid(row=0, column=2, padx=10, pady=3)
 
 root.mainloop()
