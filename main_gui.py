@@ -100,6 +100,7 @@ def ini():
 	os.system('clear')
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
+	client.publish("tgn/system/weather","0",qos=0,retain=True)
 	client.publish("tgn/esp_1/analog/sensor_1","100",qos=0,retain=True)
 	client.publish("tgn/esp_2/analog/sensor_1","100",qos=0,retain=True)
 	#MCP23017 I2C
@@ -1070,6 +1071,7 @@ def on_message(client, userdata, message):
 			call(['reboot', '-h', 'now'], shell=False)
 	if(message.topic=="tgn/system/weather"):
 		if(int(message.payload.decode("utf-8")) == 1):
+			client.publish("tgn/system/weather","0",qos=0,retain=True)
 			callback40()
 
 def on_esp_2_sig():
