@@ -923,17 +923,17 @@ def callback33():
 	elif tex == keyword1.lower():
 		all_on()
 	elif tex == keyword5.lower():
-		TextToSpeech("command found",spr)
+		callback9()
 	elif tex == keyword6.lower():
-		TextToSpeech("command found",spr)
+		callback10()
 	elif tex == keyword7.lower():
-		TextToSpeech("command found",spr)
+		callback11()
 	elif tex == keyword8.lower():
-		TextToSpeech("command found",spr)
+		callback12()
 	elif tex == keyword9.lower():
-		TextToSpeech("command found",spr)
+		callback13()
 	elif tex == keyword10.lower():
-		TextToSpeech("command found",spr)
+		callback14()
 	else:
 		if su==1 and is_connected(REMOTE_SERVER)=="Online":
 			TextToSpeech(output3+tex,spr)
