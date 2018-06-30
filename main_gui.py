@@ -101,6 +101,7 @@ def ini():
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
 	client.publish("tgn/system/weather","0",qos=0,retain=True)
+	client.publish("tgn/system/mic","0",qos=0,retain=True)
 	client.publish("tgn/esp_1/analog/sensor_1","100",qos=0,retain=True)
 	client.publish("tgn/esp_2/analog/sensor_1","100",qos=0,retain=True)
 	#MCP23017 I2C
@@ -884,6 +885,7 @@ def callback30():
 					call(['shutdown', '-h', 'now'], shell=False)
 
 def callback33():
+	client.publish("tgn/system/mic","0",qos=0,retain=True)
 	sound()
 	try:
 		f = open(spr_phat+"voice.config","r")
@@ -897,12 +899,18 @@ def callback33():
 		keyword2 = (data[1].rstrip())
 		keyword3 = (data[2].rstrip())
 		keyword4 = (data[3].rstrip())
+		keyword5 = buttons[0]
+		keyword6 = buttons[1]
+		keyword7 = buttons[2]
+		keyword8 = buttons[3]
+		keyword9 = buttons[4]
+		keyword10 = buttons[5]
 		output3 = (data[6].rstrip())
 	tex = SpeechToText(spr,"AIzaSyDDzPM2W74MU3NvWgRKG85b3-UWaNOAjQo")
 	print(tex)
-	if tex == keyword3:
+	if tex == keyword3.lower():
 		exit()
-	elif tex == keyword4:
+	elif tex == keyword4.lower():
 		if LCDpower == 1:
 			mylcd.backlight(0)
 			time.sleep(1)
@@ -910,13 +918,26 @@ def callback33():
 			time.sleep(1)
 			mylcd.backlight(0)
 		call(['shutdown', '-h', 'now'], shell=False)
-	elif tex == keyword2:
+	elif tex == keyword2.lower():
 		all_off()
-	elif tex == keyword1:
+	elif tex == keyword1.lower():
 		all_on()
+	elif tex == keyword5.lower():
+		TextToSpeech("command found",spr)
+	elif tex == keyword6.lower():
+		TextToSpeech("command found",spr)
+	elif tex == keyword7.lower():
+		TextToSpeech("command found",spr)
+	elif tex == keyword8.lower():
+		TextToSpeech("command found",spr)
+	elif tex == keyword9.lower():
+		TextToSpeech("command found",spr)
+	elif tex == keyword10.lower():
+		TextToSpeech("command found",spr)
 	else:
 		if su==1 and is_connected(REMOTE_SERVER)=="Online":
 			TextToSpeech(output3+tex,spr)
+	print(keyword10.lower())
 
 def callback32():
 	global speech
@@ -982,13 +1003,6 @@ def callback39():
 
 def callback40():
     TextToSpeech(we_cach,spr)
-
-def callback41():
-	root.quit()
-	print("remove tgn smart home and libs")
-	setn = "lxterminal -e sudo bash remove.sh"
-	os.system(setn)
-	time.sleep(3)
 
 #broker mesage
 def on_message(client, userdata, message):
@@ -1080,6 +1094,10 @@ def on_message(client, userdata, message):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/system/weather","0",qos=0,retain=True)
 			callback40()
+	if(message.topic=="tgn/system/mic"):
+		if(int(message.payload.decode("utf-8")) == 1):
+			client.publish("tgn/system/mic","0",qos=0,retain=True)
+			callback33()
 
 def on_esp_2_sig():
 	msg = "ESP_2_on"
