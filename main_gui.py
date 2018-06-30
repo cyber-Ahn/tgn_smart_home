@@ -983,6 +983,13 @@ def callback39():
 def callback40():
     TextToSpeech(we_cach,spr)
 
+def callback41():
+	root.quit()
+	print("remove tgn smart home and libs")
+	setn = "lxterminal -e sudo bash remove.sh"
+	os.system(setn)
+	time.sleep(3)
+
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
