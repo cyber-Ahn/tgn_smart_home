@@ -2,6 +2,7 @@ import Adafruit_DHT
 import Adafruit_BMP.BMP085 as BMP085
 import base64
 import datetime
+import feedparser
 import json
 import logging
 import os
@@ -634,6 +635,24 @@ def readLight(addr=BH1750_ADDRESS):
         return round(convertToNumber(data),1)
     else:
         return "error "
+
+def rss(url):
+    feed = feedparser.parse(url)
+    feed_title = feed['feed']['title']
+    feed_entries = feed.entries
+    out = ""
+    for entry in feed.entries:
+        article_title = entry.title
+        article_link = entry.link
+        article_published_at = entry.published # Unicode string
+        article_published_at_parsed = entry.published_parsed # Time object
+        #article_author = entry.author
+        #print ("{}[{}]".format(article_title, article_link))
+        #print ("Published at {}".format(article_published_at))
+        #print ("\n")
+        #print ("Published by {}".format(article_author))
+        out = out + ("{}".format(article_title))+" - "
+    return(out)
 
 def write_eeprom(bus,add,block,reg,data):
 	if ifI2C(add) == "found device":
