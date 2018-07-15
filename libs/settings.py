@@ -491,6 +491,8 @@ def prog_rom():
 	com_typ = "ip"
 	esp_address = "100.100.100.100"
 	esp2_button = "5"
+	rssurl = "empty"
+	rsslang = "de"
 	print((data[103].rstrip()))
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(spr))
 	write_eeprom(1,ROM_ADDRESS,0x00,0xa6,str(su))
@@ -506,6 +508,32 @@ def prog_rom():
 	write_eeprom(1,ROM_ADDRESS,0x00,0xf3,str(Ts))
 	write_eeprom(1,ROM_ADDRESS,0x01,0x50,pw)
 	write_eeprom(1,ROM_ADDRESS,0x01,0x5b,esp2_button)
+	start_add_AF = 0x01
+	index = 0 
+	while index < 2:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AF,"#")
+		index = index + 1
+		start_add_AF = start_add_AF + 1
+	start_add_AF = 0x01
+	index = 0 
+	while index < len(rsslang):
+		letter = rsslang[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AF,letter)
+		index = index + 1
+		start_add_AF = start_add_AF + 1
+	start_add_AG = 0x04
+	index = 0 
+	while index < 60:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AG,"#")
+		index = index + 1
+		start_add_AG = start_add_AG + 1
+	start_add_AG = 0x04
+	index = 0 
+	while index < len(rssurl):
+		letter = rssurl[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AG,letter)
+		index = index + 1
+		start_add_AG = start_add_AG + 1
 	start_add_Y = 0x2b
 	index = 0 
 	while index < 4:
@@ -1045,6 +1073,39 @@ def alarm_settings():
 	print((data[104].rstrip()))
 	time.sleep(3)
 
+def rss_settings():
+	rssurl = input((data[120].rstrip()))
+	rsslang = input((data[121].rstrip()))
+	print((data[103].rstrip()))
+	start_add_AF = 0x01
+	index = 0 
+	while index < 2:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AF,"#")
+		index = index + 1
+		start_add_AF = start_add_AF + 1
+	start_add_AF = 0x01
+	index = 0 
+	while index < len(rsslang):
+		letter = rsslang[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AF,letter)
+		index = index + 1
+		start_add_AF = start_add_AF + 1
+	start_add_AG = 0x04
+	index = 0 
+	while index < 60:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AG,"#")
+		index = index + 1
+		start_add_AG = start_add_AG + 1
+	start_add_AG = 0x04
+	index = 0 
+	while index < len(rssurl):
+		letter = rssurl[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AG,letter)
+		index = index + 1
+		start_add_AG = start_add_AG + 1
+	print((data[104].rstrip()))
+	time.sleep(3)
+
 def save_nfc():
 	pn532 = Pn532_i2c()
 	pn532.SAMconfigure()
@@ -1117,3 +1178,5 @@ if command == "alarm":
 	alarm_settings()
 if command == "esp":
 	esp_settings()
+if command == "rss":
+	rss_settings()
