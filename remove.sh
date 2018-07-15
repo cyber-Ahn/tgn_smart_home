@@ -37,6 +37,7 @@ apt-get remove gir1.2-gst-plugins-base-1.0
 apt-get remove python3-pil.imagetk
 sudo pip3 uninstall thingspeak
 sudo pip3 uninstall gTTS
+sudo pip3 uninstall feedparser
 sleep 5
 
 clear
