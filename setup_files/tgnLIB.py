@@ -651,7 +651,7 @@ def rss(url):
         #print ("Published at {}".format(article_published_at))
         #print ("\n")
         #print ("Published by {}".format(article_author))
-        out = out + ("{}".format(article_title))+" / "
+        out = out + ("{}".format(article_title))+" - "
     return(out)
 
 def write_eeprom(bus,add,block,reg,data):
