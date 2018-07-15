@@ -89,8 +89,14 @@ esp_rssi_2 = "--"
 esp_li_2 = "100"
 esp_b1_2 = "off"
 esp_switch_2 = 70
+esp_switch_2_b = 90
 esp_ls_2 = 0
 esp_2_button = "5"
+esp2_cou = 0
+#RSS
+rssfeed = "no feed"
+rssurl = "empty"
+rsslang = "en"
 #PiHole
 api_url = 'http://localhost/admin/api.php'
 #functions
@@ -187,6 +193,8 @@ def ini():
 	global com_typ
 	global esp_address
 	global esp_2_button
+	global rssurl
+	global rsslang
 	if ifI2C(address) == "found device":
 		RTCpower = 1
 		client.publish("tgn/i2c/rtc","online",qos=0,retain=True)
@@ -447,6 +455,26 @@ def ini():
 				esp_address = esp_address + cach
 			index = index + 1
 			start_add_AE = start_add_AE + 1
+		rssurl = ""
+		rsslang = ""
+		start_add_AF = 0x01
+		index = 0
+		while index < 2:
+			cach = read_eeprom(1,ROM_ADDRESS,0x02,start_add_AF)
+			print(">>Read Byte "+str(start_add_AF))
+			if cach != "#":
+				rsslang = rsslang + cach
+			index = index + 1
+			start_add_AF = start_add_AF + 1
+		start_add_AG = 0x04
+		index = 0
+		while index < 60:
+			cach = read_eeprom(1,ROM_ADDRESS,0x02,start_add_AG)
+			print(">>Read Byte "+str(start_add_AG))
+			if cach != "#":
+				rssurl = rssurl + cach
+			index = index + 1
+			start_add_AG = start_add_AG + 1
 	else:
 		print(">>EEPROM not found")
 		client.publish("tgn/i2c/eeprom","offline",qos=0,retain=True)
@@ -1004,6 +1032,16 @@ def callback39():
 def callback40():
     TextToSpeech(we_cach,spr)
 
+def callback41():
+	os.execv(sys.executable, ['python3'] + sys.argv)
+
+def callback42():
+	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py rss"
+	os.system(setn)
+
+def callback43():
+    TextToSpeech(rssfeed,rsslang)
+
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
@@ -1102,12 +1140,10 @@ def on_message(client, userdata, message):
 def on_esp_2_sig():
 	msg = "ESP_2_on"
 	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
-	client.publish("tgn/buttons/status/"+esp_2_button,"1",qos=0,retain=True)
 
 def off_esp_2_sig():
 	msg = "ESP_2_off"
 	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
-	client.publish("tgn/buttons/status/"+esp_2_button,"0",qos=0,retain=True)
 		
 # updating window (Clock and Temps)
 the_time=''
@@ -1131,12 +1167,19 @@ class Window(Frame):
 			newtime = time.time()
 			if newtime != the_time:
 				global esp_ls_2
+				global esp2_cou
 				if esp_b1_2 == "on" and int(esp_li_2) < esp_switch_2 and esp_ls_2 == 0:
-					esp_ls_2 = 1
-					on_esp_2_sig()
-				if  esp_ls_2 == 1 and (esp_b1_2 == "off" or int(esp_li_2) > esp_switch_b):
-					esp_ls_2 = 0
-					off_esp_2_sig()
+					if esp2_cou == 2:
+						client.publish("tgn/buttons/status/"+esp_2_button,"1",qos=0,retain=True)
+						esp_ls_2 = 1
+						on_esp_2_sig()
+					esp2_cou = esp2_cou + 1
+				if  esp_ls_2 == 1:
+					if esp_b1_2 == "off" or int(esp_li_2) > esp_switch_2_b:
+						client.publish("tgn/buttons/status/"+esp_2_button,"0",qos=0,retain=True)
+						esp_ls_2 = 0
+						esp2_cou = 0
+						off_esp_2_sig()
 				if MCPpower == 1:
 					#if mcp.input(7) >> 7 == 1:
 						#all_off()
@@ -1226,6 +1269,11 @@ class WindowB(Frame):
 				output = ''
 				if is_connected(REMOTE_SERVER)=="Online":
 					global esp_ls
+					global rssfeed
+					if rssurl == "empty":
+						rssfeed = "Please set a Newsfeed"
+					else:
+						rssfeed = rss(rssurl)
 					if esp_ls == 0 and int(esp_li) < esp_switch:
 						esp_ls = 1
 						on()
@@ -1236,9 +1284,9 @@ class WindowB(Frame):
 						data = weather_info(zipcode,openweatherkey)
 						m_symbol = '\xb0' + 'C'
 						output = output+(dataText[24].rstrip())+data['city']+','+data['country']+'\n'
-						output = output+str(data['temp'])+'°C  '+data['sky']+'\n'
+						output = output+str(data['temp'])+'°C  '+data['sky']+' '
 						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'°C, '+(dataText[26].rstrip())+str(data['temp_min'])+'°C\n'
-						output = output+'\n'
+						#output = output+'\n'
 						output = output+(dataText[27].rstrip())+str(data['wind'])+'km/h \n'
 						output = output+(dataText[28].rstrip())+str(data['humidity'])+'% \n'
 						output = output+(dataText[29].rstrip())+str(data['cloudiness'])+'% \n'
@@ -1299,9 +1347,32 @@ class WindowB(Frame):
 						img = Label(self, image=render)
 						img.image = render
 						img.config(bg=afbground)
-						img.place(x=0, y=100)
+						img.place(x=0, y=60)
 			self.display_time.after(1200000, change_value_the_time)
 		change_value_the_time()
+
+# updating window (RSS Feed)
+class WindowC(Frame):
+	def __init__(self,master):
+		Frame.__init__(self, master)
+		self.grid()
+		self.canvas = Canvas(self, bg=afbground, highlightthickness=0, width=453, height=40)
+		self.canvas.pack(expand=True)
+		xpos = 450
+		ypos = 20
+		self.canvas.create_text(xpos, ypos, anchor='w', text=rssfeed,font=('Helvetica 20 bold'), fill=fground, tags='text')
+		text_begin = self.canvas.bbox('text')[0]
+		text_end = self.canvas.bbox('text')[2]
+		self.text_length = text_end - text_begin
+		self.scroll_text()
+        
+	def scroll_text(self):
+		self.canvas.move('text', -3, 0)
+		text_end = self.canvas.bbox('text')[2]
+		if text_end < 0:
+			self.canvas.move('text', 450 + self.text_length, 0)
+		self.canvas.after(50, self.scroll_text)
+
 def spt1():
 	global spr
 	spr = "de"
@@ -1357,7 +1428,8 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 		data = []
 		for line in f:
 			data.append(line)
-		TextToSpeech((data[4].rstrip()),spr)
+		if spr != "zh":
+			TextToSpeech((data[4].rstrip()),spr)
 root = Tk()
 #fullscreen mode
 WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
@@ -1382,6 +1454,7 @@ menu.add_cascade(label=(data[37].rstrip()), menu=filemenu)
 filemenu.add_command(label=(data[38].rstrip()), command=callback8)
 filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 filemenu.add_separator()
+#filemenu.add_command(label="Reload", command=callback41)
 filemenu.add_command(label=(data[40].rstrip()), command=callback30)
 
 setmenu = Menu(menu)
@@ -1493,6 +1566,7 @@ rommenu.add_command(label=(data[60].rstrip()), command=callback27)
 rommenu.add_command(label=(data[61].rstrip()), command=callback35)
 rommenu.add_command(label=(data[112].rstrip()), command=callback36)
 rommenu.add_command(label=(data[113].rstrip()), command=callback38)
+rommenu.add_command(label=(data[119].rstrip()), command=callback42)
 rommenu.add_command(label=(data[62].rstrip()), command=callback22)
 
 nfcmenu = Menu(menu)
@@ -1516,9 +1590,6 @@ leftFrame.grid(row=0, column=0, padx=10, pady=3)
 infFrame1 = Frame(leftFrame)
 infFrame1.configure(background=bground)
 infFrame1.grid(row=0, column=0, padx=10, pady=3)
-infLabel1 = Label(infFrame1, text=(data[21].rstrip()))
-infLabel1.configure(background=bground, foreground=fground)
-infLabel1.grid(row=0, column=1, padx=10, pady=3)
 
 rightFrame = Frame(root, width=400, height = 400)
 rightFrame.configure(background=bground)
@@ -1630,22 +1701,40 @@ if ifI2C(NFC_ADDRESS) == "found device":
 
 app=WindowB(leftFrame)
 
+seperatorFrame4 = Frame(leftFrame)
+seperatorFrame4.configure(background=bground)
+seperatorFrame4.grid(row=2, column=0, padx=5, pady=3)
+seperatorLabel1 = Label(seperatorFrame4, text="")
+seperatorLabel1.configure(background=bground)
+seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
+
+app=WindowC(leftFrame)
+
 seperatorFrame3 = Frame(leftFrame)
 seperatorFrame3.configure(background=bground)
-seperatorFrame3.grid(row=2, column=0, padx=5, pady=3)
+seperatorFrame3.grid(row=4, column=0, padx=5, pady=3)
 seperatorLabel1 = Label(seperatorFrame3, text="")
+seperatorLabel1.configure(background=bground)
+seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
+
+seperatorFrame5 = Frame(leftFrame)
+seperatorFrame5.configure(background=bground)
+seperatorFrame5.grid(row=4, column=0, padx=5, pady=3)
+seperatorLabel1 = Label(seperatorFrame5, text="")
 seperatorLabel1.configure(background=bground)
 seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
 
 buttonFrame3 = Frame(leftFrame)
 buttonFrame3.configure(background=bground)
-buttonFrame3.grid(row=3, column=0, padx=10, pady=3)
+buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
 
-B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=12, command=callback20)
+B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=7, command=callback20)
 B1.grid(row=0, column=0, padx=10, pady=3) 
-B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=12, command=callback21)
+B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=9, command=callback21)
 B2.grid(row=0, column=1, padx=10, pady=3)
-B2 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=12, command=callback40)
-B2.grid(row=0, column=2, padx=10, pady=3)
+B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=9, command=callback40)
+B3.grid(row=0, column=2, padx=10, pady=3)
+B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg=buttonb, fg=fground, width=7, command=callback43)
+B4.grid(row=0, column=3, padx=10, pady=3)
 
 root.mainloop()
