@@ -1273,7 +1273,7 @@ class WindowB(Frame):
 					if rssurl == "empty":
 						rssfeed = "Please set a Newsfeed"
 					else:
-						rssfeed = rss(rssurl)
+						rssfeed = rss(rssurl,10)
 					if esp_ls == 0 and int(esp_li) < esp_switch:
 						esp_ls = 1
 						on()
@@ -1351,7 +1351,7 @@ class WindowB(Frame):
 			self.display_time.after(1200000, change_value_the_time)
 		change_value_the_time()
 
-# updating window (RSS Feed)
+#window (RSS Feed)
 class WindowC(Frame):
 	def __init__(self,master):
 		Frame.__init__(self, master)
@@ -1370,6 +1370,10 @@ class WindowC(Frame):
 		self.canvas.move('text', -3, 0)
 		text_end = self.canvas.bbox('text')[2]
 		if text_end < 0:
+			self.canvas.itemconfig('text',text=rssfeed)
+			text_begin = self.canvas.bbox('text')[0]
+			text_end = self.canvas.bbox('text')[2]
+			self.text_length = text_end - text_begin
 			self.canvas.move('text', 450 + self.text_length, 0)
 		self.canvas.after(50, self.scroll_text)
 
