@@ -636,22 +636,25 @@ def readLight(addr=BH1750_ADDRESS):
     else:
         return "error "
 
-def rss(url):
+def rss(url,num):
     feed = feedparser.parse(url)
     feed_title = feed['feed']['title']
     feed_entries = feed.entries
     out = ""
-    for entry in feed.entries:
-        article_title = entry.title
-        article_link = entry.link
-        article_published_at = entry.published # Unicode string
-        article_published_at_parsed = entry.published_parsed # Time object
-        #article_author = entry.author
-        #print ("{}[{}]".format(article_title, article_link))
-        #print ("Published at {}".format(article_published_at))
-        #print ("\n")
-        #print ("Published by {}".format(article_author))
-        out = out + ("{}".format(article_title))+" - "
+    x_num = 1
+    for entry in feed_entries:
+        if x_num <= num:
+            article_title = entry.title
+            article_link = entry.link
+            article_published_at = entry.published # Unicode string
+            article_published_at_parsed = entry.published_parsed # Time object
+            #article_author = entry.author
+            #print ("{}[{}]".format(article_title, article_link))
+            #print ("Published at {}".format(article_published_at))
+            #print ("\n")
+            #print ("Published by {}".format(article_author))
+            out = out + ("{}".format(article_title))+" - "
+            x_num = x_num + 1
     return(out)
 
 def write_eeprom(bus,add,block,reg,data):
