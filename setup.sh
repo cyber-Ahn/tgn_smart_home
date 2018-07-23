@@ -43,6 +43,7 @@ apt-get install python3-pil.imagetk
 sudo pip3 install thingspeak
 sudo pip3 install gTTS
 sudo pip3 install feedparser
+sudo pip3 install gitpython
 sleep 5
 
 clear
