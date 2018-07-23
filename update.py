@@ -1,5 +1,3 @@
-#pip3 install gitpython
-
 import requests
 from git import Repo
 import shutil
