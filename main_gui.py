@@ -1042,6 +1042,12 @@ def callback42():
 def callback43():
     TextToSpeech(rssfeed,rsslang)
 
+def callback44():
+	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/update.py"
+	os.system(setn)
+	time.sleep(5)
+	os.execv(sys.executable, ['python3'] + sys.argv)
+
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
@@ -1585,6 +1591,7 @@ helpmenu = Menu(menu)
 menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
 helpmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
 menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
+helpmenu.add_command(label="Update", command=callback44)
 helpmenu.add_command(label=(data[68].rstrip()), command=About)
 
 leftFrame = Frame(root, width=400, height = 400)

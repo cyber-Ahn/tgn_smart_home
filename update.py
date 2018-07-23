@@ -3,6 +3,7 @@
 import requests
 from git import Repo
 import shutil
+import time
 
 def update(ver):
     url = 'https://api.github.com/repos/cyber-Ahn/tgn_smart_home/contents/version.txt'
@@ -35,3 +36,4 @@ def update(ver):
         shutil.rmtree('/home/pi/Desktop/update', ignore_errors=True)
         return("New version available SHA:"+read_data+"\nUpdate successful")
 print(update("fe804e59218a9228ebad3a37aa44fccbc9a96287"))
+time.sleep(6)
