@@ -85,6 +85,8 @@ esp_li = "100"
 #ESP8622/2
 esp_ip_2 = "---.---.---.---"
 esp_pr_2 = "--"
+esp_temp_2 = "--"
+esp_hum_2 = "--"
 esp_rssi_2 = "--"
 esp_li_2 = "100"
 esp_b1_2 = "off"
@@ -1052,6 +1054,8 @@ def callback44():
 def on_message(client, userdata, message):
 	global esp_temp
 	global esp_hum
+	global esp_temp_2
+	global esp_hum_2
 	global esp_rssi
 	global esp_li
 	global b6
@@ -1076,6 +1080,10 @@ def on_message(client, userdata, message):
 		esp_temp = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/temp/sensor_2"):
 		esp_hum = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/esp_2/temp/sensor_1"):
+    		esp_temp_2 = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/esp_2/temp/sensor_2"):
+		esp_hum_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/wifi/rssi"):
 		esp_rssi = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/analog/sensor_1"):
@@ -1300,7 +1308,7 @@ class WindowB(Frame):
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+" "+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'\n'
-						output = output+'ESP2:'+esp_li_2+' / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+esp_pr_2+'%\n'
+						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_hum_2+'% / '+esp_rssi_2+'dbm / '+esp_li_2+'\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+temp_data+" / "+str(readLight())+'Lux\n'
 						global weather_t
