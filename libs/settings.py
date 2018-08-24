@@ -450,10 +450,10 @@ def prog_rom():
 	s4 = "1"
 	key = "10101"
 	gpio = "26"
-	b1 = "Main Power"
+	b1 = "Main_Power"
 	b2 = "NAS"
 	b3 = "Computer"
-	b4 = "WZ Light"
+	b4 = "WZ_Light"
 	b5 = "Floor"
 	b6 = "empty"
 	b1A = 0
