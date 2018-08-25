@@ -1271,7 +1271,8 @@ class WindowB(Frame):
 				DNSQUERIES = dataPIhole['dns_queries_today']
 				ADSBLOCKED = dataPIhole['ads_blocked_today']
 				CLIENTS = dataPIhole['unique_clients']
-				temp_data = get_dht11()
+				#temp_data = get_dht11()
+				temp_data = "Room:20.0°C / 12.0%"
 				try:
 					f = open(spr_phat+"text.config","r")
 				except IOError:
