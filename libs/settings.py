@@ -1198,5 +1198,5 @@ if command == "esp":
 	esp_settings()
 if command == "rss":
 	rss_settings()
-if command == "rss":
+if command == "update":
 	update_ver()
