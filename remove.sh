@@ -39,6 +39,7 @@ sudo pip3 uninstall thingspeak
 sudo pip3 uninstall gTTS
 sudo pip3 uninstall feedparser
 sudo pip3 uninstall gitpython
+apt-get remove lirc
 sleep 5
 
 clear
