@@ -30,6 +30,7 @@ Contain:
 * libssl1.0.0
 * mosquitto server
 * paho-mqtt
+* lirc
 
 
 Required hardware:
@@ -37,7 +38,8 @@ Required hardware:
 * Speacker 3,5mm
 * Pi Camera
 * 7" HDMI Display
-* DHT11 -- GPIO 18 (optional)
+* IR Reciver -- GPIO 18 (optional)
+* IR Transmitter -- GPIO 22 (optional)
 * 433Mhz RF Wireless Transmitter-Empfänger-Modul Link-Kit für ARM / MCU -- Transmitter on GPIO 17 /Reciver on GPIO 26
 * PIR motion detector -- GPIO 24 (optional)
 + ON I2C Bus:     (all optional)
