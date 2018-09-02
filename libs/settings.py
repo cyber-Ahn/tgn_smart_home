@@ -441,7 +441,7 @@ def thinkspeak_settings():
 	print((data[104].rstrip()))
 
 def prog_rom():
-	version = "V.1.9"
+	version = "V.2.0"
 	ontime = "17:10|4:31"
 	offtime = "23:10|5:41"
 	s1 = "0"
