@@ -6,7 +6,7 @@
 #version:        1.9
 #usage:          sudo bash Setup.sh
 #Support:        https:caworks-sl.de/TGN
-#OS:             Debian_Stretch_Raspbian_2017.09 / Python3.5 !!!
+#OS:             Debian_Stretch_Raspbian_2018.07 / Python3.5 !!!
 #==============================================================================
 
 echo -e "##########################################################"
