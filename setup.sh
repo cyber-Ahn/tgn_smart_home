@@ -72,6 +72,11 @@ sudo mv /home/pi/tgn_smart_home/setup_files/habridge_install.sh /home/pi/tgn_sma
 
 clear
 
+echo -e ">> Install tgn NeuralNetwork"
+git clone https://github.com/cyber-Ahn/tgn_neural_network.git
+
+clear
+
 echo -e ">> Install Web Interface Libs"
 pip3 install routes
 pip3 install pyopenssl
