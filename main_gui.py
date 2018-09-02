@@ -145,7 +145,7 @@ def ini():
 		time.sleep(2)
 		mylcd.backlight(1)
 		mylcd.lcd_display_string("TGN Smart Home", 1, 1)
-		mylcd.lcd_display_string("V1.6 Loading....", 2, 0)
+		mylcd.lcd_display_string("Loading....", 2, 0)
 		print(">>LCD Display configured")
 		client.publish("tgn/i2c/lcd","online",qos=0,retain=True)
 	else:
