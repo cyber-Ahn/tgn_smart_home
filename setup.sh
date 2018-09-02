@@ -44,6 +44,7 @@ sudo pip3 install thingspeak
 sudo pip3 install gTTS
 sudo pip3 install feedparser
 sudo pip3 install gitpython
+apt-get install lirc -y
 sleep 5
 
 clear
@@ -119,6 +120,15 @@ sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_broker.sh /home/pi
+
+sudo mv /home/pi/tgn_smart_home/setup_files/lircd.conf /etc/lirc
+sudo mv /home/pi/tgn_smart_home/setup_files/lirc_options.conf /etc/lirc
+sudo mv /home/pi/tgn_smart_home/setup_files/hardware.conf /etc/lirc
+sudo mv /home/pi/tgn_smart_home/setup_files/unitymedia_samsung.lircd.conf /etc/lirc/lircd.conf.d
+echo "dtoverlay=lirc-rpi,gpio_in_pin=18,gpio_out_pin=23" >> /boot/config.txt
+echo "lirc_rpi" >> /etc/modules
+echo "lirc_dev" >> /etc/modules
+
 cd ..
 sudo chmod +x /home/pi/start_main_gui.sh
 sudo chmod +x /home/pi/web_interface.sh
