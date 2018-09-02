@@ -440,6 +440,24 @@ def thinkspeak_settings():
 		start_add_X = start_add_X + 1
 	print((data[104].rstrip()))
 
+def update_ver():
+	version = "V.2.0"
+	start_add_I = 0x68
+	index = 0 
+	while index < 5:
+		write_eeprom(1,ROM_ADDRESS,0x00,start_add_I,"X")
+		index = index + 1
+		start_add_I = start_add_I + 1
+		print("Write: "+str(start_add_I))
+	start_add_I = 0x68
+	index = 0 
+	while index < len(version):
+		letter = version[index]
+		write_eeprom(1,ROM_ADDRESS,0x00,start_add_I,letter) 
+		index = index + 1
+		start_add_I = start_add_I + 1
+		print("Write: "+str(start_add_I))
+
 def prog_rom():
 	version = "V.2.0"
 	ontime = "17:10|4:31"
@@ -1180,3 +1198,5 @@ if command == "esp":
 	esp_settings()
 if command == "rss":
 	rss_settings()
+if command == "rss":
+	update_ver()
