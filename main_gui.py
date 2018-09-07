@@ -1247,7 +1247,8 @@ class Window(Frame):
 					counterLCD = 0
 				if backlight == 0 and LCDpower == 1:
 					mylcd.backlight(0)
-				the_time= pcf8563ReadTimeB()+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C\n"+stats
+				trigger = pcf8563ReadTimeB()
+				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C\n"+stats
 				self.display_time.config(text=the_time, font=('times', 20, 'bold'), bg=afbground, fg=fground)
 			self.display_time.after(5000, change_value_the_time)
 		change_value_the_time()
@@ -1351,8 +1352,9 @@ class WindowB(Frame):
 					room_t = 0.0
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
+					timespl = format_time(pcf8563ReadTime()).split(" ")
 					print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
-					output = output+'\n'+(dataText[36].rstrip())
+					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 				self.display_time.config(text=output, font=('times', 17, 'bold'), bg=afbground, fg=fground)
 				if is_connected(REMOTE_SERVER)=="Online":
 					if allowed_key(openweatherkey) == "yes":
