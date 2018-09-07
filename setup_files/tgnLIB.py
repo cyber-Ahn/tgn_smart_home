@@ -742,6 +742,19 @@ def pcf8563ReadTime():
 	t[5] = t[5]&0x1F  #dayname -> month
 	return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
 
+def format_time(inputtime):
+    timefo = inputtime
+    cachfo = timefo.split(" ")
+    cachfi = cachfo[3].split(":")
+    timese = cachfi[2]
+    timemi = cachfi[1]
+    if int(timese) <= 9:
+        timese = "0"+timese
+    if int(timemi) <= 9:
+        timemi = "0"+timemi
+    timefo = cachfo[0]+"  "+cachfo[2]+" "+cachfi[0]+":"+timemi+":"+timese
+    return timefo
+
 def setRTC():
 	var1 = strftime("%a-%Y-%m-%d-%H-%M-%S", localtime())
 	var2 = var1.split("-")
