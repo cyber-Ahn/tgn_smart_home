@@ -153,6 +153,18 @@ BH1750_ADDRESS = 0x23
 
 REMOTE_SERVER = "www.google.com"
 
+HexDigits = [0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71]
+ADDR_AUTO = 0x40
+ADDR_FIXED = 0x44
+STARTADDR = 0xC0
+BRIGHT_DARKEST = 0
+BRIGHT_TYPICAL = 2
+BRIGHT_HIGHEST = 7
+OUTPUT = GPIO.OUT
+INPUT = GPIO.IN
+LOW = GPIO.LOW
+HIGH = GPIO.HIGH
+
 class MCP230XX(object):
     OUTPUT = 0
     INPUT = 1
@@ -1223,6 +1235,120 @@ class Pn532_i2c:
     def __exit__(self, type, value, traceback):
         self.PN532.close()
         del self.PN532
+
+class TM1637:
+    __doublePoint = False
+    __Clkpin = 0
+    __Datapin = 0
+    __brightnes = BRIGHT_TYPICAL;
+    __currentData = [0,0,0,0];
+	
+    def __init__( self, pinClock, pinData, brightnes ):
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+        self.__Clkpin = pinClock
+        self.__Datapin = pinData
+        self.__brightnes = brightnes;
+        GPIO.setup(self.__Clkpin,OUTPUT)
+        GPIO.setup(self.__Datapin,OUTPUT)
+
+    def Clear(self):
+        b = self.__brightnes;
+        point = self.__doublePoint;
+        self.__brightnes = 0;
+        self.__doublePoint = False;
+        data = [0x7F,0x7F,0x7F,0x7F];
+        self.Show(data);
+        self.__brightnes = b;
+        self.__doublePoint = point;
+
+    def Show( self, data ):
+        for i in range(0,4):
+            self.__currentData[i] = data[i];
+        self.start();
+        self.writeByte(ADDR_AUTO);
+        self.stop();
+        self.start();
+        self.writeByte(STARTADDR);
+        for i in range(0,4):
+            self.writeByte(self.coding(data[i]));
+        self.stop();
+        self.start();
+        self.writeByte(0x88 + self.__brightnes);
+        self.stop();
+
+    def Show1(self, DigitNumber, data):
+        if( DigitNumber < 0 or DigitNumber > 3):
+            return;
+        self.__currentData[DigitNumber] = data;
+        self.start();
+        self.writeByte(ADDR_FIXED);
+        self.stop();
+        self.start();
+        self.writeByte(STARTADDR | DigitNumber);
+        self.writeByte(self.coding(data));
+        self.stop();
+        self.start();
+        self.writeByte(0x88 + self.__brightnes);
+        self.stop();
+		
+    def SetBrightnes(self, brightnes):
+        if( brightnes > 7 ):
+            brightnes = 7;
+        elif( brightnes < 0 ):
+            brightnes = 0;
+        if( self.__brightnes != brightnes):
+            self.__brightnes = brightnes;
+            self.Show(self.__currentData);
+
+    def ShowDoublepoint(self, on):
+        if( self.__doublePoint != on):
+            self.__doublePoint = on;
+            self.Show(self.__currentData);
+			
+    def writeByte( self, data ):
+        for i in range(0,8):
+            GPIO.output( self.__Clkpin, LOW)
+            if(data & 0x01):
+                GPIO.output( self.__Datapin, HIGH)
+            else:
+                GPIO.output( self.__Datapin, LOW)
+            data = data >> 1
+            GPIO.output( self.__Clkpin, HIGH)
+        GPIO.output( self.__Clkpin, LOW)
+        GPIO.output( self.__Datapin, HIGH)
+        GPIO.output( self.__Clkpin, HIGH)
+        GPIO.setup(self.__Datapin, INPUT)
+        while(GPIO.input(self.__Datapin)):
+            time.sleep(0.001)
+            if( GPIO.input(self.__Datapin)):
+                GPIO.setup(self.__Datapin, OUTPUT)
+                GPIO.output( self.__Datapin, LOW)
+                GPIO.setup(self.__Datapin, INPUT)        
+        GPIO.setup(self.__Datapin, OUTPUT)
+    
+    def start(self):
+        GPIO.output( self.__Clkpin, HIGH)
+        GPIO.output( self.__Datapin, HIGH)
+        GPIO.output( self.__Datapin, LOW) 
+        GPIO.output( self.__Clkpin, LOW)
+	
+    def stop(self):
+        GPIO.output( self.__Clkpin, LOW) 
+        GPIO.output( self.__Datapin, LOW) 
+        GPIO.output( self.__Clkpin, HIGH)
+        GPIO.output( self.__Datapin, HIGH)
+	
+    def coding(self, data):
+        if( self.__doublePoint ):
+            pointData = 0x80
+        else:
+            pointData = 0;
+        if(data == 0x7F):
+            data = 0
+        else:
+            data = HexDigits[data] + pointData;
+        return data
 
 class keypad_GPIO():
     def __init__(self, columnCount = 3):
