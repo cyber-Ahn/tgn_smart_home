@@ -49,6 +49,7 @@ Required hardware:
   * PN532 NFC
   * BMP085
   * BH1750
+  * 5 x 4 Bit Digital Tube LED Display Modul I2C
  + optional:
    * NodeMcu with DHT22, Fotoresitor and Small Display
    * Android Phone for Smart Home App
