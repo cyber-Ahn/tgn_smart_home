@@ -73,7 +73,7 @@ mylcd = ""
 ontime = "10:19|10:21"
 offtime = "10:20|10:22"
 phat = "/home/pi/tgn_smart_home/icons/"
-color_button =[]
+color_button = []
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
@@ -103,7 +103,27 @@ rsslang = "en"
 api_url = 'http://localhost/admin/api.php'
 #functions
 
+def seven_seg(data):
+	cachseven = "0"+str(data)
+	lenseven = len(cachseven)
+	if(lenseven == 3):
+		cachseven = "0"+cachseven
+	if(lenseven == 2):
+		cachseven = "00"+cachseven
+	if(lenseven == 1):
+		cachseven = "000"+cachseven
+	listseven = []
+	for char in cachseven:
+		listseven.append(int(char))
+	sevenseg.Show(listseven)
+
 def ini():
+	global sevenseg
+	sevenseg = TM1637(12,16,BRIGHT_TYPICAL)
+	sevenseg.Clear()
+	time.sleep(1)
+	anzeige = [0,0,0,0]
+	sevenseg.Show(anzeige) 
 	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
 	os.system('clear')
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
@@ -209,6 +229,7 @@ def ini():
 		while index < 34:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_U)
 			print(">>Read Byte "+str(start_add_U))
+			seven_seg(start_add_U)
 			if cach != "#":
 				pushbulletkey = pushbulletkey + cach
 			index = index + 1
@@ -219,6 +240,7 @@ def ini():
 		while index < 7:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_S)
 			print(">>Read Byte "+str(start_add_S))
+			seven_seg(start_add_S)
 			if cach != "X":
 				zipcode = zipcode + cach
 			index = index + 1
@@ -229,6 +251,7 @@ def ini():
 		while index < 32:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_T)
 			print(">>Read Byte "+str(start_add_T))
+			seven_seg(start_add_T)
 			if cach != "#":
 				openweatherkey = openweatherkey + cach
 			index = index + 1
@@ -239,6 +262,7 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_C)
 			print(">>Read Byte "+str(start_add_C))
+			seven_seg(start_add_C)
 			if cach != "X":
 				b1A = b1A + cach
 			index = index + 1
@@ -249,6 +273,7 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_D)
 			print(">>Read Byte "+str(start_add_D))
+			seven_seg(start_add_D)
 			if cach != "X":
 				b2A = b2A + cach
 			index = index + 1
@@ -259,6 +284,7 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_E)
 			print(">>Read Byte "+str(start_add_E))
+			seven_seg(start_add_E)
 			if cach != "X":
 				b3A = b3A + cach
 			index = index + 1
@@ -269,6 +295,7 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_F)
 			print(">>Read Byte "+str(start_add_F))
+			seven_seg(start_add_F)
 			if cach != "X":
 				b4A = b4A + cach
 			index = index + 1
@@ -279,6 +306,7 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_G)
 			print(">>Read Byte "+str(start_add_G))
+			seven_seg(start_add_G)
 			if cach != "X":
 				b5A = b5A + cach
 			index = index + 1
@@ -289,6 +317,7 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_H)
 			print(">>Read Byte "+str(start_add_H))
+			seven_seg(start_add_H)
 			if cach != "X":
 				b6A = b6A + cach
 			index = index + 1
@@ -316,6 +345,7 @@ def ini():
 		while index < 11:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_A)
 			print(">>Read Byte "+str(start_add_A))
+			seven_seg(start_add_A)
 			if cach != "X":
 				ontime = ontime + cach
 			index = index + 1
@@ -326,6 +356,7 @@ def ini():
 		while index < 11:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_B)
 			print(">>Read Byte "+str(start_add_B))
+			seven_seg(start_add_B)
 			if cach != "X":
 				offtime = offtime + cach
 			index = index + 1
@@ -367,6 +398,7 @@ def ini():
 		while index < 5:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_I)
 			print(">>Read Byte "+str(start_add_I))
+			seven_seg(start_add_I)
 			if cach != "X":
 				ver = ver + cach
 			index = index + 1
@@ -379,6 +411,7 @@ def ini():
 		while index < 6:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_V)
 			print(">>Read Byte "+str(start_add_V))
+			seven_seg(start_add_V)
 			if cach != "X":
 				channel_id = channel_id + cach
 			index = index + 1
@@ -389,6 +422,7 @@ def ini():
 		while index < 16:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_W)
 			print(">>Read Byte "+str(start_add_W))
+			seven_seg(start_add_W)
 			if cach != "#":
 				write_key = write_key + cach
 			index = index + 1
@@ -399,6 +433,7 @@ def ini():
 		while index < 16:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_X)
 			print(">>Read Byte "+str(start_add_X))
+			seven_seg(start_add_X)
 			if cach != "#":
 				read_key = read_key + cach
 			index = index + 1
@@ -409,6 +444,7 @@ def ini():
 		while index < 5:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_AB)
 			print(">>Read Byte "+str(start_add_AB))
+			seven_seg(start_add_AB)
 			if cach != "X":
 				alarm_t = alarm_t + cach
 			index = index + 1
@@ -419,6 +455,7 @@ def ini():
 		while index < 3:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_AC)
 			print(">>Read Byte "+str(start_add_AC))
+			seven_seg(start_add_AC)
 			if cach != "X":
 				alarm_s = alarm_s + cach
 			index = index + 1
@@ -443,6 +480,7 @@ def ini():
 		while index < 3:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_AD)
 			print(">>Read Byte "+str(start_add_AD))
+			seven_seg(start_add_AD)
 			if cach != "X":
 				com_typ = com_typ + cach
 			index = index + 1
@@ -452,7 +490,8 @@ def ini():
 		esp_address = ""
 		while index < 30:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_AE)
-			print(">>read byte "+str(start_add_AE))
+			print(">>Read Byte "+str(start_add_AE))
+			seven_seg(start_add_AE)
 			if cach != "#":
 				esp_address = esp_address + cach
 			index = index + 1
@@ -464,6 +503,7 @@ def ini():
 		while index < 2:
 			cach = read_eeprom(1,ROM_ADDRESS,0x02,start_add_AF)
 			print(">>Read Byte "+str(start_add_AF))
+			seven_seg(start_add_AF)
 			if cach != "#":
 				rsslang = rsslang + cach
 			index = index + 1
@@ -473,6 +513,7 @@ def ini():
 		while index < 60:
 			cach = read_eeprom(1,ROM_ADDRESS,0x02,start_add_AG)
 			print(">>Read Byte "+str(start_add_AG))
+			seven_seg(start_add_AG)
 			if cach != "#":
 				rssurl = rssurl + cach
 			index = index + 1
@@ -1235,6 +1276,7 @@ class Window(Frame):
 					mylcd.lcd_clear()
 					mylcd.lcd_display_string("TGN Smart Home", 1, 1)
 					mylcd.lcd_display_string("IP:"+get_ip(), 2, 0)
+					sevenseg.Clear()
 				if counterLCD == 60 and LCDpower == 1:
 					mylcd.lcd_clear()
 					r = requests.get(api_url)
@@ -1244,7 +1286,9 @@ class Window(Frame):
 					CLIENTS = dataPIhole['unique_clients']
 					mylcd.lcd_display_string("Ad Blocked:"+str(ADSBLOCKED), 1, 0)
 					mylcd.lcd_display_string("Queries:"+str(DNSQUERIES), 2, 0)
+					seven_seg(str(ADSBLOCKED))
 					counterLCD = 0
+
 				if backlight == 0 and LCDpower == 1:
 					mylcd.backlight(0)
 				trigger = pcf8563ReadTimeB()
@@ -1451,6 +1495,7 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 			data.append(line)
 		if spr != "zh":
 			TextToSpeech((data[4].rstrip()),spr)
+sevenseg.Clear()
 root = Tk()
 #fullscreen mode
 WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
