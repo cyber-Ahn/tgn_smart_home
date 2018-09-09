@@ -803,6 +803,7 @@ def callback15():
 		mcp.output(3, 0)
 	mylcd.lcd_clear()
 	mylcd.backlight(0)
+	sevenseg.Clear()
 	call(['shutdown', '-h', 'now'], shell=False)
 def callback16():
 	sound()
@@ -810,6 +811,7 @@ def callback16():
 		mcp.output(3, 0)
 	mylcd.lcd_clear()
 	mylcd.backlight(0)
+	sevenseg.Clear()
 	call(['reboot', '-h', 'now'], shell=False)
 def callback17():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py rtc"
@@ -834,6 +836,7 @@ def callback20():
 		LCDpower = 0
 		mylcd.lcd_clear()
 		mylcd.backlight(0)
+		sevenseg.Clear()
 	else:
 		LCDpower = 1
 		mylcd.lcd_display_string("TGN Smart Home", 1, 1)
