@@ -77,7 +77,7 @@ color_button = []
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
-esp_switch_b = 90
+esp_switch_b = 100
 esp_temp = "--"
 esp_hum = "--"
 esp_rssi = "--"
@@ -119,6 +119,10 @@ def seven_seg(data):
 
 def ini():
 	global sevenseg
+	global esp_li
+	global esp_li_2
+	esp_li = esp_switch_b + 10
+	esp_li_2 = esp_switch_2_b + 10
 	sevenseg = TM1637(12,16,BRIGHT_TYPICAL)
 	sevenseg.Clear()
 	time.sleep(1)
