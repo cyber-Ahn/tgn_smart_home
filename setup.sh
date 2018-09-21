@@ -69,6 +69,7 @@ sleep 3
 rm -fr Adafruit_Python_BMP/
 
 sudo mv /home/pi/tgn_smart_home/setup_files/habridge_install.sh /home/pi/tgn_smart_home
+sudo mv /home/pi/tgn_smart_home/setup_files/AlexaInstaller.sh /home/pi/tgn_smart_home
 
 clear
 
