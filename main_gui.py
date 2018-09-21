@@ -1497,7 +1497,7 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 		for line in f:
 			data.append(line)
 		if spr != "zh":
-			TextToSpeech((data[4].rstrip()),spr)
+			#TextToSpeech((data[4].rstrip()),spr)
 sevenseg.Clear()
 root = Tk()
 #fullscreen mode
