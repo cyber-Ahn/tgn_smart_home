@@ -1402,6 +1402,7 @@ class WindowB(Frame):
 					timespl = format_time(pcf8563ReadTime()).split(" ")
 					print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
+					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				self.display_time.config(text=output, font=('times', 17, 'bold'), bg=afbground, fg=fground)
 				if is_connected(REMOTE_SERVER)=="Online":
 					if allowed_key(openweatherkey) == "yes":
@@ -1497,6 +1498,7 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 		for line in f:
 			data.append(line)
 		if spr != "zh":
+			print("Start Voice Modul")
 			#TextToSpeech((data[4].rstrip()),spr)
 sevenseg.Clear()
 root = Tk()
