@@ -1,17 +1,17 @@
+import paho.mqtt.client as mqtt
 from tgnLIB import *
 from subprocess import call
 
-def shutdown():
-	call(['shutdown', '-h', 'now'], shell=False)
-
-def reboot():
-	call(['reboot', '-h', 'now'], shell=False)
-
 c1 = sys.argv[1]
 c2 = int(sys.argv[2])
-if c2 == "shutdown":
-	shutdown()
+
+
+client = mqtt.Client("HA Brigde Com")
+client.connect(get_ip())
+if c1 == "shutdown":
+	client.publish("tgn/system/shutdown","1",qos=0,retain=True)
 elif c1 == "reboot":
-	reboot()
+	client.publish("tgn/system/reboot","1",qos=0,retain=True)
 else:
-	send(int(c1),int(c2))
+	modul = "tgn/buttons/status/"+c1
+	client.publish(modul,c2,qos=0,retain=True)
