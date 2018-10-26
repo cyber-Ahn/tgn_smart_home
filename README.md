@@ -85,10 +85,12 @@ after LXDE-pi add line:
 
 Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
  * Pi Commands
+ 
   - sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py reboot 1
   - sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py shutdown 1
   
  * wireless socket
-  -sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py [wireless socket number] [1 = on 0 = off]
-    example:
-    sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py 4 1
+ 
+   - sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py [wireless socket number] [1 = on 0 = off]
+   - example:
+    - sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py 4 1
