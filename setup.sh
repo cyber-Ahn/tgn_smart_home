@@ -75,18 +75,6 @@ clear
 
 echo -e ">> Install tgn NeuralNetwork"
 git clone https://github.com/cyber-Ahn/tgn_neural_network.git
-
-clear
-
-echo -e ">> Install Web Interface Libs"
-pip3 install routes
-pip3 install pyopenssl
-git clone https://github.com/simplejson/simplejson.git
-cd simplejson
-python3 setup.py install
-cd ..
-rm -fr simplejson 
-pip3 install cherrypy
 sleep 3
 
 clear
@@ -94,7 +82,6 @@ clear
 echo -e ">> set authority"
 chmod +x /home/pi/tgn_smart_home/libs/pushbullet.sh
 chmod +x start_gui.sh
-chmod +x web_interface.sh
 chmod +x start_mqtt_broker.sh
 chmod +x habridge_install.sh
 sleep 5
@@ -124,9 +111,7 @@ sudo mv /home/pi/tgn_smart_home/setup_files/black.list /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
-sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_broker.sh /home/pi
-
 sudo mv /home/pi/tgn_smart_home/setup_files/lircd.conf /etc/lirc
 sudo mv /home/pi/tgn_smart_home/setup_files/lirc_options.conf /etc/lirc
 sudo mv /home/pi/tgn_smart_home/setup_files/hardware.conf /etc/lirc
@@ -137,7 +122,6 @@ echo "lirc_dev" >> /etc/modules
 
 cd ..
 sudo chmod +x /home/pi/start_main_gui.sh
-sudo chmod +x /home/pi/web_interface.sh
 sudo chmod +x /home/pi/start_mqtt_broker.sh
 clear
 
@@ -152,15 +136,6 @@ python3 setup.py install
 sleep 3
 cd /home/pi/tgn_smart_home
 sudo pip3 install SpeechRecognition
-
-clear
-echo -e ">> Install ddclient (ignore setup infos and click ok)"
-sleep 2
-sudo apt-get install ddclient -y
-sudo nano /etc/ddclient.conf
-ddclient -daemon=0 -debug -verbose -noquiet 2 /etc/ddclient.conf
-sudo /etc/init.d/ddclient restart
-sleep 3
 
 clear
 
@@ -178,10 +153,6 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py pushb
 clear
 
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py thinkspeak
-
-clear
-
-sudo python3 /home/pi/tgn_smart_home/libs/settings.py webapp
 
 clear
 
