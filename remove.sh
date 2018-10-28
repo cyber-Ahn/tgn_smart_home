@@ -61,19 +61,6 @@ sudo python3 setup.py remove
 cd ..
 sleep 3
 rm -fr Adafruit_Python_BMP/
-
-
-clear
-
-echo -e ">> deinstall Web Interface Libs"
-pip3 uninstall routes
-pip3 unintsall pyopenssl
-git clone https://github.com/simplejson/simplejson.git
-cd simplejson
-python3 setup.py remove
-cd ..
-rm -fr simplejson 
-pip3 uninstall cherrypy
 sleep 3
 
 clear
@@ -88,8 +75,6 @@ echo -e ">> Move backup files"
 rm /usr/local/lib/python3.5/dist-packages/tgnLIB.py
 rm /home/pi/.asoundrc
 rm /home/pi/start_main_gui.sh
-rm /home/pi/web_interface.sh
-rm /home/pi/start_main_gui.sh
 rm /home/pi/start_mqtt_broker.sh
 cd ..
 clear
@@ -102,11 +87,6 @@ sudo apt-get remove libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-dev
 sleep 3
 cd /home/pi/tgn_smart_home
 sudo pip3 uninstall SpeechRecognition
-
-clear
-echo -e ">> deinstall ddclient (ignore setup infos and click ok)"
-sleep 2
-sudo apt-get remove ddclient 
 sleep 3
 
 clear
