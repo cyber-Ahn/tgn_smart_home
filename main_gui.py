@@ -123,15 +123,8 @@ def ini():
 	sevenseg.Clear()
 	time.sleep(1)
 	anzeige = [0,0,0,0]
-	sevenseg.Show(anzeige) 
-	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
+	sevenseg.Show(anzeige)
 	os.system('clear')
-	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
-	client.publish("tgn/system/reboot","0",qos=0,retain=True)
-	client.publish("tgn/system/weather","0",qos=0,retain=True)
-	client.publish("tgn/system/mic","0",qos=0,retain=True)
-	client.publish("tgn/esp_1/analog/sensor_1","100",qos=0,retain=True)
-	client.publish("tgn/esp_2/analog/sensor_1","100",qos=0,retain=True)
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
@@ -148,10 +141,8 @@ def ini():
 		mcp.pullup(6, 1)
 		mcp.pullup(7, 1)
 		print(">>MCP23017 configured")
-		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
 		print(">>MCP23017 not found")
-		client.publish("tgn/i2c/mcp","offline",qos=0,retain=True)
 	#LCD
 	print(">>initialize LCD Display")
 	if ifI2C(LCD_ADDRESS) == "found device":
@@ -167,10 +158,8 @@ def ini():
 		mylcd.lcd_display_string("TGN Smart Home", 1, 1)
 		mylcd.lcd_display_string("Loading....", 2, 0)
 		print(">>LCD Display configured")
-		client.publish("tgn/i2c/lcd","online",qos=0,retain=True)
 	else:
 		print(">>LCD Display not found")
-		client.publish("tgn/i2c/lcd","offline",qos=0,retain=True)
 	global ontime
 	global offtime
 	global s1
@@ -219,10 +208,8 @@ def ini():
 	global rsslang
 	if ifI2C(address) == "found device":
 		RTCpower = 1
-		client.publish("tgn/i2c/rtc","online",qos=0,retain=True)
 	print(">>initialize EEPROM")
 	if ifI2C(ROM_ADDRESS) == "found device":
-		client.publish("tgn/i2c/eeprom","online",qos=0,retain=True)
 		start_add_U = 0xcf
 		index = 0
 		pushbulletkey = ""
@@ -329,12 +316,6 @@ def ini():
 		buttons.append(b4A)
 		buttons.append(b5A)
 		buttons.append(b6A)
-		client.publish("tgn/buttons/name/1",b1A,qos=0,retain=True)
-		client.publish("tgn/buttons/name/2",b2A,qos=0,retain=True)
-		client.publish("tgn/buttons/name/3",b3A,qos=0,retain=True)
-		client.publish("tgn/buttons/name/4",b4A,qos=0,retain=True)
-		client.publish("tgn/buttons/name/5",b5A,qos=0,retain=True)
-		client.publish("tgn/buttons/name/6",b6A,qos=0,retain=True)
 		s1 = read_eeprom(1,ROM_ADDRESS,0x00,0x08)
 		s2 = read_eeprom(1,ROM_ADDRESS,0x00,0x09)
 		s3 = read_eeprom(1,ROM_ADDRESS,0x00,0x0a)
@@ -363,22 +344,16 @@ def ini():
 			start_add_B = start_add_B + 1
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x01)
 		b1=int(dataX)
-		client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x02)
 		b2=int(dataX)
-		client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x03)
 		b3=int(dataX)
-		client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x04)
 		b4=int(dataX)
-		client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x05)
 		b5=int(dataX)
-		client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x06)
 		b6=int(dataX)
-		client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
 		esp_2_button = read_eeprom(1,ROM_ADDRESS,0x01,0x5b)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x07)
 		colorSet=int(dataX)
@@ -404,7 +379,6 @@ def ini():
 			index = index + 1
 			start_add_I = start_add_I + 1
 		version = ver
-		client.publish("tgn/version",version,qos=0,retain=True)
 		start_add_V = 0x01
 		index = 0
 		channel_id = ""
@@ -520,7 +494,6 @@ def ini():
 			start_add_AG = start_add_AG + 1
 	else:
 		print(">>EEPROM not found")
-		client.publish("tgn/i2c/eeprom","offline",qos=0,retain=True)
 	if MCPpower == 1:
 		print(">>MCP23017 test Input and Output")
 		print("%d: %x" % (4, mcp.input(4) >> 4))
@@ -569,7 +542,6 @@ def ini():
 	if LCDpower == 1:
 		mylcd.lcd_clear()
 	spr_phat="/home/pi/tgn_smart_home/language/"+spr+"/"
-	client.publish("tgn/language",spr,qos=0,retain=True)
 	try:
 		f = open(spr_phat+"text.config","r")
 	except IOError:
@@ -583,6 +555,45 @@ def ini():
 	if pw == "1":
 		setn = "python3 /home/pi/tgn_smart_home/libs/pw.py"
 		os.system(setn)
+	#send status to mqtt
+	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
+	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot","0",qos=0,retain=True)
+	client.publish("tgn/system/weather","0",qos=0,retain=True)
+	client.publish("tgn/system/mic","0",qos=0,retain=True)
+	client.publish("tgn/esp_1/analog/sensor_1","100",qos=0,retain=True)
+	client.publish("tgn/esp_2/analog/sensor_1","100",qos=0,retain=True)
+	client.publish("tgn/language",spr,qos=0,retain=True)
+	client.publish("tgn/version",version,qos=0,retain=True)
+	client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
+	client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
+	client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
+	client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
+	client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
+	client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
+	client.publish("tgn/buttons/name/1",b1A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/2",b2A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/3",b3A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/4",b4A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/5",b5A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/6",b6A,qos=0,retain=True)
+	if MCPpower == 1:
+		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
+	else:
+		client.publish("tgn/i2c/mcp","offline",qos=0,retain=True)
+	if RTCpower == 1:
+		client.publish("tgn/i2c/rtc","online",qos=0,retain=True)
+	else:
+		client.publish("tgn/i2c/rtc","offline",qos=0,retain=True)
+	if ifI2C(ROM_ADDRESS) == "found device":
+		client.publish("tgn/i2c/eeprom","online",qos=0,retain=True)
+	else:
+		client.publish("tgn/i2c/eeprom","offline",qos=0,retain=True)
+	if LCDpower == 1:
+		client.publish("tgn/i2c/lcd","online",qos=0,retain=True)
+	else:
+		client.publish("tgn/i2c/lcd","offline",qos=0,retain=True)
+	
 
 def on():
 	global son
@@ -1218,29 +1229,15 @@ class Window(Frame):
 			client.on_message=on_message
 			client.loop_start()
 			client.subscribe(main_topic)
-			time.sleep(1)
+			time.sleep(2)
 			client.loop_stop()
 			global the_time
 			global counterLCD
 			newtime = time.time()
 			if newtime != the_time:
-				global esp_ls_2
-				global esp2_cou
-				if esp_b1_2 == "on" and int(esp_li_2) < esp_switch_2 and esp_ls_2 == 0:
-					if esp2_cou == 2:
-						client.publish("tgn/buttons/status/"+esp_2_button,"1",qos=0,retain=True)
-						esp_ls_2 = 1
-						on_esp_2_sig()
-					esp2_cou = esp2_cou + 1
-				if  esp_ls_2 == 1:
-					if esp_b1_2 == "off" or int(esp_li_2) > esp_switch_2_b:
-						client.publish("tgn/buttons/status/"+esp_2_button,"0",qos=0,retain=True)
-						esp_ls_2 = 0
-						esp2_cou = 0
-						off_esp_2_sig()
 				if MCPpower == 1:
-					#if mcp.input(7) >> 7 == 1:
-						#all_off()
+					if mcp.input(7) >> 7 == 1:
+						all_off()
 					if mcp.input(4) >> 4 == 1:
 						callback7()
 					if mcp.input(5) >> 5 == 1:
@@ -1248,7 +1245,11 @@ class Window(Frame):
 					if mcp.input(6) >> 6 == 1:
 						callback24()
 				stats = textswitch
-				client.publish("tgn/cpu/temp",str(round(getCpuTemperature(),1)),qos=0,retain=True)
+				try:
+					client.publish("tgn/cpu/temp",str(round(getCpuTemperature(),1)),qos=0,retain=True)
+				except:
+					client.connect(get_ip())
+					client.loop_start()
 				if b1 == 0:
 					stats=stats+'OFF|'
 				if b1 == 1:
@@ -1482,6 +1483,7 @@ def spt6():
 #Main Prog
 client = mqtt.Client("TGN Smart Home")
 client.connect(get_ip())
+client.loop_start()
 ini()
 if LCDpower == 1:
 	mylcd.lcd_display_string("TGN Smart Home", 1, 1)
@@ -1525,7 +1527,7 @@ menu.add_cascade(label=(data[37].rstrip()), menu=filemenu)
 filemenu.add_command(label=(data[38].rstrip()), command=callback8)
 filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 filemenu.add_separator()
-#filemenu.add_command(label="Reload", command=callback41)
+filemenu.add_command(label="Reload", command=callback41)
 filemenu.add_command(label=(data[40].rstrip()), command=callback30)
 
 setmenu = Menu(menu)
