@@ -42,8 +42,6 @@ b3 = 0
 b4 = 0
 b5 = 0
 b6 = 0
-room_t = 26
-room_h = 40.0
 weather_t = -0.41
 weather_c = 0
 weather_w = 4.1
@@ -552,9 +550,6 @@ def ini():
 			data.append(line)
 	textcpu=(data[20].rstrip())
 	textswitch=(data[19].rstrip())
-	if pw == "1":
-		setn = "python3 /home/pi/tgn_smart_home/libs/pw.py"
-		os.system(setn)
 	#send status to mqtt
 	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
@@ -635,7 +630,8 @@ def sound():
 def alarm_go():
 	global alarm_p
 	if alarm_p == 0:
-		os.system('mpg321 /home/pi/tgn_smart_home/sounds/alarm.mp3 &')
+		if su==1:
+			os.system('mpg321 /home/pi/tgn_smart_home/sounds/alarm.mp3 &')
 		alarm_p = 1
 	elif alarm_p == 1:
 		time.sleep(60)
@@ -1052,14 +1048,6 @@ def callback36():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py webapp"
 	os.system(setn)
 
-def callback37():
-	global pw
-	if pw == "0":
-		pw = "1"
-	elif pw == "1":
-		pw = "0"
-	write_eeprom(1,ROM_ADDRESS,0x01,0x50,pw)
-
 def callback38():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py alarm"
 	os.system(setn)
@@ -1205,14 +1193,6 @@ def on_message(client, userdata, message):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/system/mic","0",qos=0,retain=True)
 			callback33()
-
-def on_esp_2_sig():
-	msg = "ESP_2_on"
-	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
-
-def off_esp_2_sig():
-	msg = "ESP_2_off"
-	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		
 # updating window (Clock and Temps)
 the_time=''
@@ -1320,8 +1300,7 @@ class WindowB(Frame):
 				DNSQUERIES = dataPIhole['dns_queries_today']
 				ADSBLOCKED = dataPIhole['ads_blocked_today']
 				CLIENTS = dataPIhole['unique_clients']
-				#temp_data = get_dht11()
-				temp_data = "Room:20.0°C / 12.0%"
+				temp_data = "Room Luxmeter:"
 				try:
 					f = open(spr_phat+"text.config","r")
 				except IOError:
@@ -1350,17 +1329,16 @@ class WindowB(Frame):
 						output = output+(dataText[24].rstrip())+data['city']+','+data['country']+'\n'
 						output = output+str(data['temp'])+'°C  '+data['sky']+' '
 						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'°C, '+(dataText[26].rstrip())+str(data['temp_min'])+'°C\n'
-						#output = output+'\n'
 						output = output+(dataText[27].rstrip())+str(data['wind'])+'km/h \n'
 						output = output+(dataText[28].rstrip())+str(data['humidity'])+'% \n'
 						output = output+(dataText[29].rstrip())+str(data['cloudiness'])+'% \n'
 						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+" "+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'\n'
-						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_hum_2+'% / '+esp_rssi_2+'dbm / '+esp_li_2+'\n'
+						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'LUX\n'
+						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_hum_2+'% / '+esp_rssi_2+'dbm / '+esp_li_2+'LUX\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+temp_data+" / "+str(readLight())+'Lux\n'
+						output = output+temp_data+" / "+str(readLight())+'LUX\n'
 						global weather_t
 						global weather_c
 						global weather_w
@@ -1385,19 +1363,7 @@ class WindowB(Frame):
 					output = output+'---------------------------------------------------------\n'
 				output = output+'Ad Blocked:'+str(ADSBLOCKED)+' Client:'+str(CLIENTS)+' DNS Queries:'+str(DNSQUERIES)
 				channel = thingspeak.Channel(id=channel_id, write_key=write_key, api_key=read_key)
-				global room_t
-				global room_h
 				global cpu_t
-				if temp_data != "error":
-					rcach = temp_data.split(" / ")
-					rcachB = rcach[1].split("%")
-					rcachC = rcach[0].split(":")
-					rcachD = rcachC[1].split("°C")
-					room_t = float(rcachD[0])
-					room_h = float(rcachB[0])
-				else:
-					room_h = 0.0
-					room_t = 0.0
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
 					timespl = format_time(pcf8563ReadTime()).split(" ")
@@ -1534,7 +1500,6 @@ setmenu = Menu(menu)
 menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
 setmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
 menu.add_cascade(label=(data[41].rstrip()), menu=setmenu)
-setmenu.add_command(label=(data[114].rstrip()), command=callback37)
 setmenu.add_command(label=(data[115].rstrip()), command=callback39)
 setmenu.add_command(label=(data[42].rstrip()), command=callback25)
 setmenu.add_command(label=(data[43].rstrip()), command=callback32)
@@ -1637,7 +1602,6 @@ rommenu.add_command(label=(data[58].rstrip()), command=callback23)
 rommenu.add_command(label=(data[59].rstrip()), command=callback26)
 rommenu.add_command(label=(data[60].rstrip()), command=callback27)
 rommenu.add_command(label=(data[61].rstrip()), command=callback35)
-rommenu.add_command(label=(data[112].rstrip()), command=callback36)
 rommenu.add_command(label=(data[113].rstrip()), command=callback38)
 rommenu.add_command(label=(data[119].rstrip()), command=callback42)
 rommenu.add_command(label=(data[62].rstrip()), command=callback22)
