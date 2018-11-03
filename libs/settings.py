@@ -502,7 +502,7 @@ def prog_rom():
 	port_w = "9090"
 	ip_w = "192.168.0.94"
 	pw_w = "1234"
-	pw = "9876"
+	pw = "0"
 	alarm_t = "17:55"
 	alarm_s = "off"
 	com_typ = "ip"
