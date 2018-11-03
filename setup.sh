@@ -88,7 +88,6 @@ fi
 echo -e "\e[33m>> \e[31mset authority\e[32m"
 chmod +x /home/pi/tgn_smart_home/libs/pushbullet.sh
 chmod +x start_gui.sh
-chmod +x web_interface.sh
 chmod +x start_mqtt_broker.sh
 chmod +x habridge_install.sh
 sleep 5
@@ -135,7 +134,6 @@ echo "lirc_dev" >> /etc/modules
 
 cd ..
 sudo chmod +x /home/pi/start_main_gui.sh
-sudo chmod +x /home/pi/web_interface.sh
 sudo chmod +x /home/pi/start_mqtt_broker.sh
 clear
 
