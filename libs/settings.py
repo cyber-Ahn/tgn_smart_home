@@ -1,4 +1,3 @@
-#0x5b on 0x01 last add +1
 from tgnLIB import *
 import binascii
 
@@ -460,8 +459,8 @@ def update_ver():
 
 def prog_rom():
 	version = "V.2.0"
-	ontime = "17:10|4:31"
-	offtime = "23:10|5:41"
+	ontime = "23:10|4:31"
+	offtime = "23:11|5:41"
 	s1 = "0"
 	s2 = "0"
 	s3 = "0"
@@ -503,7 +502,7 @@ def prog_rom():
 	port_w = "9090"
 	ip_w = "192.168.0.94"
 	pw_w = "1234"
-	pw = "0"
+	pw = "9876"
 	alarm_t = "17:55"
 	alarm_s = "off"
 	com_typ = "ip"
@@ -532,6 +531,7 @@ def prog_rom():
 		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AF,"#")
 		index = index + 1
 		start_add_AF = start_add_AF + 1
+		print("Write: "+str(start_add_AF))
 	start_add_AF = 0x01
 	index = 0 
 	while index < len(rsslang):
@@ -539,12 +539,14 @@ def prog_rom():
 		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AF,letter)
 		index = index + 1
 		start_add_AF = start_add_AF + 1
+		print("Write: "+str(start_add_AF))
 	start_add_AG = 0x04
 	index = 0 
 	while index < 60:
 		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AG,"#")
 		index = index + 1
 		start_add_AG = start_add_AG + 1
+		print("Write: "+str(start_add_AG))
 	start_add_AG = 0x04
 	index = 0 
 	while index < len(rssurl):
@@ -552,6 +554,7 @@ def prog_rom():
 		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AG,letter)
 		index = index + 1
 		start_add_AG = start_add_AG + 1
+		print("Write: "+str(start_add_AG))
 	start_add_Y = 0x2b
 	index = 0 
 	while index < 4:
@@ -1025,38 +1028,6 @@ def prog_rom():
 
 	print((data[104].rstrip()))
 	time.sleep(3)
-
-def esp_settings():
-	com_typ = input("com typ - ip or url:")
-	esp_address = input("ESP Adress:")
-	print((data[103].rstrip()))
-	start_add_AD = 0x5b
-	index = 0
-	while index < 3:
-		write_eeprom(1,ROM_ADDRESS,0x01,start_add_AD,"X")
-		index = index + 1
-		start_add_AD = start_add_AD + 1
-	start_add_AD = 0x5b
-	index = 0
-	while index < len(com_typ):
-		letter = com_typ[index]
-		write_eeprom(1,ROM_ADDRESS,0x01,start_add_AD,letter)
-		index = index + 1
-		start_add_AD = start_add_AD + 1
-	start_add_AE = 0x5f
-	index = 0
-	while index < 30:
-		write_eeprom(1,ROM_ADDRESS,0x01,start_add_AE,"#")
-		index = index + 1
-		start_add_AE = start_add_AE + 1
-	start_add_AE = 0x5f
-	index = 0
-	while index < len(esp_address):
-		letter = esp_address[index] 
-		write_eeprom(1,ROM_ADDRESS,0x01,start_add_AE,letter)
-		index = index + 1
-		start_add_AE = start_add_AE + 1
-	print((data[104].rstrip()))
 
 def alarm_settings():
 	alarm_t = input((data[116].rstrip()))

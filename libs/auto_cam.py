@@ -4,7 +4,6 @@ import os
 from time import gmtime, strftime
 from tgnLIB import *
 
-#var
 ROM_ADDRESS = 0x53
 sleep_t = "300"
 start = "14:00"
@@ -84,6 +83,7 @@ def check_2(file):
 		num = num + 1
 		file = path+"video"+str(num)+".h264"
 		check_2(file)
+
 def make_image():
 	camera.start_preview()
 	print("click")
@@ -95,10 +95,12 @@ def make_image():
 	if sound == "on":
 		os.system('mpg321 /home/pi/tgn_smart_home/sounds/flash.mp3 &')
 	camera.stop_preview()
+
 def preview():
 	camera.start_preview()
 	time.sleep(30)
 	camera.stop_preview()
+
 def make_video(t):
 	print("recording")
 	camera.start_preview()
@@ -113,6 +115,7 @@ def make_video(t):
 	camera.stop_preview()
 	if sound == "on":
 		os.system('mpg321 /home/pi/tgn_smart_home/sounds/button.mp3 &')
+
 def capture_time():
 	global auto_capture
 	global count
@@ -136,6 +139,7 @@ def capture_time():
 	else:
 		time.sleep(10)
 		capture_time()
+
 ini()
 command = sys.argv[1]
 timer = int(sys.argv[2])

@@ -5,7 +5,6 @@ from subprocess import call
 c1 = sys.argv[1]
 c2 = int(sys.argv[2])
 
-
 client = mqtt.Client("HA Brigde Com")
 client.connect(get_ip())
 if c1 == "shutdown":

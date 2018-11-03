@@ -5,7 +5,6 @@ import time
 import socket
 import os
 
-#var
 ROM_ADDRESS = 0x53
 MCP_ADDRESS = 0x20
 shutdownPort = 26
@@ -19,7 +18,6 @@ if ifI2C(MCP_ADDRESS) == "found device":
 	mcp = MCP230XX(busnum = 1, address = 0x20, num_gpios = 16)
 	mcp.config(1, 0)
 
-#read config
 if ifI2C(ROM_ADDRESS) == "found device":
 	start_add_O = 0x82
 	index = 0 
@@ -53,6 +51,7 @@ print(str(shutdownPort)+"-"+command+"-"+time_set)
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(shutdownPort, GPIO.IN)
+
 def buttonStateChanged(pin):
 	if not (GPIO.input(pin)):
 		if MCPpower == 1:
@@ -64,6 +63,7 @@ def buttonStateChanged(pin):
 		if MCPpower == 1:
 			mcp.output(1, 0)
 		print("release")
+
 GPIO.add_event_detect(shutdownPort, GPIO.BOTH, callback=buttonStateChanged)
 while True:
 	time.sleep(5)

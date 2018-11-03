@@ -6,7 +6,6 @@ from tgnLIB import *
 
 ROM_ADDRESS = 0x53
 MCP_ADDRESS = 0x20
-
 sound = "off"
 path = "/home/pi/test/"
 num = 1
@@ -28,7 +27,6 @@ address = 0x51
 register = 0x02
 w  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 bus = smbus.SMBus(1)
-
 camera = picamera.PiCamera()
 camera.vflip = True
 
@@ -54,20 +52,22 @@ def ini():
 				path = path + cach
 			index = index + 1
 			start_add_Q = start_add_Q + 1	
+
 def check_1(file):
 	global num
 	if os.path.exists(file):
 		num = num + 1
 		file = path+"capture"+str(num)+".jpg"
 		check_1(file)
+
 def check_2(file):
 	global num
 	if os.path.exists(file):
 		num = num + 1
 		file = path+"video"+str(num)+".h264"
 		check_2(file)
+
 def make_image():
-	#camera.start_preview()
 	print("click")
 	global num
 	file = path+"capture"+str(num)+".jpg"
@@ -76,7 +76,7 @@ def make_image():
 	camera.capture(path+"capture"+str(num)+".jpg")
 	if sound == "on":
 		os.system('mpg321 /home/pi/tgn_smart_home/sounds/flash.mp3 &')
-	#camera.stop_preview()
+
 def pcf8563ReadTime():
 	t = bus.read_i2c_block_data(address,register,7);
 	t[0] = t[0]&0x7F  #sec
@@ -86,12 +86,12 @@ def pcf8563ReadTime():
 	t[4] = t[4]&0x07  #month   -> dayname
 	t[5] = t[5]&0x1F  #dayname -> month
 	return("20%x/%x/%x %x:%x:%x  %s" %(t[6],t[5],t[3],t[2],t[1],t[0],w[t[4]]))
+
 ini()
 camera.start_preview()
 camera.led = False
 x = True
-while x == True:
-	
+while x == True:	
 	var1 = pcf8563ReadTime()
 	camera.annotate_text = var1
 	if MCPpower == 1:
