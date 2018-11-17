@@ -204,6 +204,7 @@ def ini():
 	global esp_2_button
 	global rssurl
 	global rsslang
+	global client
 	if ifI2C(address) == "found device":
 		RTCpower = 1
 	print(">>initialize EEPROM")
@@ -550,6 +551,10 @@ def ini():
 			data.append(line)
 	textcpu=(data[20].rstrip())
 	textswitch=(data[19].rstrip())
+	#connect mqtt
+	client = mqtt.Client("TGN Smart Home")
+	client.connect(get_ip())
+	client.loop_start()
 	#send status to mqtt
 	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
@@ -1445,11 +1450,14 @@ def spt6():
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(6))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
+def callback45():
+	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py backup"
+	os.system(setn)
+def callback46():
+	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py restore"
+	os.system(setn)
 
 #Main Prog
-client = mqtt.Client("TGN Smart Home")
-client.connect(get_ip())
-client.loop_start()
 ini()
 if LCDpower == 1:
 	mylcd.lcd_display_string("TGN Smart Home", 1, 1)
@@ -1495,6 +1503,8 @@ filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 filemenu.add_separator()
 filemenu.add_command(label="Reload", command=callback41)
 filemenu.add_command(label=(data[40].rstrip()), command=callback30)
+filemenu.add_command(label="Backup Rom", command=callback45)
+filemenu.add_command(label="Restore Rom", command=callback46)
 
 setmenu = Menu(menu)
 menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
