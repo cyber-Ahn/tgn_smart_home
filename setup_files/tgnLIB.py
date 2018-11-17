@@ -1,6 +1,7 @@
 import Adafruit_DHT
 import Adafruit_BMP.BMP085 as BMP085
 import base64
+import csv
 import datetime
 import feedparser
 import json
@@ -680,14 +681,90 @@ def write_eeprom(bus,add,block,reg,data):
 		time.sleep(0.5)
 
 def read_eeprom(bus,add,block,reg):
-	if ifI2C(add) == "found device":
-		bus = smbus.SMBus(bus)
-		bus.write_i2c_block_data(add, block, [reg])
-		cach = hex(bus.read_byte(add))
-		cachB = cach.split("x")
-		out = (bytes.fromhex(cachB[1]).decode('utf-8'))
-		return out
-		time.sleep(0.5)
+    if ifI2C(add) == "found device":
+        bus = smbus.SMBus(bus)
+        bus.write_i2c_block_data(add, block, [reg])
+        cach = hex(bus.read_byte(add))
+        if cach != "0x0" and cach != "0xff" and cach != "0xef" and cach != "0xfb":
+            cachB = cach.split("x")
+            out = (bytes.fromhex(cachB[1]).decode('utf-8'))
+        else:
+            out = "?"
+        return out
+        time.sleep(0.5)
+
+def backup_rom(blocknum, phatB):
+    print ("Backup EEPROM")
+    time.sleep(3)
+    file = open(phatB,'w')
+    writer = csv.writer(file)
+    writer.writerow(["block", "address", "data"])
+    if blocknum >= 1:
+        for i in range(255):
+            nu = 0x01 + i
+            cb = '0x'+hex(nu)[2:].rjust(2, '0')
+            print (cb)
+            cach = read_eeprom(1,ROM_ADDRESS,0x00,nu)
+            cach = hex(ord(cach))
+            print (cach)
+            writer.writerow(["0x00", cb, cach])
+    if blocknum >= 2:
+        for i in range(255):
+            nu = 0x01 + i
+            cb = '0x'+hex(nu)[2:].rjust(2, '0')
+            print (cb)
+            cach = read_eeprom(1,ROM_ADDRESS,0x01,nu)
+            cach = hex(ord(cach))
+            print (cach)
+            writer.writerow(["0x01", cb, cach])
+    if blocknum >= 3:
+        for i in range(255):
+            nu = 0x01 + i
+            cb = '0x'+hex(nu)[2:].rjust(2, '0')
+            print (cb)
+            cach = read_eeprom(1,ROM_ADDRESS,0x02,nu)
+            cach = hex(ord(cach))
+            print (cach)
+            writer.writerow(["0x02", cb, cach])
+    if blocknum >= 4:
+        for i in range(255):
+            nu = 0x01 + i
+            cb = '0x'+hex(nu)[2:].rjust(2, '0')
+            print (cb)
+            cach = read_eeprom(1,ROM_ADDRESS,0x03,nu)
+            cach = hex(ord(cach))
+            print (cach)
+            writer.writerow(["0x03", cb, cach])
+    print("Done")
+
+def restore_rom (blocknum, phatB):
+    print("Restore EEPROM")
+    blocknum = blocknum - 1
+    time.sleep(3)
+    file = open(phatB, newline='')
+    reader = csv.reader(file)
+    header = next(reader)
+    data = [row for row in reader]
+    nu = len(data)
+    print ("lines in backup: "+str(nu))
+    print ("Header:")
+    print (header)
+    time.sleep(3)
+    bl = 0x00
+    add = 0x01
+    for i in range(nu):
+        time.sleep(0.5)
+        cach = data[i]
+        print (cach)
+        daz = cach[2].split("x")
+        daa = (bytes.fromhex(daz[1]).decode('utf-8'))
+        if bl <= blocknum:
+            write_eeprom(1,ROM_ADDRESS,bl,add,daa)
+        add = add + 1
+        if add == 256:
+            add = 0x01
+            bl = bl + 1
+    print ("Done")
 
 default_key = [1,0,0,0,1]
 default_pin = 12
