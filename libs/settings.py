@@ -5,9 +5,12 @@ ROM_ADDRESS = 0x53
 NFC_ADDRESS = 0x24
 spr = "de"
 spr_phat = ""
+blocknum = 4 
+phatrom = "/home/pi/tgn_smart_home/config/rom.csv"
 
 if ifI2C(ROM_ADDRESS) == "found device":
 	dataX = read_eeprom(1,ROM_ADDRESS,0x01,0x2a)
+	dataX = "2"
 	xx=int(dataX)
 	if xx == 1:
 		spr = "de"
@@ -1171,3 +1174,7 @@ if command == "rss":
 	rss_settings()
 if command == "update":
 	update_ver()
+if command == "backup":
+	backup_rom(blocknum, phatrom)
+if command == "restore":
+	restore_rom(blocknum, phatrom)
