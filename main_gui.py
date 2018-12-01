@@ -75,7 +75,7 @@ color_button = []
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
-esp_switch_b = 90
+esp_switch_b = 120
 esp_temp = "--"
 esp_hum = "--"
 esp_rssi = "--"
@@ -89,7 +89,7 @@ esp_rssi_2 = "--"
 esp_li_2 = "100"
 esp_b1_2 = "off"
 esp_switch_2 = 70
-esp_switch_2_b = 90
+esp_switch_2_b = 120
 esp_ls_2 = 0
 esp_2_button = "5"
 esp2_cou = 0
