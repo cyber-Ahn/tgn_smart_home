@@ -195,7 +195,7 @@ echo "deb http://archive.raspbian.org/raspbian jessie main contrib non-free rpi"
 echo "deb https://packagecloud.io/headmelted/codebuilds/raspbian/ jessie main" >> /etc/apt/sources.list
 sleep 2
 sudo apt-get update
-sudo apt-get -y install code-oss
+sudo apt-get install code-oss
 sleep 3
 clear
 fi
