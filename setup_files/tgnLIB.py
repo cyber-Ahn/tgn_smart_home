@@ -154,6 +154,8 @@ BH1750_ADDRESS = 0x23
 
 REMOTE_SERVER = "www.google.com"
 
+phatC = "/home/pi/tgn_smart_home/config/rom.csv"
+
 HexDigits = [0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71]
 ADDR_AUTO = 0x40
 ADDR_FIXED = 0x44
@@ -671,14 +673,41 @@ def rss(url,num):
     return(out)
 
 def write_eeprom(bus,add,block,reg,data):
-	if ifI2C(add) == "found device":
-		wr = []
-		cach = hex(ord(data))
-		wr.append(reg)
-		wr.append(int(cach,16))
-		bus = smbus.SMBus(bus)
-		bus.write_i2c_block_data(add,block,wr)
-		time.sleep(0.5)
+    if ifI2C(add) == "found device":
+        wr = []
+        cach = hex(ord(data))
+        wr.append(reg)
+        wr.append(int(cach,16))
+        bus = smbus.SMBus(bus)
+        bus.write_i2c_block_data(add,block,wr)
+        time.sleep(0.5)
+    else:
+        print ("Rom not found, save in CSV")
+        file = open(phatC, newline='')
+        reader = csv.reader(file)
+        header = next(reader)
+        dataB = [row for row in reader]
+        nu = len(dataB)
+        spA = []
+        spB = []
+        spC = []
+        for i in range(nu):
+            cach = dataB[i]
+            spA.append(cach[0])
+            spB.append(cach[1])
+            spC.append(cach[2])
+        nuB = len(spA)
+        blockB = "0x"+format(block,"02x")
+        regB = "0x"+format(reg,"02x")
+        for x in range(nuB):
+            if blockB == spA[x] and regB == spB[x]:
+                cachB = hex(ord(data))
+                spC[x] = cachB
+        file = open(phatC,'w')
+        writer = csv.writer(file)
+        writer.writerow(["block", "address", "data"])
+        for x in range(nuB):
+            writer.writerow([spA[x], spB[x], spC[x]])
 
 def read_eeprom(bus,add,block,reg):
     if ifI2C(add) == "found device":
@@ -690,8 +719,23 @@ def read_eeprom(bus,add,block,reg):
             out = (bytes.fromhex(cachB[1]).decode('utf-8'))
         else:
             out = "?"
-        return out
-        time.sleep(0.5)
+    else:
+        print ("Rom not found, read CSV")
+        out = "?"
+        file = open(phatC, newline='')
+        reader = csv.reader(file)
+        header = next(reader)
+        data = [row for row in reader]
+        nu = len(data)
+        for i in range(nu):
+            cach = data[i]
+            daz = cach[2].split("x")
+            daa = (bytes.fromhex(daz[1]).decode('utf-8'))
+            blockB = "0x"+format(block,"02x")
+            regB = "0x"+format(reg,"02x")
+            if cach[1] == regB and cach[0] == blockB:
+                out = daa
+    return out
 
 def backup_rom(blocknum, phatB):
     print ("Backup EEPROM")
