@@ -14,6 +14,8 @@ LCD_ADDRESS = 0x3f
 MCP_ADDRESS = 0x20
 NFC_ADDRESS = 0x24
 
+MCP_num_gpios = 16
+
 main_topic = "tgn/#"
 channel_id = 43245
 write_key = "8WQB01T3F5JE0EZ"
@@ -129,15 +131,13 @@ def ini():
 		global MCPpower
 		MCPpower = 1
 		global mcp
-		mcp = MCP230XX(busnum = 1, address = MCP_ADDRESS, num_gpios = 16)
-		mcp.config(0, 0)
-		mcp.config(1, 0)
-		mcp.config(2, 0)
-		mcp.config(3, 0)
-		mcp.pullup(4, 1)
-		mcp.pullup(5, 1)
-		mcp.pullup(6, 1)
-		mcp.pullup(7, 1)
+		mcp = MCP230XX(busnum = 1, address = MCP_ADDRESS, num_gpios = MCP_num_gpios)
+		for i in range(int(MCP_num_gpios/2)):
+			mcp.config(i, 0)
+			mcp.output(i, 0)
+		for i in range(int(MCP_num_gpios/2), MCP_num_gpios):
+			mcp.config(i, 1)
+			mcp.pullup(i, 1)
 		print(">>MCP23017 configured")
 	else:
 		print(">>MCP23017 not found")
@@ -495,22 +495,20 @@ def ini():
 		print(">>EEPROM not found")
 	if MCPpower == 1:
 		print(">>MCP23017 test Input and Output")
-		print("%d: %x" % (4, mcp.input(4) >> 4))
-		print("%d: %x" % (5, mcp.input(5) >> 5))
-		print("%d: %x" % (6, mcp.input(6) >> 6))
-		print("%d: %x" % (7, mcp.input(7) >> 7))
-		mcp.output(0, 1)
+		print("%d: %x" % (8, mcp.input(8) >> 8))
+		print("%d: %x" % (9, mcp.input(9) >> 9))
+		print("%d: %x" % (10, mcp.input(10) >> 10))
+		print("%d: %x" % (11, mcp.input(11) >> 11))
+		print("%d: %x" % (12, mcp.input(12) >> 12))
+		print("%d: %x" % (13, mcp.input(13) >> 13))
+		print("%d: %x" % (14, mcp.input(14) >> 14))
+		print("%d: %x" % (15, mcp.input(15) >> 15))
+		for i in range(int(MCP_num_gpios/2)):
+			mcp.output(i, 1)
+			time.sleep(0.5)
+		for i in range(int(MCP_num_gpios/2)):
+			mcp.output(i, 0)
 		time.sleep(0.5)
-		mcp.output(1, 1)
-		time.sleep(0.5)
-		mcp.output(2, 1)
-		time.sleep(0.5)
-		mcp.output(3, 1)
-		time.sleep(0.5)
-		mcp.output(0, 0)
-		mcp.output(1, 0)
-		mcp.output(2, 0)
-		mcp.output(3, 0)
 	try:
 		print(">>Load themes.config")
 		f = open("/home/pi/tgn_smart_home/config/themes.config","r")
@@ -701,7 +699,6 @@ def callback6():
 	stream()
 def callback7():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/digi-cam.py"
-	TextToSpeech("Start cam",spr)
 	os.system(setn)
 def callback8():
 	sound()
@@ -812,7 +809,8 @@ def callback14():
 def callback15():
 	sound()
 	if MCPpower == 1:
-		mcp.output(3, 0)
+		for i in range(int(MCP_num_gpios/2)):
+			mcp.output(i, 0)
 	mylcd.lcd_clear()
 	mylcd.backlight(0)
 	sevenseg.Clear()
@@ -820,7 +818,8 @@ def callback15():
 def callback16():
 	sound()
 	if MCPpower == 1:
-		mcp.output(3, 0)
+		for i in range(int(MCP_num_gpios/2)):
+			mcp.output(i, 0)
 	mylcd.lcd_clear()
 	mylcd.backlight(0)
 	sevenseg.Clear()
@@ -914,30 +913,55 @@ def exit():
 		mylcd.lcd_clear()
 		time.sleep(1)
 		mylcd.backlight(0)
+	if MCPpower == 1:
+		for i in range(int(MCP_num_gpios/2)):
+			mcp.output(i, 0)
 	root.quit()
 
 def all_off():
 	sound()
+	if MCPpower == 1:
+		mcp.output(3, 0)
+		mcp.output(2, 1)
 	subprocess.call('xset dpms force on', shell=True)
 	msg = "all_off"
 	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
-	client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
-	client.publish("tgn/buttons/status/2","0",qos=0,retain=True)
-	client.publish("tgn/buttons/status/3","0",qos=0,retain=True)
-	client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
-	client.publish("tgn/buttons/status/5","0",qos=0,retain=True)
 	client.publish("tgn/buttons/status/6","0",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/5","0",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/3","0",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/2","0",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
+	if MCPpower == 1:
+		mcp.output(3, 1)
+		mcp.output(2, 0)
 def all_on():
 	sound()
+	if MCPpower == 1:
+		mcp.output(3, 0)
+		mcp.output(2, 1)
 	subprocess.call('xset dpms force on', shell=True)
 	msg = "all_on"
 	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 	client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
+	time.sleep(6.0)
 	client.publish("tgn/buttons/status/2","1",qos=0,retain=True)
+	time.sleep(6.0)
 	client.publish("tgn/buttons/status/3","1",qos=0,retain=True)
+	time.sleep(6.0)
 	client.publish("tgn/buttons/status/4","1",qos=0,retain=True)
+	time.sleep(6.0)
 	client.publish("tgn/buttons/status/5","1",qos=0,retain=True)
+	time.sleep(6.0)
 	client.publish("tgn/buttons/status/6","1",qos=0,retain=True)
+	if MCPpower == 1:
+		mcp.output(3, 1)
+		mcp.output(2, 0)
 	time.sleep(1)
 
 def callback30():
@@ -1117,13 +1141,21 @@ def on_message(client, userdata, message):
 	global esp_li_2
 	global esp_b1_2
 	if(message.topic=="tgn/esp_2/wifi/pre"):
-    		esp_pr_2 = str(message.payload.decode("utf-8"))
+		esp_pr_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/wifi/rssi"):
-    		esp_rssi_2 = str(message.payload.decode("utf-8"))
+		esp_rssi_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/analog/sensor_1"):
-    		esp_li_2 = str(message.payload.decode("utf-8"))
+		esp_li_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/button/b1"):
-    		esp_b1_2 = str(message.payload.decode("utf-8"))
+		esp_b1_2 = str(message.payload.decode("utf-8"))
+		if(esp_b1_2 == "off"):
+			mcp.output(6, 1)
+			mcp.output(7, 0)
+			esp_b1_2 = "No Rain"
+		else:
+			mcp.output(7, 1)
+			mcp.output(6, 0)
+			esp_b1_2 = "Rain"	
 	if(message.topic=="tgn/esp_1/temp/sensor_1"):
 		esp_temp = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/temp/sensor_2"):
@@ -1221,14 +1253,18 @@ class Window(Frame):
 			newtime = time.time()
 			if newtime != the_time:
 				if MCPpower == 1:
-					if mcp.input(7) >> 7 == 1:
-						all_off()
-					if mcp.input(4) >> 4 == 1:
-						callback7()
-					if mcp.input(5) >> 5 == 1:
-						callback12()
-					if mcp.input(6) >> 6 == 1:
-						callback24()
+					if mcp.input(8) >> 8 == 1:
+						callback7() #digi-cam
+					if mcp.input(9) >> 9 == 1:
+						callback12() #light(button[3])
+					if mcp.input(10) >> 10 == 1:
+						callback24() #xste dpms
+					if mcp.input(11) >> 11 == 1:
+						all_off()    #all off
+					if mcp.input(12) >> 12 == 1:
+						all_on()     #all on
+					if mcp.input(15) >> 15 == 1:
+						callback15()     #shutdown
 				stats = textswitch
 				try:
 					client.publish("tgn/cpu/temp",str(round(getCpuTemperature(),1)),qos=0,retain=True)
@@ -1341,7 +1377,7 @@ class WindowB(Frame):
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+" "+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'LUX\n'
-						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_hum_2+'% / '+esp_rssi_2+'dbm / '+esp_li_2+'LUX\n'
+						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+esp_li_2+'LUX\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+temp_data+" / "+str(readLight())+'LUX\n'
 						global weather_t
@@ -1475,7 +1511,7 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 			data.append(line)
 		if spr != "zh":
 			print("Start Voice Modul")
-			#TextToSpeech((data[4].rstrip()),spr)
+			TextToSpeech((data[4].rstrip()),spr)
 sevenseg.Clear()
 root = Tk()
 #fullscreen mode
