@@ -4,6 +4,7 @@ import base64
 import csv
 import datetime
 import feedparser
+import itertools
 import json
 import logging
 import os
@@ -17,14 +18,17 @@ import speech_recognition as sr
 import sys
 import smbus
 import socket
+import string
 import subprocess
 import thingspeak
 import time
 import urllib.request
+import zipfile
 from ctypes import c_int, c_uint16, c_ushort, c_short, c_ubyte, c_char, POINTER, Structure, create_string_buffer, sizeof, byref, addressof, string_at
 from contextlib import closing
 from fcntl import ioctl
 from gtts import gTTS
+from threading import Thread
 from time import gmtime, strftime
 from time import sleep
 from time import localtime
@@ -809,6 +813,23 @@ def restore_rom (blocknum, phatB):
             add = 0x01
             bl = bl + 1
     print ("Done")
+
+out_zip = "searchig....."
+def crack_zip(zip, pwd):
+    try:
+        global out_zip
+        zip.extractall(pwd=str.encode(pwd))
+        out_zip = "Password is " + pwd
+    except:
+        print(out_zip)
+        pass
+def get_zip_pwd(file):
+    myLetters = string.ascii_letters + string.digits + string.punctuation
+    zipFile = zipfile.ZipFile(file)
+    for i in range(1, 15):
+        for j in map(''.join, itertools.product(myLetters, repeat=i)):
+            t = Thread(target=crack_zip, args=(zipFile, j))
+            t.start()
 
 default_key = [1,0,0,0,1]
 default_pin = 12
