@@ -18,10 +18,14 @@ if ifI2C(MCP_ADDRESS) == "found device":
 	MCPpower = 1
 	mcp = MCP230XX(busnum = 1, address = MCP_ADDRESS, num_gpios = 16)
 	mcp.config(1, 0)
-	mcp.pullup(4, 1)
-	mcp.pullup(5, 1)
-	mcp.pullup(6, 1)
-	mcp.pullup(7, 1)
+	mcp.config(8, 1)
+	mcp.config(9, 1)
+	mcp.config(10, 1)
+	mcp.config(11, 1)
+	mcp.pullup(8, 1)
+	mcp.pullup(9, 1)
+	mcp.pullup(10, 1)
+	mcp.pullup(11, 1)
 
 address = 0x51
 register = 0x02
@@ -95,14 +99,14 @@ while x == True:
 	var1 = pcf8563ReadTime()
 	camera.annotate_text = var1
 	if MCPpower == 1:
-		if mcp.input(7) >> 7 == 1:
+		if mcp.input(11) >> 11 == 1:
 			camera.led = True
 			mcp.output(1, 1)
 			make_image()
 			time.sleep(4)
 			camera.led = Fals
 			mcp.output(1, 0)
-		if mcp.input(6) >> 6 == 1:
+		if mcp.input(10) >> 10 == 1:
 			print("recording")
 			mcp.output(1, 1)
 			camera.led = True
@@ -113,7 +117,7 @@ while x == True:
 			check_2(file)
 			camera.start_recording(path+"video"+str(num)+".h264")
 			time.sleep(4)
-		if mcp.input(5) >> 5 == 1:
+		if mcp.input(9) >> 9 == 1:
 			mcp.output(1, 0)
 			camera.stop_recording
 			print("stop recording")
@@ -121,7 +125,7 @@ while x == True:
 			if sound == "on":
 				os.system('mpg321 /home/pi/tgn_smart_home/sounds/button.mp3 &')
 			time.sleep(4)
-		if mcp.input(4) >> 4 == 1:
+		if mcp.input(8) >> 8 == 1:
 			mcp.output(1, 1)
 			print("Close Program.....")
 			x = False
