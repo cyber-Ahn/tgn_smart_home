@@ -77,6 +77,10 @@ add to autostart:
 
 sudo nano /home/pi/.config/lxsession/LXDE-pi/autostart
 
+or
+
+sudo nano  /etc/xdg/lxsession/LXDE-pi/autostart
+
 after LXDE-pi add line:
 
 @lxterminal -e /home/pi/start_mqtt_broker.sh
