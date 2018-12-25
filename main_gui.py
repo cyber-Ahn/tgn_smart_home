@@ -215,7 +215,6 @@ def ini():
 		while index < 34:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_U)
 			print(">>Read Byte "+str(start_add_U))
-			seven_seg(start_add_U)
 			if cach != "#":
 				pushbulletkey = pushbulletkey + cach
 			index = index + 1
@@ -226,7 +225,6 @@ def ini():
 		while index < 7:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_S)
 			print(">>Read Byte "+str(start_add_S))
-			seven_seg(start_add_S)
 			if cach != "X":
 				zipcode = zipcode + cach
 			index = index + 1
@@ -237,7 +235,6 @@ def ini():
 		while index < 32:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_T)
 			print(">>Read Byte "+str(start_add_T))
-			seven_seg(start_add_T)
 			if cach != "#":
 				openweatherkey = openweatherkey + cach
 			index = index + 1
@@ -248,7 +245,6 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_C)
 			print(">>Read Byte "+str(start_add_C))
-			seven_seg(start_add_C)
 			if cach != "X":
 				b1A = b1A + cach
 			index = index + 1
@@ -259,7 +255,6 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_D)
 			print(">>Read Byte "+str(start_add_D))
-			seven_seg(start_add_D)
 			if cach != "X":
 				b2A = b2A + cach
 			index = index + 1
@@ -270,7 +265,6 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_E)
 			print(">>Read Byte "+str(start_add_E))
-			seven_seg(start_add_E)
 			if cach != "X":
 				b3A = b3A + cach
 			index = index + 1
@@ -281,7 +275,6 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_F)
 			print(">>Read Byte "+str(start_add_F))
-			seven_seg(start_add_F)
 			if cach != "X":
 				b4A = b4A + cach
 			index = index + 1
@@ -292,7 +285,6 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_G)
 			print(">>Read Byte "+str(start_add_G))
-			seven_seg(start_add_G)
 			if cach != "X":
 				b5A = b5A + cach
 			index = index + 1
@@ -303,7 +295,6 @@ def ini():
 		while index < 10:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_H)
 			print(">>Read Byte "+str(start_add_H))
-			seven_seg(start_add_H)
 			if cach != "X":
 				b6A = b6A + cach
 			index = index + 1
@@ -325,7 +316,6 @@ def ini():
 		while index < 11:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_A)
 			print(">>Read Byte "+str(start_add_A))
-			seven_seg(start_add_A)
 			if cach != "X":
 				ontime = ontime + cach
 			index = index + 1
@@ -336,7 +326,6 @@ def ini():
 		while index < 11:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_B)
 			print(">>Read Byte "+str(start_add_B))
-			seven_seg(start_add_B)
 			if cach != "X":
 				offtime = offtime + cach
 			index = index + 1
@@ -372,7 +361,6 @@ def ini():
 		while index < 5:
 			cach = read_eeprom(1,ROM_ADDRESS,0x00,start_add_I)
 			print(">>Read Byte "+str(start_add_I))
-			seven_seg(start_add_I)
 			if cach != "X":
 				ver = ver + cach
 			index = index + 1
@@ -384,7 +372,6 @@ def ini():
 		while index < 6:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_V)
 			print(">>Read Byte "+str(start_add_V))
-			seven_seg(start_add_V)
 			if cach != "X":
 				channel_id = channel_id + cach
 			index = index + 1
@@ -395,7 +382,6 @@ def ini():
 		while index < 16:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_W)
 			print(">>Read Byte "+str(start_add_W))
-			seven_seg(start_add_W)
 			if cach != "#":
 				write_key = write_key + cach
 			index = index + 1
@@ -406,7 +392,6 @@ def ini():
 		while index < 16:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_X)
 			print(">>Read Byte "+str(start_add_X))
-			seven_seg(start_add_X)
 			if cach != "#":
 				read_key = read_key + cach
 			index = index + 1
@@ -417,7 +402,6 @@ def ini():
 		while index < 5:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_AB)
 			print(">>Read Byte "+str(start_add_AB))
-			seven_seg(start_add_AB)
 			if cach != "X":
 				alarm_t = alarm_t + cach
 			index = index + 1
@@ -428,7 +412,6 @@ def ini():
 		while index < 3:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_AC)
 			print(">>Read Byte "+str(start_add_AC))
-			seven_seg(start_add_AC)
 			if cach != "X":
 				alarm_s = alarm_s + cach
 			index = index + 1
@@ -453,7 +436,6 @@ def ini():
 		while index < 3:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_AD)
 			print(">>Read Byte "+str(start_add_AD))
-			seven_seg(start_add_AD)
 			if cach != "X":
 				com_typ = com_typ + cach
 			index = index + 1
@@ -464,7 +446,6 @@ def ini():
 		while index < 30:
 			cach = read_eeprom(1,ROM_ADDRESS,0x01,start_add_AE)
 			print(">>Read Byte "+str(start_add_AE))
-			seven_seg(start_add_AE)
 			if cach != "#":
 				esp_address = esp_address + cach
 			index = index + 1
@@ -476,7 +457,6 @@ def ini():
 		while index < 2:
 			cach = read_eeprom(1,ROM_ADDRESS,0x02,start_add_AF)
 			print(">>Read Byte "+str(start_add_AF))
-			seven_seg(start_add_AF)
 			if cach != "#":
 				rsslang = rsslang + cach
 			index = index + 1
@@ -486,7 +466,6 @@ def ini():
 		while index < 60:
 			cach = read_eeprom(1,ROM_ADDRESS,0x02,start_add_AG)
 			print(">>Read Byte "+str(start_add_AG))
-			seven_seg(start_add_AG)
 			if cach != "#":
 				rssurl = rssurl + cach
 			index = index + 1
