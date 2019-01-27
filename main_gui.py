@@ -554,6 +554,10 @@ def ini():
 	client.publish("tgn/buttons/name/4",b4A,qos=0,retain=True)
 	client.publish("tgn/buttons/name/5",b5A,qos=0,retain=True)
 	client.publish("tgn/buttons/name/6",b6A,qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/color","255.1.1.255",qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/color_cach","-65279",qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
+
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
