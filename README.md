@@ -54,7 +54,8 @@ Required hardware:
    * NodeMcu with DHT22, Fotoresitor and Small Display
    * Android Phone for Smart Home App
    * NodeMcu with DHT22, Fotoresistor and PIR Sensor
-
+   * NodeMcu with NeoPixel Light (ws2812b)
+   
 Installation:
 * open Terminal
 * sudo su
