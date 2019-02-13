@@ -558,6 +558,7 @@ def ini():
 	client.publish("tgn/esp_3/neopixel/color_cach","-65279",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
 
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
