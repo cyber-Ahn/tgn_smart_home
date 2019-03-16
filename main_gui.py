@@ -1308,19 +1308,20 @@ class Window(Frame):
 		change_value_the_time()
 
 # updating window (Weather and PiHole)
+the_timeb=''
 class WindowB(Frame):
 	def __init__(self,master):
 		Frame.__init__(self, master)
 		self.grid()
 		self.create_widgets()
 	def create_widgets(self):
-		self.display_time=Label(self, text=the_time)
+		self.display_time=Label(self, text=the_timeb)
 		self.display_time.grid(row=0, column=1)
-		def change_value_the_time():
+		def change_value_the_timeb():
 			subprocess.call('xset dpms force on', shell=True)
-			global the_time
+			global the_timeb
 			newtime = time.time()
-			if newtime != the_time:
+			if newtime != the_timeb:
 				r = requests.get(api_url)
 				dataPIhole = json.loads(r.text)
 				DNSQUERIES = dataPIhole['dns_queries_today']
@@ -1406,8 +1407,8 @@ class WindowB(Frame):
 						img.image = render
 						img.config(bg=afbground)
 						img.place(x=0, y=60)
-			self.display_time.after(1200000, change_value_the_time)
-		change_value_the_time()
+			self.display_time.after(1200000, change_value_the_timeb)
+		change_value_the_timeb()
 
 #window (RSS Feed)
 class WindowC(Frame):
