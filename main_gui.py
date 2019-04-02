@@ -6,6 +6,7 @@ import subprocess
 from subprocess import call
 from tkinter import *
 from PIL import Image, ImageTk
+from tkinter.colorchooser import *
 from tgnLIB import *
 # var
 
@@ -554,7 +555,7 @@ def ini():
 	client.publish("tgn/buttons/name/4",b4A,qos=0,retain=True)
 	client.publish("tgn/buttons/name/5",b5A,qos=0,retain=True)
 	client.publish("tgn/buttons/name/6",b6A,qos=0,retain=True)
-	client.publish("tgn/esp_3/neopixel/color","255.1.1.255",qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/color","0.0.0.255",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/color_cach","-65279",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
@@ -1303,7 +1304,7 @@ class Window(Frame):
 					mylcd.backlight(0)
 				trigger = pcf8563ReadTimeB()
 				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C\n"+stats
-				self.display_time.config(text=the_time, font=('times', 20, 'bold'), bg=afbground, fg=fground)
+				self.display_time.config(text=the_time, font=('times', 18, 'bold'), bg=afbground, fg=fground)
 			self.display_time.after(5000, change_value_the_time)
 		change_value_the_time()
 
@@ -1478,6 +1479,28 @@ def callback45():
 def callback46():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py restore"
 	os.system(setn)
+def callback100():
+    print("empty button")
+def set_neo():
+	client.publish("tgn/esp_3/neopixel/brightness",str(SL1.get()),qos=0,retain=True)
+def red_neo():
+	client.publish("tgn/esp_3/neopixel/color","255.0.0.255",qos=0,retain=True)
+def green_neo():
+	client.publish("tgn/esp_3/neopixel/color","0.255.0.255",qos=0,retain=True)
+def blue_neo():
+	client.publish("tgn/esp_3/neopixel/color","0.0.255.255",qos=0,retain=True)
+def off_neo():
+	client.publish("tgn/esp_3/neopixel/color","0.0.0.255",qos=0,retain=True)
+def color_neo():
+	color = askcolor()
+	cach1 = str(color).split('),')
+	cach2 = cach1[0].split('(', 2)
+	cach3 = cach2[2].split(', ')
+	c_x = cach3[0].split('.')
+	c_y = cach3[1].split('.')
+	c_z = cach3[2].split('.')
+	color_set = c_x[0]+"."+c_y[0]+"."+c_z[0]
+	client.publish("tgn/esp_3/neopixel/color",color_set,qos=0,retain=True)
 
 #Main Prog
 ini()
@@ -1665,26 +1688,15 @@ rightFrame = Frame(root, width=400, height = 400)
 rightFrame.configure(background=bground)
 rightFrame.grid(row=0, column=1, padx=10, pady=3)
 
+app=Window(rightFrame)
+
 buttonFrame = Frame(rightFrame)
 buttonFrame.configure(background=bground)
-buttonFrame.grid(row=1, column=0, padx=10, pady=3)
+buttonFrame.grid(row=2, column=0, padx=10, pady=3)
 buttonLabel1 = Label(buttonFrame, text=(data[0].rstrip()))
 buttonLabel1.configure(background=bground, foreground=fground)
 buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
-buttonLabel2 = Label(buttonFrame, text=(data[1].rstrip()))
-buttonLabel2.configure(background=bground, foreground=fground)
-buttonLabel2.grid(row=1, column=0, padx=10, pady=3)
-E1 = Entry(buttonFrame, width=18)
-E1.grid(row=1, column=1, padx=10, pady=3)
-B1 = Button(buttonFrame, text=(data[2].rstrip()), bg=buttona, fg=fground, width=15, command=callback1)
-B1.grid(row=1, column=2, padx=10, pady=3)
-B5 = Button(buttonFrame, text=(data[3].rstrip()), bg=buttonb, fg=fground, width=15, command=callback5)
-B5.grid(row=2, column=0, padx=10, pady=3) 
-B2 = Button(buttonFrame, text=(data[4].rstrip()), bg=buttonb, fg=fground, width=15, command=callback2)
-B2.grid(row=2, column=1, padx=10, pady=3)
-B3 = Button(buttonFrame, text=(data[5].rstrip()), bg=buttonb, fg=fground, width=15, command=callback3)
-B3.grid(row=2, column=2, padx=10, pady=3)
-B4 = Button(buttonFrame, text=(data[6].rstrip()), bg=buttonb, fg=fground, width=15, command=callback4)
+B4 = Button(buttonFrame, text=(data[3].rstrip()), bg=buttonb, fg=fground, width=15, command=callback5)
 B4.grid(row=3, column=0, padx=10, pady=3)
 B7 = Button(buttonFrame, text=(data[7].rstrip()), bg=buttonb, fg=fground, width=15, command=callback7)
 B7.grid(row=3, column=1, padx=10, pady=3)
@@ -1718,9 +1730,86 @@ if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
 	B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg=buttona, fg=fground, width=15, command=callback33)
 	B9.grid(row=3, column=2, padx=10, pady=3)
 
-infFrame1 = Frame(rightFrame)
+buttonFrame2 = Frame(rightFrame)
+buttonFrame2.configure(background=bground)
+buttonFrame2.grid(row=4, column=0, padx=10, pady=3)
+buttonLabel2 = Label(buttonFrame2, text=(data[15].rstrip()))
+buttonLabel2.configure(background=bground, foreground=fground)
+buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
+
+B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg=buttonb, fg=fground, width=15, command=callback15)
+B1.grid(row=1, column=0, padx=10, pady=3)
+B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg=buttonb, fg=fground, width=15, command=callback16)
+B2.grid(row=1, column=1, padx=10, pady=3)
+if ifI2C(NFC_ADDRESS) == "found device":
+	B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg=buttona, fg=fground, width=15, command=callback30)
+	B3.grid(row=1, column=2, padx=10, pady=3)
+else:
+	B3 = Button(buttonFrame2, text=("xxx"), bg=buttona, fg=fground, width=15, command=callback100)
+	B3.grid(row=1, column=2, padx=10, pady=3)
+
+buttonFrame3 = Frame(rightFrame)
+buttonFrame3.configure(background=bground)
+buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
+
+B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=10, command=callback20)
+B1.grid(row=0, column=0, padx=10, pady=3) 
+B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=10, command=callback21)
+B2.grid(row=0, column=1, padx=10, pady=3)
+B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=10, command=callback40)
+B3.grid(row=0, column=2, padx=10, pady=3)
+B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg=buttonb, fg=fground, width=9, command=callback43)
+B4.grid(row=0, column=3, padx=10, pady=3)
+
+buttonFrame4 = Frame(rightFrame)
+buttonFrame4.configure(background=bground)
+buttonFrame4.grid(row=6, column=0, padx=10, pady=3)
+buttonLabel4 = Label(buttonFrame4, text=(data[123].rstrip()))
+buttonLabel4.configure(background=bground, foreground=fground)
+buttonLabel4.grid(row=0, column=1, padx=10, pady=3)
+
+B1 = Button(buttonFrame4, text=(data[124].rstrip()), bg=buttonb, fg=fground, width=15, command=red_neo)
+B1.grid(row=1, column=0, padx=10, pady=3)
+B2 = Button(buttonFrame4, text=(data[125].rstrip()), bg=buttonb, fg=fground, width=15, command=green_neo)
+B2.grid(row=1, column=1, padx=10, pady=3)
+B3 = Button(buttonFrame4, text=(data[126].rstrip()), bg=buttonb, fg=fground, width=15, command=blue_neo)
+B3.grid(row=1, column=2, padx=10, pady=3)
+B4 = Button(buttonFrame4, text=(data[127].rstrip()), bg=buttonb, fg=fground, width=15, command=off_neo)
+B4.grid(row=2, column=0, padx=10, pady=3)
+B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg=buttonb, fg=fground, width=15, command=set_neo)
+B5.grid(row=2, column=1, padx=10, pady=3)
+B6 = Button(buttonFrame4, text=("ColorPicker"), bg=buttonb, fg=fground, width=15, command=color_neo)
+B6.grid(row=2, column=2, padx=10, pady=3)
+
+buttonFrame5 = Frame(rightFrame)
+buttonFrame5.configure(background=bground)
+buttonFrame5.grid(row=7, column=0, padx=10, pady=3)
+
+SL1 = Scale(buttonFrame5, from_=0, to=255,  length=480, bg=buttonb, fg=fground, tickinterval=20, label=(data[129].rstrip()), orient=HORIZONTAL)
+SL1.grid(row=0, column=1, padx=10, pady=3)
+SL1.set(10)
+
+app=WindowB(leftFrame)
+
+seperatorFrame4 = Frame(leftFrame)
+seperatorFrame4.configure(background=bground)
+seperatorFrame4.grid(row=2, column=0, padx=5, pady=3)
+seperatorLabel1 = Label(seperatorFrame4, text="")
+seperatorLabel1.configure(background=bground)
+seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
+
+app=WindowC(leftFrame)
+
+seperatorFrame3 = Frame(leftFrame)
+seperatorFrame3.configure(background=bground)
+seperatorFrame3.grid(row=4, column=0, padx=5, pady=3)
+seperatorLabel1 = Label(seperatorFrame3, text="")
+seperatorLabel1.configure(background=bground)
+seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
+
+infFrame1 = Frame(leftFrame)
 infFrame1.configure(background=bground)
-infFrame1.grid(row=5, column=0, padx=10, pady=3)
+infFrame1.grid(row=4, column=0, padx=10, pady=3)
 infLabel1 = Label(infFrame1, text=(data[11].rstrip()))
 infLabel1.configure(background=bground, foreground=fground)
 infLabel1.grid(row=0, column=1, padx=10, pady=3)
@@ -1744,67 +1833,5 @@ oText5 = (data[111].rstrip()) + alarm_t
 infLabel6 = Label(infFrame1, text=oText5)
 infLabel6.configure(background=bground, foreground=fground)
 infLabel6.grid(row=2, column=2, padx=10, pady=3)
-
-app=Window(rightFrame)
-
-seperatorFrame2 = Frame(rightFrame)
-seperatorFrame2.configure(background=bground)
-seperatorFrame2.grid(row=7, column=0, padx=5, pady=3)
-seperatorLabel1 = Label(seperatorFrame2, text="")
-seperatorLabel1.configure(background=bground)
-seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
-
-buttonFrame2 = Frame(rightFrame)
-buttonFrame2.configure(background=bground)
-buttonFrame2.grid(row=8, column=0, padx=10, pady=3)
-buttonLabel2 = Label(buttonFrame2, text=(data[15].rstrip()))
-buttonLabel2.configure(background=bground, foreground=fground)
-buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
-
-B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg=buttonb, fg=fground, width=15, command=callback15)
-B1.grid(row=1, column=0, padx=10, pady=3) 
-B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg=buttonb, fg=fground, width=15, command=callback16)
-B2.grid(row=1, column=1, padx=10, pady=3)
-if ifI2C(NFC_ADDRESS) == "found device":
-	B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg=buttona, fg=fground, width=15, command=callback30)
-	B3.grid(row=1, column=2, padx=10, pady=3)
-
-app=WindowB(leftFrame)
-
-seperatorFrame4 = Frame(leftFrame)
-seperatorFrame4.configure(background=bground)
-seperatorFrame4.grid(row=2, column=0, padx=5, pady=3)
-seperatorLabel1 = Label(seperatorFrame4, text="")
-seperatorLabel1.configure(background=bground)
-seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
-
-app=WindowC(leftFrame)
-
-seperatorFrame3 = Frame(leftFrame)
-seperatorFrame3.configure(background=bground)
-seperatorFrame3.grid(row=4, column=0, padx=5, pady=3)
-seperatorLabel1 = Label(seperatorFrame3, text="")
-seperatorLabel1.configure(background=bground)
-seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
-
-seperatorFrame5 = Frame(leftFrame)
-seperatorFrame5.configure(background=bground)
-seperatorFrame5.grid(row=4, column=0, padx=5, pady=3)
-seperatorLabel1 = Label(seperatorFrame5, text="")
-seperatorLabel1.configure(background=bground)
-seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
-
-buttonFrame3 = Frame(leftFrame)
-buttonFrame3.configure(background=bground)
-buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
-
-B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=7, command=callback20)
-B1.grid(row=0, column=0, padx=10, pady=3) 
-B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=9, command=callback21)
-B2.grid(row=0, column=1, padx=10, pady=3)
-B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=9, command=callback40)
-B3.grid(row=0, column=2, padx=10, pady=3)
-B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg=buttonb, fg=fground, width=7, command=callback43)
-B4.grid(row=0, column=3, padx=10, pady=3)
 
 root.mainloop()
