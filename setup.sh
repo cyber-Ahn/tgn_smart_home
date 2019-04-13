@@ -49,6 +49,7 @@ sudo pip3 install thingspeak
 sudo pip3 install gTTS
 sudo pip3 install feedparser
 sudo pip3 install gitpython
+sudo pip3 install fabric3
 sudo apt-get -y install lirc
 sleep 5
 
@@ -123,6 +124,7 @@ sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_broker.sh /home/pi
+sudo mv /home/pi/tgn_smart_home/setup_files/fabfile.py /home/pi
 
 sudo mv /home/pi/tgn_smart_home/setup_files/lircd.conf /etc/lirc
 sudo mv /home/pi/tgn_smart_home/setup_files/lirc_options.conf /etc/lirc
