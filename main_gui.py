@@ -9,14 +9,11 @@ from PIL import Image, ImageTk
 from tkinter.colorchooser import *
 from tgnLIB import *
 # var
-
 ROM_ADDRESS = 0x53
 LCD_ADDRESS = 0x3f
 MCP_ADDRESS = 0x20
 NFC_ADDRESS = 0x24
-
 MCP_num_gpios = 16
-
 main_topic = "tgn/#"
 channel_id = 43245
 write_key = "8WQB01T3F5JE0EZ"
@@ -58,7 +55,7 @@ afground = "black"
 afbground = "black"
 buttona = "red"
 buttonb = "black"
-colorSet = 7
+colorSet = 9
 s1 = "0"
 s2 = "0"
 s3 = "0"
@@ -102,8 +99,8 @@ rssurl = "empty"
 rsslang = "en"
 #PiHole
 api_url = 'http://localhost/admin/api.php'
-#functions
 
+#functions
 def seven_seg(data):
 	cachseven = "0"+str(data)
 	lenseven = len(cachseven)
@@ -117,7 +114,6 @@ def seven_seg(data):
 	for char in cachseven:
 		listseven.append(int(char))
 	sevenseg.Show(listseven)
-
 def ini():
 	global sevenseg
 	sevenseg = TM1637(12,16,BRIGHT_TYPICAL)
@@ -356,6 +352,11 @@ def ini():
 		su=int(dataX)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x01,0x50)
 		pw=dataX
+		if su==1:
+			if colorSet <= 8:
+				os.system('mpg321 /home/pi/tgn_smart_home/sounds/startup.mp3 &')
+			else:
+				os.system('mpg321 /home/pi/tgn_smart_home/sounds/lcars-startup.mp3 &')
 		start_add_I = 0x68
 		index = 0 
 		ver = ""
@@ -489,33 +490,34 @@ def ini():
 		for i in range(int(MCP_num_gpios/2)):
 			mcp.output(i, 0)
 		time.sleep(0.5)
-	try:
-		print(">>Load themes.config")
-		f = open("/home/pi/tgn_smart_home/config/themes.config","r")
-	except IOError:
-    		print("cannot open themes.config.... file not found")
-	else:
-		data = []
-		for line in f:
-			data.append(line)
-		if colorSet == 1:
-			startLine = 1
+	if colorSet <= 8:
+		try:
+			print(">>Load themes.config")
+			f = open("/home/pi/tgn_smart_home/config/themes.config","r")
+		except IOError:
+				print("cannot open themes.config.... file not found")
 		else:
-			startLine = ((colorSet - 1)*8)+1
-		c1 = (data[startLine].rstrip())
-		c2 = (data[(startLine+1)].rstrip())
-		c3 = (data[(startLine+2)].rstrip())
-		c4 = (data[(startLine+3)].rstrip())
-		c5 = (data[(startLine+4)].rstrip())
-		c6 = (data[(startLine+5)].rstrip())
-		c7 = (data[(startLine+6)].rstrip())
-		d,bground = c1.split("=")
-		d,fground = c2.split("=")
-		d,abground = c3.split("=")
-		d,afground = c4.split("=")
-		d,afbground = c5.split("=")
-		d,buttona = c6.split("=")
-		d,buttonb = c7.split("=")
+			data = []
+			for line in f:
+				data.append(line)
+			if colorSet == 1:
+				startLine = 1
+			else:
+				startLine = ((colorSet - 1)*8)+1
+			c1 = (data[startLine].rstrip())
+			c2 = (data[(startLine+1)].rstrip())
+			c3 = (data[(startLine+2)].rstrip())
+			c4 = (data[(startLine+3)].rstrip())
+			c5 = (data[(startLine+4)].rstrip())
+			c6 = (data[(startLine+5)].rstrip())
+			c7 = (data[(startLine+6)].rstrip())
+			d,bground = c1.split("=")
+			d,fground = c2.split("=")
+			d,abground = c3.split("=")
+			d,afground = c4.split("=")
+			d,afbground = c5.split("=")
+			d,buttona = c6.split("=")
+			d,buttonb = c7.split("=")
 	if LCDpower == 1:
 		mylcd.lcd_clear()
 	spr_phat="/home/pi/tgn_smart_home/language/"+spr+"/"
@@ -560,7 +562,6 @@ def ini():
 	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
-
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
@@ -578,10 +579,10 @@ def ini():
 	else:
 		client.publish("tgn/i2c/lcd","offline",qos=0,retain=True)
 	
-
 def on():
 	global son
 	global soff
+	sound()
 	if son == 0:
 		soff = 0
 		son = 1
@@ -599,6 +600,7 @@ def on():
 def off():
 	global son
 	global soff
+	sound()
 	if soff == 0:
 		soff = 1
 		son = 0
@@ -615,17 +617,22 @@ def off():
 
 def sound():
 	if su==1:
-		os.system('mpg321 /home/pi/tgn_smart_home/sounds/button.mp3 &')
+		if colorSet <= 8:
+			os.system('mpg321 /home/pi/tgn_smart_home/sounds/button.mp3 &')
+		else:
+			os.system('mpg321 /home/pi/tgn_smart_home/sounds/lcars-button.mp3 &')
 def alarm_go():
 	global alarm_p
 	if alarm_p == 0:
 		if su==1:
-			os.system('mpg321 /home/pi/tgn_smart_home/sounds/alarm.mp3 &')
+			if colorSet <= 8:
+				os.system('mpg321 /home/pi/tgn_smart_home/sounds/alarm.mp3 &')
+			else:
+				os.system('mpg321 /home/pi/tgn_smart_home/sounds/lcars-alarm.mp3 &')
 		alarm_p = 1
 	elif alarm_p == 1:
 		time.sleep(60)
 		alarm_p = 0	
-
 def pcf8563ReadTimeB():
 	cach_time = ""
 	time_out = ""
@@ -663,28 +670,35 @@ def pcf8563ReadTimeB():
 	if alarm_s == "on" and alarm_t == cach_time:
 		alarm_go()
 	return(time_out)
-
 def About():
-    print("TGN Smart Home "+version)
+	print("TGN Smart Home "+version)
+	sound()
 def callback1():
 	setn = "python3 /home/pi/tgn_smart_home/libs/auto_cam.py video "+E1.get()
+	sound()
 	os.system(setn)
 def callback2():
 	setn = "python3 /home/pi/tgn_smart_home/libs/auto_cam.py capture 0"
+	sound()
 	os.system(setn)
 def callback3():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/auto_cam.py timer 0"
+	sound()
 	os.system(setn)
 def callback4():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/camGpio.py"
+	sound()
 	os.system(setn)
 def callback5():
 	setn = "python3 /home/pi/tgn_smart_home/libs/auto_cam.py preview 0"
+	sound()
 	os.system(setn)
 def callback6():
+	sound()
 	stream()
 def callback7():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/digi-cam.py"
+	sound()
 	os.system(setn)
 def callback8():
 	sound()
@@ -850,9 +864,11 @@ def callback21():
 		mylcd.backlight(1)
 def callback22():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py install_rom"
+	sound()
 	os.system(setn)
 def callback23():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py cam"
+	sound()
 	os.system(setn)
 def callback24():
 	subprocess.call('xset dpms force on', shell=True)
@@ -861,6 +877,7 @@ def callback25():
 	global su
 	if su == 1:
 		su = 0
+		sound()
 	else:
 		su = 1
 	write_eeprom(1,ROM_ADDRESS,0x00,0xa6,str(su))
@@ -884,7 +901,7 @@ def callback31():
 def exit():
 	if su==1 and is_connected(REMOTE_SERVER)=="Online":
 		try:
-			print(">>Load themes.config")
+			print(">>Load voice.config")
 			f = open(spr_phat+"voice.config","r")
 		except IOError:
     			print("cannot open voice.config.... file not found")
@@ -903,7 +920,6 @@ def exit():
 		for i in range(int(MCP_num_gpios/2)):
 			mcp.output(i, 0)
 	root.quit()
-
 def all_off():
 	sound()
 	if MCPpower == 1:
@@ -979,7 +995,6 @@ def callback30():
 						time.sleep(1)
 						mylcd.backlight(0)
 					call(['shutdown', '-h', 'now'], shell=False)
-
 def callback33():
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
 	sound()
@@ -1003,7 +1018,6 @@ def callback33():
 		keyword10 = buttons[5]
 		output3 = (data[6].rstrip())
 	tex = SpeechToText(spr,"AIzaSyDDzPM2W74MU3NvWgRKG85b3-UWaNOAjQo")
-	print(tex)
 	if tex == keyword3.lower():
 		exit()
 	elif tex == keyword4.lower():
@@ -1033,8 +1047,6 @@ def callback33():
 	else:
 		if su==1 and is_connected(REMOTE_SERVER)=="Online":
 			TextToSpeech(output3+tex,spr)
-	print(keyword10.lower())
-
 def callback32():
 	global speech
 	if speech == 0:
@@ -1042,9 +1054,9 @@ def callback32():
 	elif speech == 1:
 		speech = 0
 	write_eeprom(1,ROM_ADDRESS,0x00,0xf2,str(speech))
+	sound()
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
-
 def callback34():
 	global Ts
 	if Ts == 0:
@@ -1052,22 +1064,19 @@ def callback34():
 	elif Ts == 1:
 		Ts = 0
 	write_eeprom(1,ROM_ADDRESS,0x00,0xf3,str(Ts))
+	sound()
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
-
 def callback35():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py thinkspeak"
 	os.system(setn)
-
 def callback36():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py webapp"
 	os.system(setn)
-
 def callback38():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py alarm"
 	os.system(setn)
 	os.execv(sys.executable, ['python3'] + sys.argv)
-
 def callback39():
 	global alarm_s
 	if alarm_s == "on":
@@ -1075,7 +1084,8 @@ def callback39():
 	elif alarm_s == "off":
 		alarm_s = "on"
 	start_add_AC = 0x57
-	index = 0 
+	index = 0
+	sound()
 	while index < 3:
 		write_eeprom(1,ROM_ADDRESS,0x01,start_add_AC,"X")
 		index = index + 1
@@ -1088,26 +1098,22 @@ def callback39():
 		index = index + 1
 		start_add_AC = start_add_AC + 1
 	os.execv(sys.executable, ['python3'] + sys.argv)
-
 def callback40():
     TextToSpeech(we_cach,spr)
-
 def callback41():
+	sound()
 	os.execv(sys.executable, ['python3'] + sys.argv)
-
 def callback42():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py rss"
 	os.system(setn)
-
 def callback43():
     TextToSpeech(rssfeed,rsslang)
-
 def callback44():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/update.py"
+	sound()
 	os.system(setn)
 	time.sleep(5)
 	os.execv(sys.executable, ['python3'] + sys.argv)
-
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
@@ -1216,7 +1222,6 @@ def on_message(client, userdata, message):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/system/mic","0",qos=0,retain=True)
 			callback33()
-		
 # updating window (Clock and Temps)
 the_time=''
 TIME = newtime = time.time()
@@ -1299,15 +1304,18 @@ class Window(Frame):
 					mylcd.lcd_display_string("Queries:"+str(DNSQUERIES), 2, 0)
 					seven_seg(str(ADSBLOCKED))
 					counterLCD = 0
-
 				if backlight == 0 and LCDpower == 1:
 					mylcd.backlight(0)
 				trigger = pcf8563ReadTimeB()
 				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C\n"+stats
+				global afbground
+				global fground
+				if colorSet == 9:
+					afbground = '#000000'
+					fground = '#003f7e'
 				self.display_time.config(text=the_time, font=('times', 18, 'bold'), bg=afbground, fg=fground)
 			self.display_time.after(5000, change_value_the_time)
 		change_value_the_time()
-
 # updating window (Weather and PiHole)
 the_timeb=''
 class WindowB(Frame):
@@ -1398,6 +1406,11 @@ class WindowB(Frame):
 					print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
+				global afbground
+				global fground
+				if colorSet == 9:
+					afbground = '#000000'
+					fground = '#eaa424'
 				self.display_time.config(text=output, font=('times', 17, 'bold'), bg=afbground, fg=fground)
 				if is_connected(REMOTE_SERVER)=="Online":
 					if allowed_key(openweatherkey) == "yes":
@@ -1410,10 +1423,14 @@ class WindowB(Frame):
 						img.place(x=0, y=60)
 			self.display_time.after(1200000, change_value_the_timeb)
 		change_value_the_timeb()
-
 #window (RSS Feed)
 class WindowC(Frame):
 	def __init__(self,master):
+		global afbground
+		global fground
+		if colorSet == 9:
+			afbground = '#000000'
+			fground = '#eaa424'
 		Frame.__init__(self, master)
 		self.grid()
 		self.canvas = Canvas(self, bg=afbground, highlightthickness=0, width=453, height=40)
@@ -1425,7 +1442,6 @@ class WindowC(Frame):
 		text_end = self.canvas.bbox('text')[2]
 		self.text_length = text_end - text_begin
 		self.scroll_text()
-        
 	def scroll_text(self):
 		self.canvas.move('text', -3, 0)
 		text_end = self.canvas.bbox('text')[2]
@@ -1436,61 +1452,74 @@ class WindowC(Frame):
 			self.text_length = text_end - text_begin
 			self.canvas.move('text', 450 + self.text_length, 0)
 		self.canvas.after(50, self.scroll_text)
-
 def spt1():
 	global spr
 	spr = "de"
+	sound()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(1))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt2():
 	global spr
 	spr = "en"
+	sound()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(2))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt3():
 	global spr
 	spr = "fr"
+	sound()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(3))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt4():
 	global spr
 	spr = "ru"
+	sound()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(4))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt5():
 	global spr
 	spr = "ja"
+	sound()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(5))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt6():
 	global spr
 	spr = "zh"
+	sound()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(6))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def callback45():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py backup"
+	sound()
 	os.system(setn)
 def callback46():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py restore"
+	sound()
 	os.system(setn)
 def callback100():
-    print("empty button")
+	print("empty button")
+	sound()
 def set_neo():
+	sound()
 	client.publish("tgn/esp_3/neopixel/brightness",str(SL1.get()),qos=0,retain=True)
 def red_neo():
 	client.publish("tgn/esp_3/neopixel/color","255.0.0.255",qos=0,retain=True)
+	sound()
 def green_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.255.0.255",qos=0,retain=True)
+	sound()
 def blue_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.0.255.255",qos=0,retain=True)
+	sound()
 def off_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.0.0.255",qos=0,retain=True)
+	sound()
 def color_neo():
 	color = askcolor()
 	cach1 = str(color).split('),')
@@ -1501,7 +1530,7 @@ def color_neo():
 	c_z = cach3[2].split('.')
 	color_set = c_x[0]+"."+c_y[0]+"."+c_z[0]
 	client.publish("tgn/esp_3/neopixel/color",color_set,qos=0,retain=True)
-
+	sound()
 #Main Prog
 ini()
 if LCDpower == 1:
@@ -1522,316 +1551,601 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 			print("Start Voice Modul")
 			TextToSpeech((data[4].rstrip()),spr)
 sevenseg.Clear()
-root = Tk()
-#fullscreen mode
-WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
-root.overrideredirect(screen) 
-root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
-try:
-	f = open(spr_phat+"text.config","r")
-except IOError:
-    	print("cannot open text.config.... file not found")
-else:
-	data = []
-	for line in f:
-		data.append(line)
-root.wm_title("TGN Smart Home "+version+" ("+spr+")")
-menu = Menu(root)
-root.config(background = bground, menu=menu)
+def normal_screen():
+	root = Tk()
+	#sfullscreen mode
+	WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
+	root.overrideredirect(screen) 
+	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
 
-filemenu = Menu(menu)
-menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
-filemenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
-menu.add_cascade(label=(data[37].rstrip()), menu=filemenu)
-filemenu.add_command(label=(data[38].rstrip()), command=callback8)
-filemenu.add_command(label=(data[39].rstrip()), command=callback7)
-filemenu.add_separator()
-filemenu.add_command(label="Reload", command=callback41)
-filemenu.add_command(label=(data[40].rstrip()), command=callback30)
-filemenu.add_command(label="Backup Rom", command=callback45)
-filemenu.add_command(label="Restore Rom", command=callback46)
+	try:
+		f = open(spr_phat+"text.config","r")
+	except IOError:
+			print("cannot open text.config.... file not found")
+	else:
+		data = []
+		for line in f:
+			data.append(line)
+	root.wm_title("TGN Smart Home "+version+" ("+spr+")")
+	menu = Menu(root)
+	root.config(background = bground, menu=menu)
 
-setmenu = Menu(menu)
-menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
-setmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
-menu.add_cascade(label=(data[41].rstrip()), menu=setmenu)
-setmenu.add_command(label=(data[115].rstrip()), command=callback39)
-setmenu.add_command(label=(data[42].rstrip()), command=callback25)
-setmenu.add_command(label=(data[43].rstrip()), command=callback32)
-setmenu.add_command(label=(data[44].rstrip()), command=callback34)
+	filemenu = Menu(menu)
+	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
+	filemenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
+	menu.add_cascade(label=(data[37].rstrip()), menu=filemenu)
+	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
+	filemenu.add_command(label=(data[39].rstrip()), command=callback7)
+	filemenu.add_separator()
+	filemenu.add_command(label="Reload", command=callback41)
+	filemenu.add_command(label=(data[40].rstrip()), command=callback30)
+	filemenu.add_command(label="Backup Rom", command=callback45)
+	filemenu.add_command(label="Restore Rom", command=callback46)
 
-langmenu = Menu(menu)
-menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
-langmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
-setmenu.add_cascade(label=(data[45].rstrip()), menu=langmenu)
-langmenu.add_command(label="de", command=spt1)
-langmenu.add_command(label="en", command=spt2)
-langmenu.add_command(label="fr", command=spt3)
-langmenu.add_command(label="ru", command=spt4)
-langmenu.add_command(label="jp", command=spt5)
-langmenu.add_command(label="zh", command=spt6)
+	setmenu = Menu(menu)
+	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
+	setmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
+	menu.add_cascade(label=(data[41].rstrip()), menu=setmenu)
+	setmenu.add_command(label=(data[115].rstrip()), command=callback39)
+	setmenu.add_command(label=(data[42].rstrip()), command=callback25)
+	setmenu.add_command(label=(data[43].rstrip()), command=callback32)
+	setmenu.add_command(label=(data[44].rstrip()), command=callback34)
 
-stylemenu = Menu(menu)
-menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
-stylemenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
-setmenu.add_cascade(label=(data[46].rstrip()), menu=stylemenu)
-stylemenu.add_command(label=(data[47].rstrip()), command=callback19)
+	langmenu = Menu(menu)
+	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
+	langmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
+	setmenu.add_cascade(label=(data[45].rstrip()), menu=langmenu)
+	langmenu.add_command(label="de", command=spt1)
+	langmenu.add_command(label="en", command=spt2)
+	langmenu.add_command(label="fr", command=spt3)
+	langmenu.add_command(label="ru", command=spt4)
+	langmenu.add_command(label="jp", command=spt5)
+	langmenu.add_command(label="zh", command=spt6)
 
-colmenu = Menu(menu)
-menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
-colmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
-stylemenu.add_cascade(label=(data[48].rstrip()), menu=colmenu)
-try:
-	print(">>Load themes.config")
-	f = open("/home/pi/tgn_smart_home/config/themes.config","r")
-except IOError:
-    print("cannot open themes.config.... file not found")
-else:
-    data_ca = []
-    color_button = [] 
-    for line in f:
-        data_ca.append(line)
-    cou = 0
-    for x in data_ca:
-        index = data_ca[cou].find("#")
-        if index == 0:
-            bu_cach = data_ca[cou].rstrip()
-            bu_cach = bu_cach[1:]
-            color_button.append(bu_cach) 
-        cou = cou + 1
-index_bu = len(color_button)
-if index_bu >= 1:    
-	colmenu.add_command(label=color_button[0], command=lambda: key(1))
-if index_bu >= 2:    
-	colmenu.add_command(label=color_button[1], command=lambda: key(2))
-if index_bu >= 3:    
-	colmenu.add_command(label=color_button[2], command=lambda: key(3))
-if index_bu >= 4:    
-	colmenu.add_command(label=color_button[3], command=lambda: key(4))
-if index_bu >= 5:    
-	colmenu.add_command(label=color_button[4], command=lambda: key(5))
-if index_bu >= 6:    
-	colmenu.add_command(label=color_button[5], command=lambda: key(6))
-if index_bu >= 7:    
-	colmenu.add_command(label=color_button[6], command=lambda: key(7))
-if index_bu >= 8:    
-	colmenu.add_command(label=color_button[7], command=lambda: key(8))
-if index_bu >= 9:    
-	colmenu.add_command(label=color_button[8], command=lambda: key(9))
-if index_bu >= 10:    
-	colmenu.add_command(label=color_button[9], command=lambda: key(10))
-if index_bu >= 11:    
-	colmenu.add_command(label=color_button[10], command=lambda: key(11))
-if index_bu >= 12:    
-	colmenu.add_command(label=color_button[11], command=lambda: key(12))
-if index_bu >= 13:    
-	colmenu.add_command(label=color_button[12], command=lambda: key(13))
-if index_bu >= 14:    
-	colmenu.add_command(label=color_button[13], command=lambda: key(14))
-if index_bu >= 15:    
-	colmenu.add_command(label=color_button[14], command=lambda: key(15))
-if index_bu >= 16:    
-	colmenu.add_command(label=color_button[15], command=lambda: key(16))
-if index_bu >= 17:    
-	colmenu.add_command(label=color_button[16], command=lambda: key(17))
-if index_bu >= 18:    
-	colmenu.add_command(label=color_button[17], command=lambda: key(18))
-if index_bu >= 19:    
-	colmenu.add_command(label=color_button[18], command=lambda: key(19))
-if index_bu >= 20:    
-	colmenu.add_command(label=color_button[19], command=lambda: key(20))
-def key(method):
-	global colorSet
-	colorSet = method
-	write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
-	time.sleep(1)
-	os.execv(sys.executable, ['python3'] + sys.argv)
+	stylemenu = Menu(menu)
+	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
+	stylemenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
+	setmenu.add_cascade(label=(data[46].rstrip()), menu=stylemenu)
+	stylemenu.add_command(label=(data[47].rstrip()), command=callback19)
 
-rommenu = Menu(menu)
-menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
-rommenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
-setmenu.add_cascade(label=(data[55].rstrip()), menu=rommenu)
-rommenu.add_command(label=(data[56].rstrip()), command=callback17)
-rommenu.add_command(label=(data[57].rstrip()), command=callback18)
-rommenu.add_command(label=(data[58].rstrip()), command=callback23)
-rommenu.add_command(label=(data[59].rstrip()), command=callback26)
-rommenu.add_command(label=(data[60].rstrip()), command=callback27)
-rommenu.add_command(label=(data[61].rstrip()), command=callback35)
-rommenu.add_command(label=(data[113].rstrip()), command=callback38)
-rommenu.add_command(label=(data[119].rstrip()), command=callback42)
-rommenu.add_command(label=(data[62].rstrip()), command=callback22)
+	colmenu = Menu(menu)
+	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
+	colmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
+	stylemenu.add_cascade(label=(data[48].rstrip()), menu=colmenu)
+	try:
+		print(">>Load themes.config")
+		f = open("/home/pi/tgn_smart_home/config/themes.config","r")
+	except IOError:
+		print("cannot open themes.config.... file not found")
+	else:
+		data_ca = []
+		color_button = [] 
+		for line in f:
+			data_ca.append(line)
+		cou = 0
+		for x in data_ca:
+			index = data_ca[cou].find("#")
+			if index == 0:
+				bu_cach = data_ca[cou].rstrip()
+				bu_cach = bu_cach[1:]
+				color_button.append(bu_cach) 
+			cou = cou + 1
+		color_button.append("LCARS")
+	index_bu = len(color_button)
+	if index_bu >= 1:    
+		colmenu.add_command(label=color_button[0], command=lambda: key(1,color_button[0]))
+	if index_bu >= 2:    
+		colmenu.add_command(label=color_button[1], command=lambda: key(2,color_button[1]))
+	if index_bu >= 3:    
+		colmenu.add_command(label=color_button[2], command=lambda: key(3,color_button[2]))
+	if index_bu >= 4:    
+		colmenu.add_command(label=color_button[3], command=lambda: key(4,color_button[3]))
+	if index_bu >= 5:    
+		colmenu.add_command(label=color_button[4], command=lambda: key(5,color_button[4]))
+	if index_bu >= 6:    
+		colmenu.add_command(label=color_button[5], command=lambda: key(6,color_button[5]))
+	if index_bu >= 7:    
+		colmenu.add_command(label=color_button[6], command=lambda: key(7,color_button[6]))
+	if index_bu >= 8:    
+		colmenu.add_command(label=color_button[7], command=lambda: key(8,color_button[7]))
+	if index_bu >= 9:    
+		colmenu.add_command(label=color_button[8], command=lambda: key(9,color_button[8]))
+	def key(method,but_name):
+		global colorSet
+		colorSet = method
+		if but_name == "LCARS":
+			colorSet = 9
+		write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
+		time.sleep(1)
+		os.execv(sys.executable, ['python3'] + sys.argv)
 
-nfcmenu = Menu(menu)
-menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
-nfcmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
-setmenu.add_cascade(label=(data[63].rstrip()), menu=nfcmenu)
-nfcmenu.add_command(label=(data[64].rstrip()), command=callback28)
-nfcmenu.add_command(label=(data[65].rstrip()), command=callback29)
-nfcmenu.add_command(label=(data[66].rstrip()), command=callback31)
+	rommenu = Menu(menu)
+	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
+	rommenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
+	setmenu.add_cascade(label=(data[55].rstrip()), menu=rommenu)
+	rommenu.add_command(label=(data[56].rstrip()), command=callback17)
+	rommenu.add_command(label=(data[57].rstrip()), command=callback18)
+	rommenu.add_command(label=(data[58].rstrip()), command=callback23)
+	rommenu.add_command(label=(data[59].rstrip()), command=callback26)
+	rommenu.add_command(label=(data[60].rstrip()), command=callback27)
+	rommenu.add_command(label=(data[61].rstrip()), command=callback35)
+	rommenu.add_command(label=(data[113].rstrip()), command=callback38)
+	rommenu.add_command(label=(data[119].rstrip()), command=callback42)
+	rommenu.add_command(label=(data[62].rstrip()), command=callback22)
 
-helpmenu = Menu(menu)
-menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
-helpmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
-menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
-helpmenu.add_command(label="Update", command=callback44)
-helpmenu.add_command(label=(data[68].rstrip()), command=About)
+	nfcmenu = Menu(menu)
+	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
+	nfcmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
+	setmenu.add_cascade(label=(data[63].rstrip()), menu=nfcmenu)
+	nfcmenu.add_command(label=(data[64].rstrip()), command=callback28)
+	nfcmenu.add_command(label=(data[65].rstrip()), command=callback29)
+	nfcmenu.add_command(label=(data[66].rstrip()), command=callback31)
 
-leftFrame = Frame(root, width=400, height = 400)
-leftFrame.configure(background=bground)
-leftFrame.grid(row=0, column=0, padx=10, pady=3)
+	helpmenu = Menu(menu)
+	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
+	helpmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
+	menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
+	helpmenu.add_command(label="Update", command=callback44)
+	helpmenu.add_command(label=(data[68].rstrip()), command=About)
 
-infFrame1 = Frame(leftFrame)
-infFrame1.configure(background=bground)
-infFrame1.grid(row=0, column=0, padx=10, pady=3)
+	leftFrame = Frame(root, width=400, height = 400)
+	leftFrame.configure(background=bground)
+	leftFrame.grid(row=0, column=0, padx=10, pady=3)
 
-rightFrame = Frame(root, width=400, height = 400)
-rightFrame.configure(background=bground)
-rightFrame.grid(row=0, column=1, padx=10, pady=3)
+	infFrame1 = Frame(leftFrame)
+	infFrame1.configure(background=bground)
+	infFrame1.grid(row=0, column=0, padx=10, pady=3)
 
-app=Window(rightFrame)
+	rightFrame = Frame(root, width=400, height = 400)
+	rightFrame.configure(background=bground)
+	rightFrame.grid(row=0, column=1, padx=10, pady=3)
 
-buttonFrame = Frame(rightFrame)
-buttonFrame.configure(background=bground)
-buttonFrame.grid(row=2, column=0, padx=10, pady=3)
-buttonLabel1 = Label(buttonFrame, text=(data[0].rstrip()))
-buttonLabel1.configure(background=bground, foreground=fground)
-buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
-B4 = Button(buttonFrame, text=(data[3].rstrip()), bg=buttonb, fg=fground, width=15, command=callback5)
-B4.grid(row=3, column=0, padx=10, pady=3)
-B7 = Button(buttonFrame, text=(data[7].rstrip()), bg=buttonb, fg=fground, width=15, command=callback7)
-B7.grid(row=3, column=1, padx=10, pady=3)
-B6 = Button(buttonFrame, text=(data[8].rstrip()), bg=buttonb, fg=fground, width=15, command=callback6)
-B6.grid(row=3, column=2, padx=10, pady=3)
+	app=Window(rightFrame)
 
-buttonFrame1 = Frame(rightFrame)
-buttonFrame1.configure(background=bground)
-buttonFrame1.grid(row=3, column=0, padx=10, pady=3)
-buttonLabel1 = Label(buttonFrame1, text=(data[9].rstrip()))
-buttonLabel1.configure(background=bground, foreground=fground)
-buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
+	buttonFrame = Frame(rightFrame)
+	buttonFrame.configure(background=bground)
+	buttonFrame.grid(row=2, column=0, padx=10, pady=3)
+	buttonLabel1 = Label(buttonFrame, text=(data[0].rstrip()))
+	buttonLabel1.configure(background=bground, foreground=fground)
+	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
+	B4 = Button(buttonFrame, text=(data[3].rstrip()), bg=buttonb, fg=fground, width=15, command=callback5)
+	B4.grid(row=3, column=0, padx=10, pady=3)
+	B7 = Button(buttonFrame, text=(data[7].rstrip()), bg=buttonb, fg=fground, width=15, command=callback7)
+	B7.grid(row=3, column=1, padx=10, pady=3)
+	B6 = Button(buttonFrame, text=(data[8].rstrip()), bg=buttonb, fg=fground, width=15, command=callback6)
+	B6.grid(row=3, column=2, padx=10, pady=3)
 
-B1 = Button(buttonFrame1, text=buttons[0], bg=buttonb, fg=fground, width=15, command=callback9)
-B1.grid(row=1, column=0, padx=10, pady=3) 
-B2 = Button(buttonFrame1, text=buttons[1], bg=buttonb, fg=fground, width=15, command=callback10)
-B2.grid(row=1, column=1, padx=10, pady=3)
-B3 = Button(buttonFrame1, text=buttons[2], bg=buttonb, fg=fground, width=15, command=callback11)
-B3.grid(row=1, column=2, padx=10, pady=3)
-B4 = Button(buttonFrame1, text=buttons[3], bg=buttonb, fg=fground, width=15, command=callback12)
-B4.grid(row=2, column=0, padx=10, pady=3)
-B5 = Button(buttonFrame1, text=buttons[4], bg=buttonb, fg=fground, width=15, command=callback13)
-B5.grid(row=2, column=1, padx=10, pady=3)
-B6 = Button(buttonFrame1, text=buttons[5], bg=buttonb, fg=fground, width=15, command=callback14)
-B6.grid(row=2, column=2, padx=10, pady=3)
-B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg=buttonb, fg=fground, width=15, command=all_on)
-B7.grid(row=3, column=0, padx=10, pady=3)
-B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg=buttonb, fg=fground, width=15, command=all_off)
-B8.grid(row=3, column=1, padx=10, pady=3)
-if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
-	B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg=buttona, fg=fground, width=15, command=callback33)
-	B9.grid(row=3, column=2, padx=10, pady=3)
+	buttonFrame1 = Frame(rightFrame)
+	buttonFrame1.configure(background=bground)
+	buttonFrame1.grid(row=3, column=0, padx=10, pady=3)
+	buttonLabel1 = Label(buttonFrame1, text=(data[9].rstrip()))
+	buttonLabel1.configure(background=bground, foreground=fground)
+	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
 
-buttonFrame2 = Frame(rightFrame)
-buttonFrame2.configure(background=bground)
-buttonFrame2.grid(row=4, column=0, padx=10, pady=3)
-buttonLabel2 = Label(buttonFrame2, text=(data[15].rstrip()))
-buttonLabel2.configure(background=bground, foreground=fground)
-buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
-
-B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg=buttonb, fg=fground, width=15, command=callback15)
-B1.grid(row=1, column=0, padx=10, pady=3)
-B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg=buttonb, fg=fground, width=15, command=callback16)
-B2.grid(row=1, column=1, padx=10, pady=3)
-if ifI2C(NFC_ADDRESS) == "found device":
-	B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg=buttona, fg=fground, width=15, command=callback30)
+	B1 = Button(buttonFrame1, text=buttons[0], bg=buttonb, fg=fground, width=15, command=callback9)
+	B1.grid(row=1, column=0, padx=10, pady=3) 
+	B2 = Button(buttonFrame1, text=buttons[1], bg=buttonb, fg=fground, width=15, command=callback10)
+	B2.grid(row=1, column=1, padx=10, pady=3)
+	B3 = Button(buttonFrame1, text=buttons[2], bg=buttonb, fg=fground, width=15, command=callback11)
 	B3.grid(row=1, column=2, padx=10, pady=3)
-else:
-	B3 = Button(buttonFrame2, text=("xxx"), bg=buttona, fg=fground, width=15, command=callback100)
+	B4 = Button(buttonFrame1, text=buttons[3], bg=buttonb, fg=fground, width=15, command=callback12)
+	B4.grid(row=2, column=0, padx=10, pady=3)
+	B5 = Button(buttonFrame1, text=buttons[4], bg=buttonb, fg=fground, width=15, command=callback13)
+	B5.grid(row=2, column=1, padx=10, pady=3)
+	B6 = Button(buttonFrame1, text=buttons[5], bg=buttonb, fg=fground, width=15, command=callback14)
+	B6.grid(row=2, column=2, padx=10, pady=3)
+	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg=buttonb, fg=fground, width=15, command=all_on)
+	B7.grid(row=3, column=0, padx=10, pady=3)
+	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg=buttonb, fg=fground, width=15, command=all_off)
+	B8.grid(row=3, column=1, padx=10, pady=3)
+	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
+		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg=buttona, fg=fground, width=15, command=callback33)
+		B9.grid(row=3, column=2, padx=10, pady=3)
+
+	buttonFrame2 = Frame(rightFrame)
+	buttonFrame2.configure(background=bground)
+	buttonFrame2.grid(row=4, column=0, padx=10, pady=3)
+	buttonLabel2 = Label(buttonFrame2, text=(data[15].rstrip()))
+	buttonLabel2.configure(background=bground, foreground=fground)
+	buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
+
+	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg=buttonb, fg=fground, width=15, command=callback15)
+	B1.grid(row=1, column=0, padx=10, pady=3)
+	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg=buttonb, fg=fground, width=15, command=callback16)
+	B2.grid(row=1, column=1, padx=10, pady=3)
+	if ifI2C(NFC_ADDRESS) == "found device":
+		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg=buttona, fg=fground, width=15, command=callback30)
+		B3.grid(row=1, column=2, padx=10, pady=3)
+	else:
+		B3 = Button(buttonFrame2, text=("xxx"), bg=buttona, fg=fground, width=15, command=callback100)
+		B3.grid(row=1, column=2, padx=10, pady=3)
+
+	buttonFrame3 = Frame(rightFrame)
+	buttonFrame3.configure(background=bground)
+	buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
+
+	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=10, command=callback20)
+	B1.grid(row=0, column=0, padx=10, pady=3) 
+	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=10, command=callback21)
+	B2.grid(row=0, column=1, padx=10, pady=3)
+	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=10, command=callback40)
+	B3.grid(row=0, column=2, padx=10, pady=3)
+	B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg=buttonb, fg=fground, width=9, command=callback43)
+	B4.grid(row=0, column=3, padx=10, pady=3)
+
+	buttonFrame4 = Frame(rightFrame)
+	buttonFrame4.configure(background=bground)
+	buttonFrame4.grid(row=6, column=0, padx=10, pady=3)
+	buttonLabel4 = Label(buttonFrame4, text=(data[123].rstrip()))
+	buttonLabel4.configure(background=bground, foreground=fground)
+	buttonLabel4.grid(row=0, column=1, padx=10, pady=3)
+
+	B1 = Button(buttonFrame4, text=(data[124].rstrip()), bg=buttonb, fg=fground, width=15, command=red_neo)
+	B1.grid(row=1, column=0, padx=10, pady=3)
+	B2 = Button(buttonFrame4, text=(data[125].rstrip()), bg=buttonb, fg=fground, width=15, command=green_neo)
+	B2.grid(row=1, column=1, padx=10, pady=3)
+	B3 = Button(buttonFrame4, text=(data[126].rstrip()), bg=buttonb, fg=fground, width=15, command=blue_neo)
 	B3.grid(row=1, column=2, padx=10, pady=3)
+	B4 = Button(buttonFrame4, text=(data[127].rstrip()), bg=buttonb, fg=fground, width=15, command=off_neo)
+	B4.grid(row=2, column=0, padx=10, pady=3)
+	B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg=buttonb, fg=fground, width=15, command=set_neo)
+	B5.grid(row=2, column=1, padx=10, pady=3)
+	B6 = Button(buttonFrame4, text=("ColorPicker"), bg=buttonb, fg=fground, width=15, command=color_neo)
+	B6.grid(row=2, column=2, padx=10, pady=3)
 
-buttonFrame3 = Frame(rightFrame)
-buttonFrame3.configure(background=bground)
-buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
+	buttonFrame5 = Frame(rightFrame)
+	buttonFrame5.configure(background=bground)
+	buttonFrame5.grid(row=7, column=0, padx=10, pady=3)
 
-B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=10, command=callback20)
-B1.grid(row=0, column=0, padx=10, pady=3) 
-B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=10, command=callback21)
-B2.grid(row=0, column=1, padx=10, pady=3)
-B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=10, command=callback40)
-B3.grid(row=0, column=2, padx=10, pady=3)
-B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg=buttonb, fg=fground, width=9, command=callback43)
-B4.grid(row=0, column=3, padx=10, pady=3)
+	SL1 = Scale(buttonFrame5, from_=0, to=255,  length=480, bg=buttonb, fg=fground, tickinterval=20, label=(data[129].rstrip()), orient=HORIZONTAL)
+	SL1.grid(row=0, column=1, padx=10, pady=3)
+	SL1.set(10)
 
-buttonFrame4 = Frame(rightFrame)
-buttonFrame4.configure(background=bground)
-buttonFrame4.grid(row=6, column=0, padx=10, pady=3)
-buttonLabel4 = Label(buttonFrame4, text=(data[123].rstrip()))
-buttonLabel4.configure(background=bground, foreground=fground)
-buttonLabel4.grid(row=0, column=1, padx=10, pady=3)
+	app=WindowB(leftFrame)
 
-B1 = Button(buttonFrame4, text=(data[124].rstrip()), bg=buttonb, fg=fground, width=15, command=red_neo)
-B1.grid(row=1, column=0, padx=10, pady=3)
-B2 = Button(buttonFrame4, text=(data[125].rstrip()), bg=buttonb, fg=fground, width=15, command=green_neo)
-B2.grid(row=1, column=1, padx=10, pady=3)
-B3 = Button(buttonFrame4, text=(data[126].rstrip()), bg=buttonb, fg=fground, width=15, command=blue_neo)
-B3.grid(row=1, column=2, padx=10, pady=3)
-B4 = Button(buttonFrame4, text=(data[127].rstrip()), bg=buttonb, fg=fground, width=15, command=off_neo)
-B4.grid(row=2, column=0, padx=10, pady=3)
-B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg=buttonb, fg=fground, width=15, command=set_neo)
-B5.grid(row=2, column=1, padx=10, pady=3)
-B6 = Button(buttonFrame4, text=("ColorPicker"), bg=buttonb, fg=fground, width=15, command=color_neo)
-B6.grid(row=2, column=2, padx=10, pady=3)
+	seperatorFrame4 = Frame(leftFrame)
+	seperatorFrame4.configure(background=bground)
+	seperatorFrame4.grid(row=2, column=0, padx=5, pady=3)
+	seperatorLabel1 = Label(seperatorFrame4, text="")
+	seperatorLabel1.configure(background=bground)
+	seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
 
-buttonFrame5 = Frame(rightFrame)
-buttonFrame5.configure(background=bground)
-buttonFrame5.grid(row=7, column=0, padx=10, pady=3)
+	app=WindowC(leftFrame)
 
-SL1 = Scale(buttonFrame5, from_=0, to=255,  length=480, bg=buttonb, fg=fground, tickinterval=20, label=(data[129].rstrip()), orient=HORIZONTAL)
-SL1.grid(row=0, column=1, padx=10, pady=3)
-SL1.set(10)
+	seperatorFrame3 = Frame(leftFrame)
+	seperatorFrame3.configure(background=bground)
+	seperatorFrame3.grid(row=4, column=0, padx=5, pady=3)
+	seperatorLabel1 = Label(seperatorFrame3, text="")
+	seperatorLabel1.configure(background=bground)
+	seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
 
-app=WindowB(leftFrame)
+	infFrame1 = Frame(leftFrame)
+	infFrame1.configure(background=bground)
+	infFrame1.grid(row=4, column=0, padx=10, pady=3)
+	infLabel1 = Label(infFrame1, text=(data[11].rstrip()))
+	infLabel1.configure(background=bground, foreground=fground)
+	infLabel1.grid(row=0, column=1, padx=10, pady=3)
+	oText1 = (data[12].rstrip())+ontime
+	infLabel2 = Label(infFrame1, text=oText1)
+	infLabel2.configure(background=bground, foreground=fground)
+	infLabel2.grid(row=1, column=0, padx=10, pady=3)
+	oText2 = (data[13].rstrip())+offtime
+	infLabel3 = Label(infFrame1, text=oText2)
+	infLabel3.configure(background=bground, foreground=fground)
+	infLabel3.grid(row=1, column=2, padx=10, pady=3)
+	oText3 = (data[14].rstrip())+s1+s2+s3+s4
+	infLabel4 = Label(infFrame1, text=oText3)
+	infLabel4.configure(background=bground, foreground=fground)
+	infLabel4.grid(row=1, column=1, padx=10, pady=3)
+	oText4 = (data[110].rstrip()) + alarm_s
+	infLabel5 = Label(infFrame1, text=oText4)
+	infLabel5.configure(background=bground, foreground=fground)
+	infLabel5.grid(row=2, column=0, padx=10, pady=3)
+	oText5 = (data[111].rstrip()) + alarm_t
+	infLabel6 = Label(infFrame1, text=oText5)
+	infLabel6.configure(background=bground, foreground=fground)
+	infLabel6.grid(row=2, column=2, padx=10, pady=3)
 
-seperatorFrame4 = Frame(leftFrame)
-seperatorFrame4.configure(background=bground)
-seperatorFrame4.grid(row=2, column=0, padx=5, pady=3)
-seperatorLabel1 = Label(seperatorFrame4, text="")
-seperatorLabel1.configure(background=bground)
-seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
+	root.mainloop()
 
-app=WindowC(leftFrame)
+def lcars_screen():
+	root = Tk()
+	#sfullscreen mode
+	WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
+	root.overrideredirect(screen) 
+	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
 
-seperatorFrame3 = Frame(leftFrame)
-seperatorFrame3.configure(background=bground)
-seperatorFrame3.grid(row=4, column=0, padx=5, pady=3)
-seperatorLabel1 = Label(seperatorFrame3, text="")
-seperatorLabel1.configure(background=bground)
-seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
+	try:
+		f = open(spr_phat+"text.config","r")
+	except IOError:
+			print("cannot open text.config.... file not found")
+	else:
+		data = []
+		for line in f:
+			data.append(line)
+	root.wm_title("TGN Smart Home "+version+" ("+spr+")")
+	menu = Menu(root)
+	root.config(background = bground, menu=menu)
 
-infFrame1 = Frame(leftFrame)
-infFrame1.configure(background=bground)
-infFrame1.grid(row=4, column=0, padx=10, pady=3)
-infLabel1 = Label(infFrame1, text=(data[11].rstrip()))
-infLabel1.configure(background=bground, foreground=fground)
-infLabel1.grid(row=0, column=1, padx=10, pady=3)
-oText1 = (data[12].rstrip())+ontime
-infLabel2 = Label(infFrame1, text=oText1)
-infLabel2.configure(background=bground, foreground=fground)
-infLabel2.grid(row=1, column=0, padx=10, pady=3)
-oText2 = (data[13].rstrip())+offtime
-infLabel3 = Label(infFrame1, text=oText2)
-infLabel3.configure(background=bground, foreground=fground)
-infLabel3.grid(row=1, column=2, padx=10, pady=3)
-oText3 = (data[14].rstrip())+s1+s2+s3+s4
-infLabel4 = Label(infFrame1, text=oText3)
-infLabel4.configure(background=bground, foreground=fground)
-infLabel4.grid(row=1, column=1, padx=10, pady=3)
-oText4 = (data[110].rstrip()) + alarm_s
-infLabel5 = Label(infFrame1, text=oText4)
-infLabel5.configure(background=bground, foreground=fground)
-infLabel5.grid(row=2, column=0, padx=10, pady=3)
-oText5 = (data[111].rstrip()) + alarm_t
-infLabel6 = Label(infFrame1, text=oText5)
-infLabel6.configure(background=bground, foreground=fground)
-infLabel6.grid(row=2, column=2, padx=10, pady=3)
+	filemenu = Menu(menu)
+	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	filemenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	menu.add_cascade(label=(data[37].rstrip()), menu=filemenu)
+	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
+	filemenu.add_command(label=(data[39].rstrip()), command=callback7)
+	filemenu.add_separator()
+	filemenu.add_command(label="Reload", command=callback41)
+	filemenu.add_command(label=(data[40].rstrip()), command=callback30)
+	filemenu.add_command(label="Backup Rom", command=callback45)
+	filemenu.add_command(label="Restore Rom", command=callback46)
 
-root.mainloop()
+	setmenu = Menu(menu)
+	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	setmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	menu.add_cascade(label=(data[41].rstrip()), menu=setmenu)
+	setmenu.add_command(label=(data[115].rstrip()), command=callback39)
+	setmenu.add_command(label=(data[42].rstrip()), command=callback25)
+	setmenu.add_command(label=(data[43].rstrip()), command=callback32)
+	setmenu.add_command(label=(data[44].rstrip()), command=callback34)
+
+	langmenu = Menu(menu)
+	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	langmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	setmenu.add_cascade(label=(data[45].rstrip()), menu=langmenu)
+	langmenu.add_command(label="de", command=spt1)
+	langmenu.add_command(label="en", command=spt2)
+	langmenu.add_command(label="fr", command=spt3)
+	langmenu.add_command(label="ru", command=spt4)
+	langmenu.add_command(label="jp", command=spt5)
+	langmenu.add_command(label="zh", command=spt6)
+
+	stylemenu = Menu(menu)
+	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	stylemenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	setmenu.add_cascade(label=(data[46].rstrip()), menu=stylemenu)
+	stylemenu.add_command(label=(data[47].rstrip()), command=callback19)
+
+	colmenu = Menu(menu)
+	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	colmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	stylemenu.add_cascade(label=(data[48].rstrip()), menu=colmenu)
+	try:
+		print(">>Load themes.config")
+		f = open("/home/pi/tgn_smart_home/config/themes.config","r")
+	except IOError:
+		print("cannot open themes.config.... file not found")
+	else:
+		data_ca = []
+		color_button = [] 
+		for line in f:
+			data_ca.append(line)
+		cou = 0
+		for x in data_ca:
+			index = data_ca[cou].find("#")
+			if index == 0:
+				bu_cach = data_ca[cou].rstrip()
+				bu_cach = bu_cach[1:]
+				color_button.append(bu_cach) 
+			cou = cou + 1
+		color_button.append("LCARS")
+	index_bu = len(color_button)
+	if index_bu >= 1:    
+		colmenu.add_command(label=color_button[0], command=lambda: key(1,color_button[0]))
+	if index_bu >= 2:    
+		colmenu.add_command(label=color_button[1], command=lambda: key(2,color_button[1]))
+	if index_bu >= 3:    
+		colmenu.add_command(label=color_button[2], command=lambda: key(3,color_button[2]))
+	if index_bu >= 4:    
+		colmenu.add_command(label=color_button[3], command=lambda: key(4,color_button[3]))
+	if index_bu >= 5:    
+		colmenu.add_command(label=color_button[4], command=lambda: key(5,color_button[4]))
+	if index_bu >= 6:    
+		colmenu.add_command(label=color_button[5], command=lambda: key(6,color_button[5]))
+	if index_bu >= 7:    
+		colmenu.add_command(label=color_button[6], command=lambda: key(7,color_button[6]))
+	if index_bu >= 8:    
+		colmenu.add_command(label=color_button[7], command=lambda: key(8,color_button[7]))
+	if index_bu >= 9:    
+		colmenu.add_command(label=color_button[8], command=lambda: key(9,color_button[8]))
+	def key(method,but_name):
+		global colorSet
+		colorSet = method
+		if but_name == "LCARS":
+			color_set = 9
+		write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
+		time.sleep(1)
+		os.execv(sys.executable, ['python3'] + sys.argv)
+
+	rommenu = Menu(menu)
+	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	rommenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	setmenu.add_cascade(label=(data[55].rstrip()), menu=rommenu)
+	rommenu.add_command(label=(data[56].rstrip()), command=callback17)
+	rommenu.add_command(label=(data[57].rstrip()), command=callback18)
+	rommenu.add_command(label=(data[58].rstrip()), command=callback23)
+	rommenu.add_command(label=(data[59].rstrip()), command=callback26)
+	rommenu.add_command(label=(data[60].rstrip()), command=callback27)
+	rommenu.add_command(label=(data[61].rstrip()), command=callback35)
+	rommenu.add_command(label=(data[113].rstrip()), command=callback38)
+	rommenu.add_command(label=(data[119].rstrip()), command=callback42)
+	rommenu.add_command(label=(data[62].rstrip()), command=callback22)
+
+	nfcmenu = Menu(menu)
+	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	nfcmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	setmenu.add_cascade(label=(data[63].rstrip()), menu=nfcmenu)
+	nfcmenu.add_command(label=(data[64].rstrip()), command=callback28)
+	nfcmenu.add_command(label=(data[65].rstrip()), command=callback29)
+	nfcmenu.add_command(label=(data[66].rstrip()), command=callback31)
+
+	helpmenu = Menu(menu)
+	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	helpmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
+	menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
+	helpmenu.add_command(label="Update", command=callback44)
+	helpmenu.add_command(label=(data[68].rstrip()), command=About)
+
+	leftFrame = Frame(root, width=400, height = 400)
+	leftFrame.configure(background=bground)
+	leftFrame.grid(row=0, column=0, padx=10, pady=3)
+
+	infFrame1 = Frame(leftFrame)
+	infFrame1.configure(background=bground)
+	infFrame1.grid(row=0, column=0, padx=10, pady=3)
+
+	rightFrame = Frame(root, width=400, height = 400)
+	rightFrame.configure(background=bground)
+	rightFrame.grid(row=0, column=1, padx=10, pady=3)
+
+	app=Window(rightFrame)
+
+	buttonFrame = Frame(rightFrame)
+	buttonFrame.configure(background='#000000')
+	buttonFrame.grid(row=2, column=0, padx=10, pady=3)
+	buttonLabel1 = Label(buttonFrame, text=(data[0].rstrip()))
+	buttonLabel1.configure(background='#000000', foreground='#eaa424')
+	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
+	B4 = Button(buttonFrame, text=(data[3].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback5)
+	B4.grid(row=3, column=0, padx=10, pady=3)
+	B7 = Button(buttonFrame, text=(data[7].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback7)
+	B7.grid(row=3, column=1, padx=10, pady=3)
+	B6 = Button(buttonFrame, text=(data[8].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback6)
+	B6.grid(row=3, column=2, padx=10, pady=3)
+
+	buttonFrame1 = Frame(rightFrame)
+	buttonFrame1.configure(background='#000000')
+	buttonFrame1.grid(row=3, column=0, padx=10, pady=3)
+	buttonLabel1 = Label(buttonFrame1, text=(data[9].rstrip()))
+	buttonLabel1.configure(background='#000000', foreground='#eaa424')
+	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
+
+	B1 = Button(buttonFrame1, text=buttons[0], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback9)
+	B1.grid(row=1, column=0, padx=10, pady=3) 
+	B2 = Button(buttonFrame1, text=buttons[1], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback10)
+	B2.grid(row=1, column=1, padx=10, pady=3)
+	B3 = Button(buttonFrame1, text=buttons[2], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback11)
+	B3.grid(row=1, column=2, padx=10, pady=3)
+	B4 = Button(buttonFrame1, text=buttons[3], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback12)
+	B4.grid(row=2, column=0, padx=10, pady=3)
+	B5 = Button(buttonFrame1, text=buttons[4], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback13)
+	B5.grid(row=2, column=1, padx=10, pady=3)
+	B6 = Button(buttonFrame1, text=buttons[5], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback14)
+	B6.grid(row=2, column=2, padx=10, pady=3)
+	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=all_on)
+	B7.grid(row=3, column=0, padx=10, pady=3)
+	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=all_off)
+	B8.grid(row=3, column=1, padx=10, pady=3)
+	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
+		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback33)
+		B9.grid(row=3, column=2, padx=10, pady=3)
+
+	buttonFrame2 = Frame(rightFrame)
+	buttonFrame2.configure(background='#000000')
+	buttonFrame2.grid(row=4, column=0, padx=10, pady=3)
+	buttonLabel2 = Label(buttonFrame2, text=(data[15].rstrip()))
+	buttonLabel2.configure(background='#000000', foreground='#eaa424')
+	buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
+
+	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback15)
+	B1.grid(row=1, column=0, padx=10, pady=3)
+	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback16)
+	B2.grid(row=1, column=1, padx=10, pady=3)
+	if ifI2C(NFC_ADDRESS) == "found device":
+		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback30)
+		B3.grid(row=1, column=2, padx=10, pady=3)
+	else:
+		B3 = Button(buttonFrame2, text=("xxx"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback100)
+		B3.grid(row=1, column=2, padx=10, pady=3)
+
+	buttonFrame3 = Frame(rightFrame)
+	buttonFrame3.configure(background=bground)
+	buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
+
+	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback20)
+	B1.grid(row=0, column=0, padx=10, pady=3) 
+	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback21)
+	B2.grid(row=0, column=1, padx=10, pady=3)
+	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback40)
+	B3.grid(row=0, column=2, padx=10, pady=3)
+	B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback43)
+	B4.grid(row=0, column=3, padx=10, pady=3)
+
+	buttonFrame4 = Frame(rightFrame)
+	buttonFrame4.configure(background='#000000')
+	buttonFrame4.grid(row=6, column=0, padx=10, pady=3)
+	buttonLabel4 = Label(buttonFrame4, text=(data[123].rstrip()))
+	buttonLabel4.configure(background='#000000', foreground='#eaa424')
+	buttonLabel4.grid(row=0, column=1, padx=10, pady=3)
+
+	B1 = Button(buttonFrame4, text=(data[124].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=red_neo)
+	B1.grid(row=1, column=0, padx=10, pady=3)
+	B2 = Button(buttonFrame4, text=(data[125].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=green_neo)
+	B2.grid(row=1, column=1, padx=10, pady=3)
+	B3 = Button(buttonFrame4, text=(data[126].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=blue_neo)
+	B3.grid(row=1, column=2, padx=10, pady=3)
+	B4 = Button(buttonFrame4, text=(data[127].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=off_neo)
+	B4.grid(row=2, column=0, padx=10, pady=3)
+	B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=set_neo)
+	B5.grid(row=2, column=1, padx=10, pady=3)
+	B6 = Button(buttonFrame4, text=("ColorPicker"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=color_neo)
+	B6.grid(row=2, column=2, padx=10, pady=3)
+
+	buttonFrame5 = Frame(rightFrame)
+	buttonFrame5.configure(background='#000000')
+	buttonFrame5.grid(row=7, column=0, padx=10, pady=3)
+
+	SL1 = Scale(buttonFrame5, from_=0, to=255,  length=480, bg='#003f7e', fg='#000000', tickinterval=20, label=(data[129].rstrip()), orient=HORIZONTAL)
+	SL1.grid(row=0, column=1, padx=10, pady=3)
+	SL1.set(10)
+
+	app=WindowB(leftFrame)
+
+	seperatorFrame4 = Frame(leftFrame)
+	seperatorFrame4.configure(background='#000000')
+	seperatorFrame4.grid(row=2, column=0, padx=5, pady=3)
+	seperatorLabel1 = Label(seperatorFrame4, text="")
+	seperatorLabel1.configure(background='#000000')
+	seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
+
+	app=WindowC(leftFrame)
+
+	seperatorFrame3 = Frame(leftFrame)
+	seperatorFrame3.configure(background='#000000')
+	seperatorFrame3.grid(row=4, column=0, padx=5, pady=3)
+	seperatorLabel1 = Label(seperatorFrame3, text="")
+	seperatorLabel1.configure(background='#000000')
+	seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
+
+	infFrame1 = Frame(leftFrame)
+	infFrame1.configure(background='#000000')
+	infFrame1.grid(row=4, column=0, padx=10, pady=3)
+	infLabel1 = Label(infFrame1, text=(data[11].rstrip()))
+	infLabel1.configure(background='#000000', foreground='#eaa424')
+	infLabel1.grid(row=0, column=1, padx=10, pady=3)
+	oText1 = (data[12].rstrip())+ontime
+	infLabel2 = Label(infFrame1, text=oText1)
+	infLabel2.configure(background='#000000', foreground='#eaa424')
+	infLabel2.grid(row=1, column=0, padx=10, pady=3)
+	oText2 = (data[13].rstrip())+offtime
+	infLabel3 = Label(infFrame1, text=oText2)
+	infLabel3.configure(background='#000000', foreground='#eaa424')
+	infLabel3.grid(row=1, column=2, padx=10, pady=3)
+	oText3 = (data[14].rstrip())+s1+s2+s3+s4
+	infLabel4 = Label(infFrame1, text=oText3)
+	infLabel4.configure(background='#000000', foreground='#eaa424')
+	infLabel4.grid(row=1, column=1, padx=10, pady=3)
+	oText4 = (data[110].rstrip()) + alarm_s
+	infLabel5 = Label(infFrame1, text=oText4)
+	infLabel5.configure(background='#000000', foreground='#eaa424')
+	infLabel5.grid(row=2, column=0, padx=10, pady=3)
+	oText5 = (data[111].rstrip()) + alarm_t
+	infLabel6 = Label(infFrame1, text=oText5)
+	infLabel6.configure(background='#000000', foreground='#eaa424')
+	infLabel6.grid(row=2, column=2, padx=10, pady=3)
+
+	root.mainloop()
+
+if colorSet <= 8:
+	normal_screen()
+else:
+    lcars_screen()
