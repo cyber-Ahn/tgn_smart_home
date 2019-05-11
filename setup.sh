@@ -22,6 +22,7 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 sysctl -p
 sleep3
+reboot
 fi
 
 echo -e "\n\e[33m>> \e[31mSetup Clock (y/n)?\e[32m"
@@ -38,14 +39,6 @@ fi
 sudo apt-get update
 
 clear
-
-echo -e "\e[33m>> \e[31mInstall Remote Desktop (y/n)?\e[32m"
-read answer
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-sudo apt-get -y install xrdp
-sleep 5
-clear
-fi
 
 echo -e "\e[33m>> \e[31mDownload Libs\e[32m"
 sudo apt-get -y install python-matplotlib
