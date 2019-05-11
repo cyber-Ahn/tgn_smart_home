@@ -587,6 +587,7 @@ def on():
 		soff = 0
 		son = 1
 		msg = "Automatic_on"
+		TextToSpeech((data[23].rstrip()),spr)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		if s1 == "1":
 			client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
@@ -605,6 +606,7 @@ def off():
 		soff = 1
 		son = 0
 		msg = "Automatic_off"
+		TextToSpeech((data[24].rstrip()),spr)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 		if s1 == "1":
 			client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
@@ -692,6 +694,7 @@ def callback4():
 def callback5():
 	setn = "python3 /home/pi/tgn_smart_home/libs/auto_cam.py preview 0"
 	sound()
+	TextToSpeech((data[15].rstrip()),spr)
 	os.system(setn)
 def callback6():
 	sound()
@@ -699,6 +702,7 @@ def callback6():
 def callback7():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/digi-cam.py"
 	sound()
+	TextToSpeech((data[17].rstrip()),spr)
 	os.system(setn)
 def callback8():
 	sound()
@@ -814,6 +818,7 @@ def callback15():
 	mylcd.lcd_clear()
 	mylcd.backlight(0)
 	sevenseg.Clear()
+	TextToSpeech((data[18].rstrip()),spr)
 	call(['shutdown', '-h', 'now'], shell=False)
 def callback16():
 	sound()
@@ -823,6 +828,7 @@ def callback16():
 	mylcd.lcd_clear()
 	mylcd.backlight(0)
 	sevenseg.Clear()
+	TextToSpeech((data[19].rstrip()),spr)
 	call(['reboot', '-h', 'now'], shell=False)
 def callback17():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py rtc"
@@ -843,6 +849,7 @@ def callback19():
 def callback20():
 	sound()
 	global LCDpower
+	TextToSpeech((data[21].rstrip()),spr)
 	if LCDpower == 1:
 		LCDpower = 0
 		mylcd.lcd_clear()
@@ -856,6 +863,7 @@ def callback20():
 def callback21():
 	sound()
 	global backlight
+	TextToSpeech((data[22].rstrip()),spr)
 	if backlight == 1:
 		backlight = 0
 		mylcd.backlight(0)
@@ -893,11 +901,9 @@ def callback28():
 def callback29():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py remove_nfc"
 	os.system(setn)
-
 def callback31():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py show_nfc"
 	os.system(setn)
-
 def exit():
 	if su==1 and is_connected(REMOTE_SERVER)=="Online":
 		try:
@@ -927,6 +933,7 @@ def all_off():
 		mcp.output(2, 1)
 	subprocess.call('xset dpms force on', shell=True)
 	msg = "all_off"
+	TextToSpeech((data[14].rstrip()),spr)
 	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 	client.publish("tgn/buttons/status/6","0",qos=0,retain=True)
 	time.sleep(6.0)
@@ -949,6 +956,7 @@ def all_on():
 		mcp.output(2, 1)
 	subprocess.call('xset dpms force on', shell=True)
 	msg = "all_on"
+	TextToSpeech((data[13].rstrip()),spr)
 	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
 	client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
 	time.sleep(6.0)
@@ -970,6 +978,7 @@ def callback30():
 	if ifI2C(NFC_ADDRESS) == "found device":
 		pn532 = Pn532_i2c()
 		pn532.SAMconfigure()
+		TextToSpeech((data[20].rstrip()),spr)
 		card_data = pn532.read_mifare().get_data()
 		card_data = str(binascii.hexlify(card_data))
 		file = open("/home/pi/tgn_smart_home/config/logfile.log","r")
@@ -1102,6 +1111,7 @@ def callback40():
     TextToSpeech(we_cach,spr)
 def callback41():
 	sound()
+	TextToSpeech((data[25].rstrip()),spr)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def callback42():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py rss"
@@ -1508,20 +1518,26 @@ def callback100():
 def set_neo():
 	sound()
 	client.publish("tgn/esp_3/neopixel/brightness",str(SL1.get()),qos=0,retain=True)
+	TextToSpeech((data[11].rstrip()),spr)
 def red_neo():
 	client.publish("tgn/esp_3/neopixel/color","255.0.0.255",qos=0,retain=True)
 	sound()
+	TextToSpeech((data[7].rstrip()),spr)
 def green_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.255.0.255",qos=0,retain=True)
 	sound()
+	TextToSpeech((data[8].rstrip()),spr)
 def blue_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.0.255.255",qos=0,retain=True)
 	sound()
+	TextToSpeech((data[9].rstrip()),spr)
 def off_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.0.0.255",qos=0,retain=True)
 	sound()
+	TextToSpeech((data[10].rstrip()),spr)
 def color_neo():
 	color = askcolor()
+	TextToSpeech((data[12].rstrip()),spr)
 	cach1 = str(color).split('),')
 	cach2 = cach1[0].split('(', 2)
 	cach3 = cach2[2].split(', ')
