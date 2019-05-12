@@ -16,15 +16,6 @@ echo -e "\e[32m####               \e[33mby cyber Ahn                     \e[32m#
 echo -e "\e[32m####           \e[34mhttp://caworks-sl.de                 \e[32m###"
 echo -e "\e[32m#######################################################"
 
-echo -e "\n\e[33m>> \e[31mRemove IPV6 (y/n)?\e[32m"
-read answer
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
-sysctl -p
-sleep3
-reboot
-fi
-
 echo -e "\n\e[33m>> \e[31mSetup Clock (y/n)?\e[32m"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then
@@ -36,7 +27,24 @@ ntpd -qg
 sleep 3
 fi
 
+clear
+
+echo -e "\n\e[33m>> \e[31mUpgrade Linux (y/n)?\e[32m"
+read answer
+if [ "$answer" != "${answer#[Yy]}" ] ;then
 sudo apt-get update
+sudo apt-get upgrade
+fi
+
+clear
+
+echo -e "\e[33m>> \e[31mInstall Remote Desktop (y/n)?\e[32m"
+read answer
+if [ "$answer" != "${answer#[Yy]}" ] ;then
+sudo apt-get -y install xrdp
+sleep 5
+clear
+fi
 
 clear
 
