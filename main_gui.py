@@ -1563,7 +1563,7 @@ def splash():
 	root.overrideredirect(True)
 	WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
 	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
-	image_file = "icons/splashScreen.gif"
+	image_file = "/home/pi/tgn_smart_home/icons/splashScreen.gif"
 	image = tk.PhotoImage(file=image_file)
 	canvas = tk.Canvas(root, height=WMHEIGHT, width=WMWIDTH, bg="black")
 	canvas.create_image(WMWIDTH/2, WMHEIGHT/2, image=image)
