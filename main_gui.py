@@ -7,6 +7,7 @@ from subprocess import call
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter.colorchooser import *
+from multiprocessing import Process
 from tgnLIB import *
 # var
 ROM_ADDRESS = 0x53
@@ -121,6 +122,8 @@ def ini():
 	time.sleep(1)
 	anzeige = [0,0,0,0]
 	sevenseg.Show(anzeige)
+	TextToSpeech("7 Segment Display configured",spr)
+	time.sleep(2)
 	os.system('clear')
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
@@ -136,9 +139,12 @@ def ini():
 			mcp.config(i, 1)
 			mcp.pullup(i, 1)
 		print(">>MCP23017 configured")
+		TextToSpeech("MCP23017 configured",spr)
 	else:
 		print(">>MCP23017 not found")
+		TextToSpeech("MCP23017 not found",spr)
 	#LCD
+	time.sleep(2)
 	print(">>initialize LCD Display")
 	if ifI2C(LCD_ADDRESS) == "found device":
 		global LCDpower
@@ -153,8 +159,10 @@ def ini():
 		mylcd.lcd_display_string("TGN Smart Home", 1, 1)
 		mylcd.lcd_display_string("Loading....", 2, 0)
 		print(">>LCD Display configured")
+		TextToSpeech("LCD Display configured",spr)
 	else:
 		print(">>LCD Display not found")
+		TextToSpeech("LCD Display not found",spr)
 	global ontime
 	global offtime
 	global s1
@@ -207,6 +215,7 @@ def ini():
 	print(">>initialize EEPROM")
 	if ifI2C(ROM_ADDRESS) == "found device":
 		start_add_U = 0xcf
+		TextToSpeech("Read EEPROM",spr)
 		index = 0
 		pushbulletkey = ""
 		while index < 34:
@@ -474,6 +483,7 @@ def ini():
 			start_add_AG = start_add_AG + 1
 	else:
 		print(">>EEPROM not found")
+		TextToSpeech("EEPROM not found",spr)
 	if MCPpower == 1:
 		print(">>MCP23017 test Input and Output")
 		print("%d: %x" % (8, mcp.input(8) >> 8))
@@ -1408,12 +1418,12 @@ class WindowB(Frame):
 						output = output+(dataText[35].rstrip())+'\n'
 					output = output+'---------------------------------------------------------\n'
 				output = output+'Ad Blocked:'+str(ADSBLOCKED)+' Client:'+str(CLIENTS)+' DNS Queries:'+str(DNSQUERIES)
-				channel = thingspeak.Channel(id=channel_id, write_key=write_key, api_key=read_key)
+				#channel = thingspeak.Channel(id=channel_id, write_key=write_key, api_key=read_key)
 				global cpu_t
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
 					timespl = format_time(pcf8563ReadTime()).split(" ")
-					print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
+					#print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				global afbground
@@ -1547,7 +1557,21 @@ def color_neo():
 	color_set = c_x[0]+"."+c_y[0]+"."+c_z[0]
 	client.publish("tgn/esp_3/neopixel/color",color_set,qos=0,retain=True)
 	sound()
+def splash():
+	import tkinter as tk
+	root = tk.Tk()
+	root.overrideredirect(True)
+	WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
+	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
+	image_file = "icons/splashScreen.gif"
+	image = tk.PhotoImage(file=image_file)
+	canvas = tk.Canvas(root, height=WMHEIGHT, width=WMWIDTH, bg="black")
+	canvas.create_image(WMWIDTH/2, WMHEIGHT/2, image=image)
+	canvas.pack()
+	root.after(45000, root.destroy)
+	root.mainloop()
 #Main Prog
+Process(target=splash).start()
 ini()
 if LCDpower == 1:
 	mylcd.lcd_display_string("TGN Smart Home", 1, 1)
@@ -1567,6 +1591,7 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 			print("Start Voice Modul")
 			TextToSpeech((data[4].rstrip()),spr)
 sevenseg.Clear()
+
 def normal_screen():
 	root = Tk()
 	#sfullscreen mode
