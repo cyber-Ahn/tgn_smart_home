@@ -592,10 +592,10 @@ def ini():
 def on():
 	global son
 	global soff
-	sound()
 	if son == 0:
 		soff = 0
 		son = 1
+		sound()
 		msg = "Automatic_on"
 		TextToSpeech((data[23].rstrip()),spr)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
@@ -611,10 +611,10 @@ def on():
 def off():
 	global son
 	global soff
-	sound()
 	if soff == 0:
 		soff = 1
 		son = 0
+		sound()
 		msg = "Automatic_off"
 		TextToSpeech((data[24].rstrip()),spr)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
