@@ -1259,6 +1259,7 @@ class Window(Frame):
 			global counterLCD
 			newtime = time.time()
 			if newtime != the_time:
+				mcp.output(0, 0)
 				if float(esp_temp) >= float(esp_temp_2):
 					print("open window")
 					mcp.output(0, 1)
