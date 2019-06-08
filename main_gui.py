@@ -77,14 +77,14 @@ color_button = []
 esp_ls = 0
 esp_switch = 70
 esp_switch_b = 120
-esp_temp = "--"
+esp_temp = "0.02"
 esp_hum = "--"
 esp_rssi = "--"
 esp_li = "100"
 #ESP8622/2
 esp_ip_2 = "---.---.---.---"
 esp_pr_2 = "--"
-esp_temp_2 = "--"
+esp_temp_2 = "0.05"
 esp_hum_2 = "--"
 esp_rssi_2 = "--"
 esp_li_2 = "100"
@@ -588,7 +588,6 @@ def ini():
 		client.publish("tgn/i2c/lcd","online",qos=0,retain=True)
 	else:
 		client.publish("tgn/i2c/lcd","offline",qos=0,retain=True)
-	
 def on():
 	global son
 	global soff
@@ -607,7 +606,6 @@ def on():
 			client.publish("tgn/buttons/status/3","1",qos=0,retain=True)
 		if s4 == "1":
 			client.publish("tgn/buttons/status/4","1",qos=0,retain=True)
-
 def off():
 	global son
 	global soff
@@ -626,7 +624,6 @@ def off():
 			client.publish("tgn/buttons/status/3","0",qos=0,retain=True)
 		if s4 == "1":
 			client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
-
 def sound():
 	if su==1:
 		if colorSet <= 8:
@@ -983,7 +980,6 @@ def all_on():
 		mcp.output(3, 1)
 		mcp.output(2, 0)
 	time.sleep(1)
-
 def callback30():
 	if ifI2C(NFC_ADDRESS) == "found device":
 		pn532 = Pn532_i2c()
@@ -1263,6 +1259,9 @@ class Window(Frame):
 			global counterLCD
 			newtime = time.time()
 			if newtime != the_time:
+				if float(esp_temp) >= float(esp_temp_2):
+					print("open window")
+					mcp.output(0, 1)
 				if MCPpower == 1:
 					if mcp.input(8) >> 8 == 1:
 						callback7() #digi-cam
@@ -1412,6 +1411,7 @@ class WindowB(Frame):
 						client.publish("tgn/pihole/clients",CLIENTS,qos=0,retain=True)
 						client.publish("tgn/room/temp",temp_data,qos=0,retain=True)
 						client.publish("tgn/room/light",readLight(),qos=0,retain=True)
+						client.publish("tgn/weather/icon",str(data['icon']),qos=0,retain=True)
 						global we_cach
 						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" °C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
 					else:
