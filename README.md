@@ -99,3 +99,5 @@ Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
    - sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py [wireless socket number] [1 = on 0 = off]
    - example:
     - sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py 4 1
+    
+<img src="http://caworks-sl.de/Smart_Home_Images/IMG_20181101_174128.jpg" alt="1" style="width:600px;height:500px;">
