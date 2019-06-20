@@ -73,6 +73,8 @@ ontime = "10:19|10:21"
 offtime = "10:20|10:22"
 phat = "/home/pi/tgn_smart_home/icons/"
 color_button = []
+mqtt_msg = "empty"
+mqtt_msg_cach = "empty"
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
@@ -572,6 +574,7 @@ def ini():
 	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
+	client.publish("tgn/mqtt-msg","System Online",qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
@@ -594,7 +597,7 @@ def on():
 	if son == 0:
 		soff = 0
 		son = 1
-		sound()
+		Process(target=sound).start()
 		msg = "Automatic_on"
 		TextToSpeech((data[23].rstrip()),spr)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
@@ -612,7 +615,7 @@ def off():
 	if soff == 0:
 		soff = 1
 		son = 0
-		sound()
+		Process(target=sound).start()
 		msg = "Automatic_off"
 		TextToSpeech((data[24].rstrip()),spr)
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
@@ -681,38 +684,38 @@ def pcf8563ReadTimeB():
 	return(time_out)
 def About():
 	print("TGN Smart Home "+version)
-	sound()
+	Process(target=sound).start()
 def callback1():
 	setn = "python3 /home/pi/tgn_smart_home/libs/auto_cam.py video "+E1.get()
-	sound()
+	Process(target=sound).start()
 	os.system(setn)
 def callback2():
 	setn = "python3 /home/pi/tgn_smart_home/libs/auto_cam.py capture 0"
-	sound()
+	Process(target=sound).start()
 	os.system(setn)
 def callback3():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/auto_cam.py timer 0"
-	sound()
+	Process(target=sound).start()
 	os.system(setn)
 def callback4():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/camGpio.py"
-	sound()
+	Process(target=sound).start()
 	os.system(setn)
 def callback5():
 	setn = "python3 /home/pi/tgn_smart_home/libs/auto_cam.py preview 0"
-	sound()
+	Process(target=sound).start()
 	TextToSpeech((data[15].rstrip()),spr)
 	os.system(setn)
 def callback6():
-	sound()
+	Process(target=sound).start()
 	stream()
 def callback7():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/digi-cam.py"
-	sound()
+	Process(target=sound).start()
 	TextToSpeech((data[17].rstrip()),spr)
 	os.system(setn)
 def callback8():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
@@ -722,7 +725,7 @@ def callback8():
 		mcp.output(2, 0)
 		mcp.output(3, 1)
 def callback9():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
@@ -738,7 +741,7 @@ def callback9():
 		mcp.output(3, 1)
 		mcp.output(2, 0)
 def callback10():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
@@ -754,7 +757,7 @@ def callback10():
 		mcp.output(3, 1)
 		mcp.output(2, 0)
 def callback11():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
@@ -770,7 +773,7 @@ def callback11():
 		mcp.output(3, 1)
 		mcp.output(2, 0)
 def callback12():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
@@ -786,7 +789,7 @@ def callback12():
 		mcp.output(3, 1)
 		mcp.output(2, 0)
 def callback13():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
@@ -802,7 +805,7 @@ def callback13():
 		mcp.output(3, 1)
 		mcp.output(2, 0)
 def callback14():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
@@ -818,7 +821,7 @@ def callback14():
 		mcp.output(3, 1)
 		mcp.output(2, 0)
 def callback15():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		for i in range(int(MCP_num_gpios/2)):
 			mcp.output(i, 0)
@@ -828,7 +831,7 @@ def callback15():
 	TextToSpeech((data[18].rstrip()),spr)
 	call(['shutdown', '-h', 'now'], shell=False)
 def callback16():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		for i in range(int(MCP_num_gpios/2)):
 			mcp.output(i, 0)
@@ -844,7 +847,7 @@ def callback18():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py funk"
 	os.system(setn)
 def callback19():
-	sound()
+	Process(target=sound).start()
 	global screen
 	if screen == 1:
 		screen = 0
@@ -854,7 +857,7 @@ def callback19():
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def callback20():
-	sound()
+	Process(target=sound).start()
 	global LCDpower
 	TextToSpeech((data[21].rstrip()),spr)
 	if LCDpower == 1:
@@ -868,7 +871,7 @@ def callback20():
 		mylcd.lcd_display_string("IP:"+get_ip(), 2, 0)
 		mylcd.backlight(1)
 def callback21():
-	sound()
+	Process(target=sound).start()
 	global backlight
 	TextToSpeech((data[22].rstrip()),spr)
 	if backlight == 1:
@@ -879,20 +882,20 @@ def callback21():
 		mylcd.backlight(1)
 def callback22():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py install_rom"
-	sound()
+	Process(target=sound).start()
 	os.system(setn)
 def callback23():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py cam"
-	sound()
+	Process(target=sound).start()
 	os.system(setn)
 def callback24():
 	subprocess.call('xset dpms force on', shell=True)
-	sound()
+	Process(target=sound).start()
 def callback25():
 	global su
 	if su == 1:
 		su = 0
-		sound()
+		Process(target=sound).start()
 	else:
 		su = 1
 	write_eeprom(1,ROM_ADDRESS,0x00,0xa6,str(su))
@@ -934,7 +937,7 @@ def exit():
 			mcp.output(i, 0)
 	root.quit()
 def all_off():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
@@ -957,7 +960,7 @@ def all_off():
 		mcp.output(3, 1)
 		mcp.output(2, 0)
 def all_on():
-	sound()
+	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
@@ -1012,7 +1015,7 @@ def callback30():
 					call(['shutdown', '-h', 'now'], shell=False)
 def callback33():
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
-	sound()
+	Process(target=sound).start()
 	try:
 		f = open(spr_phat+"voice.config","r")
 	except IOError:
@@ -1069,7 +1072,7 @@ def callback32():
 	elif speech == 1:
 		speech = 0
 	write_eeprom(1,ROM_ADDRESS,0x00,0xf2,str(speech))
-	sound()
+	Process(target=sound).start()
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def callback34():
@@ -1079,7 +1082,7 @@ def callback34():
 	elif Ts == 1:
 		Ts = 0
 	write_eeprom(1,ROM_ADDRESS,0x00,0xf3,str(Ts))
-	sound()
+	Process(target=sound).start()
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def callback35():
@@ -1100,7 +1103,7 @@ def callback39():
 		alarm_s = "on"
 	start_add_AC = 0x57
 	index = 0
-	sound()
+	Process(target=sound).start()
 	while index < 3:
 		write_eeprom(1,ROM_ADDRESS,0x01,start_add_AC,"X")
 		index = index + 1
@@ -1116,7 +1119,7 @@ def callback39():
 def callback40():
     TextToSpeech(we_cach,spr)
 def callback41():
-	sound()
+	Process(target=sound).start()
 	TextToSpeech((data[25].rstrip()),spr)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def callback42():
@@ -1126,7 +1129,7 @@ def callback43():
     TextToSpeech(rssfeed,rsslang)
 def callback44():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/update.py"
-	sound()
+	Process(target=sound).start()
 	os.system(setn)
 	time.sleep(5)
 	os.execv(sys.executable, ['python3'] + sys.argv)
@@ -1148,6 +1151,9 @@ def on_message(client, userdata, message):
 	global esp_rssi_2 
 	global esp_li_2
 	global esp_b1_2
+	global mqtt_msg
+	if(message.topic=="tgn/mqtt-msg"):
+		mqtt_msg = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/wifi/pre"):
 		esp_pr_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/wifi/rssi"):
@@ -1215,7 +1221,7 @@ def on_message(client, userdata, message):
 	if(message.topic=="tgn/system/shutdown"):
 		if(int(message.payload.decode("utf-8")) == 1):
 			TextToSpeech("Shutdown",spr)
-			sound()
+			Process(target=sound).start()
 			if MCPpower == 1:
 				mcp.output(3, 0)
 			mylcd.lcd_clear()
@@ -1224,7 +1230,7 @@ def on_message(client, userdata, message):
 	if(message.topic=="tgn/system/reboot"):
 		if(int(message.payload.decode("utf-8")) == 1):
 			TextToSpeech("Reboot",spr)
-			sound()
+			Process(target=sound).start()
 			if MCPpower == 1:
 				mcp.output(3, 0)
 			mylcd.lcd_clear()
@@ -1257,9 +1263,13 @@ class Window(Frame):
 			client.loop_stop()
 			global the_time
 			global counterLCD
+			global mqtt_msg_cach
 			newtime = time.time()
 			if newtime != the_time:
 				mcp.output(0, 0)
+				if mqtt_msg != mqtt_msg_cach:
+					mqtt_msg_cach = mqtt_msg
+					TextToSpeech(mqtt_msg,spr)
 				if float(esp_temp) >= float(esp_temp_2):
 					print("open window")
 					mcp.output(0, 1)
@@ -1476,75 +1486,75 @@ class WindowC(Frame):
 def spt1():
 	global spr
 	spr = "de"
-	sound()
+	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(1))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt2():
 	global spr
 	spr = "en"
-	sound()
+	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(2))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt3():
 	global spr
 	spr = "fr"
-	sound()
+	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(3))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt4():
 	global spr
 	spr = "ru"
-	sound()
+	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(4))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt5():
 	global spr
 	spr = "ja"
-	sound()
+	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(5))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt6():
 	global spr
 	spr = "zh"
-	sound()
+	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(6))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def callback45():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py backup"
-	sound()
+	Process(target=sound).start()
 	os.system(setn)
 def callback46():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py restore"
-	sound()
+	Process(target=sound).start()
 	os.system(setn)
 def callback100():
 	print("empty button")
-	sound()
+	Process(target=sound).start()
 def set_neo():
-	sound()
+	Process(target=sound).start()
 	client.publish("tgn/esp_3/neopixel/brightness",str(SL1.get()),qos=0,retain=True)
 	TextToSpeech((data[11].rstrip()),spr)
 def red_neo():
 	client.publish("tgn/esp_3/neopixel/color","255.0.0.255",qos=0,retain=True)
-	sound()
+	Process(target=sound).start()
 	TextToSpeech((data[7].rstrip()),spr)
 def green_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.255.0.255",qos=0,retain=True)
-	sound()
+	Process(target=sound).start()
 	TextToSpeech((data[8].rstrip()),spr)
 def blue_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.0.255.255",qos=0,retain=True)
-	sound()
+	Process(target=sound).start()
 	TextToSpeech((data[9].rstrip()),spr)
 def off_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.0.0.255",qos=0,retain=True)
-	sound()
+	Process(target=sound).start()
 	TextToSpeech((data[10].rstrip()),spr)
 def color_neo():
 	color = askcolor()
@@ -1557,7 +1567,7 @@ def color_neo():
 	c_z = cach3[2].split('.')
 	color_set = c_x[0]+"."+c_y[0]+"."+c_z[0]
 	client.publish("tgn/esp_3/neopixel/color",color_set,qos=0,retain=True)
-	sound()
+	Process(target=sound).start()
 def splash():
 	import tkinter as tk
 	root = tk.Tk()
