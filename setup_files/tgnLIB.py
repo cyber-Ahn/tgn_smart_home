@@ -14,6 +14,7 @@ import picamera
 import RPi.GPIO as GPIO
 import requests
 import re
+import pexpect
 import speech_recognition as sr
 import sys
 import smbus
@@ -577,6 +578,121 @@ class lcd:
          for line in char:
             self.lcd_write_char(line)
 
+mpgouts = [
+    {
+        "mpg_code": "@P 0",
+        "action": "user_stop",
+        "description": "Music has been stopped by the user."
+    },
+    {
+        "mpg_code": "@P 1",
+        "action": "user_pause",
+        "description": "Music has been paused by the user."
+    },
+    {
+        "mpg_code": "@P 2",
+        "action": "user_resume",
+        "description": "Music has been resumed by the user."
+    },
+    {
+        "mpg_code": "@P 3",
+        "action": "end_of_song",
+        "description": "Player has reached the end of the song."
+    }
+]
+mpgcodes = [v["mpg_code"] for v in mpgouts]
+
+class PlayerStatus:
+    INSTANCIATED = 0
+    PLAYING = 1
+    PAUSED = 2
+    STOPPED = 3
+    QUITTED = 4
+
+class MPyg321Player:
+    """Main class for mpg321 player management"""
+    player = None
+    status = None
+    output_processor = None
+
+    def __init__(self):
+        """Builds the player and creates the callbacks"""
+        self.player = pexpect.spawn("mpg321 -R somerandomword", timeout=None)
+        self.status = PlayerStatus.INSTANCIATED
+        self.output_processor = Thread(target=self.process_output)
+        self.output_processor.daemon = True
+        self.output_processor.start()
+
+    def process_output(self):
+        """Parses the output"""
+        while True:
+            index = self.player.expect(mpgcodes)
+            action = mpgouts[index]["action"]
+            if action == "user_stop":
+                self.onAnyStop()
+                self.onUserStop()
+            if action == "user_pause":
+                self.onAnyStop()
+                self.onUserPause()
+            if action == "user_resume":
+                self.onUserResume()
+            if action == "end_of_song":
+                self.onAnyStop()
+                self.onMusicEnd()
+
+    def play_song(self, path):
+        """Plays the song"""
+        self.player.sendline("LOAD " + path)
+        self.status = PlayerStatus.PLAYING
+
+    def pause(self):
+        """Pauses the player"""
+        if self.status == PlayerStatus.PLAYING:
+            self.player.sendline("PAUSE")
+            self.status = PlayerStatus.PAUSED
+
+    def resume(self):
+        """Resume the player"""
+        if self.status == PlayerStatus.PAUSED:
+            self.player.sendline("PAUSE")
+            self.status = PlayerStatus.PLAYING
+
+    def stop(self):
+        """Stops the player"""
+        self.player.sendline("STOP")
+        self.status = PlayerStatus.STOPPED
+
+    def quit(self):
+        """Quits the player"""
+        self.player.sendline("QUIT")
+        self.status = PlayerStatus.QUITTED
+    
+    def gain(self, vol):
+        """set volume"""
+        self.player.sendline("GAIN "+str(vol))
+        self.status = PlayerStatus.PLAYING
+
+    # # # Callbacks # # #
+    def onAnyStop(self):
+        """Callback when the music stops for any reason"""
+        pass
+
+    def onUserPause(self):
+        """Callback when user pauses the music"""
+        pass
+
+    def onUserResume(self):
+        """Callback when user resumes the music"""
+        pass
+
+    def onUserStop(self):
+        """Callback when user stops music"""
+        pass
+
+    def onMusicEnd(self):
+        """Callback when music ends"""
+        pass
+
 def ifI2C(add):
 	add = hex(add)
 	p = subprocess.Popen(['i2cdetect', '-y','1'],stdout=subprocess.PIPE,)
@@ -935,7 +1051,7 @@ def time_converter(time):
         int(time)
     ).strftime('%I:%M %p')
     return converted_time
-
+#weather icon
 def get_icon_name(data):
 	icon = "na.png"
 	if data == "200" or data == "211" or data == "212" or data == "221" or data == "905" or data == "960" or data == "961":
@@ -1110,7 +1226,119 @@ def read_esp(add, com_typ):
     else:
         data_nf = "ESP not found"
         return data_nf
+#rsa
+def ifprim(n):
+    pruefung = 0
+    if n <= 1:
+        return 0
+    for i in range (2,  n):
+        if n * 1.0 % i == 0:
+            pruefung = 1
+            break
+        else:
+            pruefung = 0
+    if pruefung == 1:
+        return 0
+    else:
+        return 1
 
+def generate_keys(P,q):
+    N=P*q
+    e=0
+    PFIn = (P-1) * (q-1)
+    v = PFIn - 10
+    for n in range(v):
+        if ifprim(v) != 1:
+            v = v - 1
+        else:
+            e=v
+            break
+    open_key = str(e)+","+str(N)
+    q = []
+    r = []
+    x = []
+    y =[]  
+    b = 0
+    q_a = e // PFIn
+    r_a = e % PFIn
+    b = PFIn
+    q.append(q_a)
+    r.append(r_a)
+    if r_a != 0:
+        q_a = b // r_a 
+        r_a = b % r_a
+        q.append(q_a)
+        r.append(r_a)
+    if r_a != 0:
+        for n in range(r_a):
+            z = len(r)
+            cach_q = r[z-2]//r[z-1]
+            cach_r = r[z-2]%r[z-1]
+            q.append(cach_q)
+            r.append(cach_r)
+            if cach_r == 0:
+                x.append(0)
+                y.append(1*r[z-1])
+                break
+    z = len(r)
+    zzp = 2
+    for n in range(z-1):
+        zz = len(x)
+        cach_y = x[zz-1] - q[z-zzp] * y[zz-1]
+        x.append(y[zz-1])
+        y.append(cach_y)
+        zzp += 1
+    d = x[len(x)-1]
+    private_key = str(d)+","+str(N)
+    return open_key+"-"+private_key
+
+def crypt(open_key, msg):
+    letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZüöäÜÖÄ"
+    cach = msg.split(" ")
+    z = len(cach)
+    msg_c = ""
+    for n in range(z):
+        zz = len(cach[n])
+        word = ""
+        for m in range(zz):
+            nu = letters.find(cach[n][m])
+            key_sp = open_key.split(",")
+            key_a = int(key_sp[0])
+            key_b = int(key_sp[1])
+            co = pow(nu, key_a, key_b)
+            if m == 0:
+                word = str(co)
+            else:
+                word = word + "-" + str(co)
+        if n == 0:
+            msg_c = word
+        else:
+            msg_c = msg_c + "_" + word
+    return base64.b64encode(msg_c.encode()).decode()
+
+def decrypt(private_key, msg):
+    letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZüöäÜÖÄ"
+    msg = base64.b64decode(msg).decode()
+    cach = msg.split("_")
+    z = len(cach)
+    msg_c = ""
+    for n in range(z):
+        cach_l = cach[n].split("-")
+        zz = len(cach_l)
+        word = ""
+        for m in range(zz):
+            nu = int(cach_l[m])
+            key_sp = private_key.split(",")
+            key_a = int(key_sp[0])
+            key_b = int(key_sp[1])
+            co = pow(nu, key_a, key_b)
+            word = word + letters[co]
+        if n == 0:
+            msg_c = word
+        else:
+            msg_c = msg_c + " " + word
+    return msg_c
+#-----------------------------------------
 class i2c_msg(Structure):
     _fields_ = [
         ('addr', c_uint16),
