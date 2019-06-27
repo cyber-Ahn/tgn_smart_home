@@ -1,9 +1,3 @@
-#pip3 install pexpect / update tgnLIB
-
-#add gui in loop
-#folder 
-#open file
-
 import subprocess
 from tkinter import *
 from tkinter.filedialog import askopenfilename
