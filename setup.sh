@@ -59,6 +59,7 @@ sudo pip3 install gTTS
 sudo pip3 install feedparser
 sudo pip3 install gitpython
 sudo apt-get -y install lirc
+sudo pip3 install pexpect
 sleep 5
 
 clear
