@@ -103,11 +103,12 @@ rssfeed = "no feed"
 rssurl = "empty"
 rsslang = "en"
 #PiHole
-api_url = 'http://localhost/admin/api.php'
+api_url = 'http://192.168.0.94/admin/api.php'
 
 #functions
 def ini():
 	os.system('clear')
+	global spr
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
@@ -179,7 +180,6 @@ def ini():
 	global channel_id
 	global write_key
 	global read_key
-	global spr
 	global spr_phat
 	global textcpu
 	global textswitch
@@ -1276,11 +1276,16 @@ class Window(Frame):
 					mylcd.lcd_display_string("IP:"+get_ip(), 2, 0)
 				if counterLCD == 60 and LCDpower == 1:
 					mylcd.lcd_clear()
-					r = requests.get(api_url)
-					dataPIhole = json.loads(r.text)
-					DNSQUERIES = dataPIhole['dns_queries_today']
-					ADSBLOCKED = dataPIhole['ads_blocked_today']
-					CLIENTS = dataPIhole['unique_clients']
+					if is_connected(api_url)=="Offline":
+						r = requests.get(api_url)
+						dataPIhole = json.loads(r.text)
+						DNSQUERIES = dataPIhole['dns_queries_today']
+						ADSBLOCKED = dataPIhole['ads_blocked_today']
+						CLIENTS = dataPIhole['unique_clients']
+					else:
+						DNSQUERIES = "XXX"
+						ADSBLOCKED = "XXX"
+						CLIENTS = "XXX"
 					mylcd.lcd_display_string("Ad Blocked:"+str(ADSBLOCKED), 1, 0)
 					mylcd.lcd_display_string("Queries:"+str(DNSQUERIES), 2, 0)
 					counterLCD = 0
@@ -1311,12 +1316,16 @@ class WindowB(Frame):
 			global the_timeb
 			newtime = time.time()
 			if newtime != the_timeb:
-				r = requests.get(api_url)
-				global ttiv
-				dataPIhole = json.loads(r.text)
-				DNSQUERIES = dataPIhole['dns_queries_today']
-				ADSBLOCKED = dataPIhole['ads_blocked_today']
-				CLIENTS = dataPIhole['unique_clients']
+				if is_connected(api_url)=="Offline":
+					r = requests.get(api_url)
+					dataPIhole = json.loads(r.text)
+					DNSQUERIES = dataPIhole['dns_queries_today']
+					ADSBLOCKED = dataPIhole['ads_blocked_today']
+					CLIENTS = dataPIhole['unique_clients']
+				else:
+					DNSQUERIES = "XXX"
+					ADSBLOCKED = "XXX"
+					CLIENTS = "XXX"
 				temp_data = "Room Luxmeter:"
 				try:
 					f = open(spr_phat+"text.config","r")
@@ -1330,6 +1339,7 @@ class WindowB(Frame):
 				if is_connected(REMOTE_SERVER)=="Online":
 					global esp_ls
 					global rssfeed
+					global ttiv
 					if rssurl == "empty":
 						rssfeed = "Please set a Newsfeed"
 					else:
@@ -1439,42 +1449,36 @@ class WindowC(Frame):
 			self.canvas.move('text', 450 + self.text_length, 0)
 		self.canvas.after(50, self.scroll_text)
 def spt1():
-	global spr
 	spr = "de"
 	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(1))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt2():
-	global spr
 	spr = "en"
 	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(2))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt3():
-	global spr
 	spr = "fr"
 	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(3))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt4():
-	global spr
 	spr = "ru"
 	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(4))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt5():
-	global spr
 	spr = "ja"
 	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(5))
 	time.sleep(1)
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def spt6():
-	global spr
 	spr = "zh"
 	Process(target=sound).start()
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(6))
@@ -1543,7 +1547,7 @@ def webplayer():
 def callback110():
 	Process(target=webplayer).start()
 #Main Prog
-Process(target=splash).start()
+#Process(target=splash).start()
 ini()
 if LCDpower == 1:
 	mylcd.lcd_display_string("TGN Smart Home", 1, 1)
