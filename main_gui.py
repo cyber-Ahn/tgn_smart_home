@@ -1276,7 +1276,7 @@ class Window(Frame):
 					mylcd.lcd_display_string("IP:"+get_ip(), 2, 0)
 				if counterLCD == 60 and LCDpower == 1:
 					mylcd.lcd_clear()
-					if is_connected(api_url)=="Offline":
+					if is_connected(api_url)=="Online":
 						r = requests.get(api_url)
 						dataPIhole = json.loads(r.text)
 						DNSQUERIES = dataPIhole['dns_queries_today']
@@ -1316,7 +1316,7 @@ class WindowB(Frame):
 			global the_timeb
 			newtime = time.time()
 			if newtime != the_timeb:
-				if is_connected(api_url)=="Offline":
+				if is_connected(api_url)=="Online":
 					r = requests.get(api_url)
 					dataPIhole = json.loads(r.text)
 					DNSQUERIES = dataPIhole['dns_queries_today']
