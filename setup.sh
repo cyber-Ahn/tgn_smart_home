@@ -112,7 +112,7 @@ sleep 5
 clear
 fi
 
-echo -e "\e[33m>> \e[31mInstall PiHole not for PI4 (y/n)?\e[32m"
+echo -e "\e[33m>> \e[31mInstall PiHole (y/n)?\e[32m"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then
 curl -sSL https://install.pi-hole.net | bash
@@ -206,15 +206,6 @@ echo "deb https://packagecloud.io/headmelted/codebuilds/raspbian/ jessie main" >
 sleep 2
 sudo apt-get update
 sudo apt-get install code-oss
-sleep 3
-clear
-fi
-
-echo -e "\e[33m>> \e[31mInstall Code-OSSm PI4 (y/n)?\e[32m"
-read answer
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-wget https://packagecloud.io/headmelted/codebuilds/gpgkey -O - | sudo apt-key add -
-curl -L https://code.headmelted.com/installers/apt.sh | sudo bash
 sleep 3
 clear
 fi
