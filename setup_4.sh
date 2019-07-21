@@ -58,7 +58,6 @@ sudo pip3 install thingspeak
 sudo pip3 install gTTS
 sudo pip3 install feedparser
 sudo pip3 install gitpython
-sudo apt-get -y install lirc
 sudo pip3 install pexpect
 sleep 5
 
@@ -124,14 +123,6 @@ sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_broker.sh /home/pi
 
-sudo mv /home/pi/tgn_smart_home/setup_files/lircd.conf /etc/lirc
-sudo mv /home/pi/tgn_smart_home/setup_files/lirc_options.conf /etc/lirc
-sudo mv /home/pi/tgn_smart_home/setup_files/hardware.conf /etc/lirc
-sudo mv /home/pi/tgn_smart_home/setup_files/unitymedia_samsung.lircd.conf /etc/lirc/lircd.conf.d
-echo "dtoverlay=lirc-rpi,gpio_in_pin=18,gpio_out_pin=23" >> /boot/config.txt
-echo "lirc_rpi" >> /etc/modules
-echo "lirc_dev" >> /etc/modules
-
 cd ..
 sudo chmod +x /home/pi/start_main_gui.sh
 sudo chmod +x /home/pi/start_mqtt_broker.sh
@@ -192,12 +183,14 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
 wget https://packagecloud.io/headmelted/codebuilds/gpgkey -O - | sudo apt-key add -
 curl -L https://code.headmelted.com/installers/apt.sh | sudo bash
 sleep 3
+sudo apt-get purge code-oss
+sudo apt-get install code-oss=1.29.0-1539702286
+sudo apt-mark hold code-oss
 clear
 fi
 
 echo -e "\e[33m>> \e[31mInstall MQTT-Server\e[32m"
 sudo apt-get -y install libwebsockets3
-sudo apt-get -y install libssl1.0.0
 sudo apt-get -y install mosquitto
 sudo apt install mosquitto mosquitto-clients
 pip3 install paho-mqtt
