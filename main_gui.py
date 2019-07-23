@@ -153,7 +153,6 @@ def ini():
 	global s2
 	global s3
 	global s4
-	global ondays
 	global b1
 	global b2
 	global b3
@@ -579,8 +578,6 @@ def on():
 	if son == 0:
 		soff = 0
 		son = 1
-		Process(target=sound).start()
-		Process(target=TextToSpeech, args=((data[23].rstrip()),spr)).start()
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh Automatic_on ' + pushbulletkey)
 		if s1 == "1":
 			client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
@@ -590,14 +587,13 @@ def on():
 			client.publish("tgn/buttons/status/3","1",qos=0,retain=True)
 		if s4 == "1":
 			client.publish("tgn/buttons/status/4","1",qos=0,retain=True)
+		Process(target=TextToSpeech, args=((data[23].rstrip()),spr)).start()
 def off():
 	global son
 	global soff
 	if soff == 0:
 		soff = 1
 		son = 0
-		Process(target=sound).start()
-		Process(target=TextToSpeech, args=((data[24].rstrip()),spr)).start()
 		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh Automatic_off ' + pushbulletkey)
 		if s1 == "1":
 			client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
@@ -607,6 +603,7 @@ def off():
 			client.publish("tgn/buttons/status/3","0",qos=0,retain=True)
 		if s4 == "1":
 			client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
+		Process(target=TextToSpeech, args=((data[24].rstrip()),spr)).start()
 def sound():
 	if su==1:
 		if colorSet <= 8:
@@ -629,7 +626,7 @@ def pcf8563ReadTimeB():
 	cach_time = ""
 	time_out = ""
 	if RTCpower == 1:
-		t = bus.read_i2c_block_data(address,register,7);
+		t = bus.read_i2c_block_data(address,register,7)
 		t[0] = t[0]&0x7F  #sec
 		t[1] = t[1]&0x7F  #min
 		t[2] = t[2]&0x3F  #hour
@@ -1281,11 +1278,9 @@ class Window(Frame):
 						dataPIhole = json.loads(r.text)
 						DNSQUERIES = dataPIhole['dns_queries_today']
 						ADSBLOCKED = dataPIhole['ads_blocked_today']
-						CLIENTS = dataPIhole['unique_clients']
 					except:
 						DNSQUERIES = "XXX"
 						ADSBLOCKED = "XXX"
-						CLIENTS = "XXX"
 					mylcd.lcd_display_string("Ad Blocked:"+str(ADSBLOCKED), 1, 0)
 					mylcd.lcd_display_string("Queries:"+str(DNSQUERIES), 2, 0)
 					counterLCD = 0
@@ -1356,7 +1351,6 @@ class WindowB(Frame):
 						off()
 					if allowed_key(openweatherkey) == "yes":
 						data = weather_info(zipcode,openweatherkey)
-						m_symbol = '\xb0' + 'C'
 						output = output+(dataText[24].rstrip())+data['city']+','+data['country']+'\n'
 						output = output+str(data['temp'])+'°C  '+data['sky']+' '
 						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'°C, '+(dataText[26].rstrip())+str(data['temp_min'])+'°C\n'
