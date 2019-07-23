@@ -37,7 +37,7 @@ from time import localtime
 address = 0x51
 register = 0x02
 zone = 0
-w  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+w  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
 bus = smbus.SMBus(1)
 
 RPI_DEFAULT_I2C_NEW = 0x01
@@ -573,7 +573,7 @@ class lcd:
       elif state == 0:
          self.lcd_device.write_cmd(LCD_NOBACKLIGHT)
    def lcd_load_custom_chars(self, fontdata):
-      self.lcd_write(0x40);
+      self.lcd_write(0x40)
       for char in fontdata:
          for line in char:
             self.lcd_write_char(line)
@@ -1003,7 +1003,7 @@ def getCpuTemperature():
 	return float(cpu_temp)/1000
 
 def pcf8563ReadTime():
-	t = bus.read_i2c_block_data(address,register,7);
+	t = bus.read_i2c_block_data(address,register,7)
 	t[0] = t[0]&0x7F  #sec
 	t[1] = t[1]&0x7F  #min
 	t[2] = t[2]&0x3F  #hour
@@ -1610,71 +1610,71 @@ class TM1637:
     __doublePoint = False
     __Clkpin = 0
     __Datapin = 0
-    __brightnes = BRIGHT_TYPICAL;
-    __currentData = [0,0,0,0];
+    __brightnes = BRIGHT_TYPICAL
+    __currentData = [0,0,0,0]
 	
     def __init__( self, pinClock, pinData, brightnes ):
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         self.__Clkpin = pinClock
         self.__Datapin = pinData
-        self.__brightnes = brightnes;
+        self.__brightnes = brightnes
         GPIO.setup(self.__Clkpin,OUTPUT)
         GPIO.setup(self.__Datapin,OUTPUT)
 
     def Clear(self):
-        b = self.__brightnes;
-        point = self.__doublePoint;
-        self.__brightnes = 0;
-        self.__doublePoint = False;
-        data = [0x7F,0x7F,0x7F,0x7F];
-        self.Show(data);
-        self.__brightnes = b;
-        self.__doublePoint = point;
+        b = self.__brightnes
+        point = self.__doublePoint
+        self.__brightnes = 0
+        self.__doublePoint = False
+        data = [0x7F,0x7F,0x7F,0x7F]
+        self.Show(data)
+        self.__brightnes = b
+        self.__doublePoint = point
 
     def Show( self, data ):
         for i in range(0,4):
-            self.__currentData[i] = data[i];
-        self.start();
-        self.writeByte(ADDR_AUTO);
-        self.stop();
-        self.start();
-        self.writeByte(STARTADDR);
+            self.__currentData[i] = data[i]
+        self.start()
+        self.writeByte(ADDR_AUTO)
+        self.stop()
+        self.start()
+        self.writeByte(STARTADDR)
         for i in range(0,4):
-            self.writeByte(self.coding(data[i]));
-        self.stop();
-        self.start();
-        self.writeByte(0x88 + self.__brightnes);
-        self.stop();
+            self.writeByte(self.coding(data[i]))
+        self.stop()
+        self.start()
+        self.writeByte(0x88 + self.__brightnes)
+        self.stop()
 
     def Show1(self, DigitNumber, data):
         if( DigitNumber < 0 or DigitNumber > 3):
-            return;
-        self.__currentData[DigitNumber] = data;
-        self.start();
-        self.writeByte(ADDR_FIXED);
-        self.stop();
-        self.start();
-        self.writeByte(STARTADDR | DigitNumber);
-        self.writeByte(self.coding(data));
-        self.stop();
-        self.start();
-        self.writeByte(0x88 + self.__brightnes);
-        self.stop();
+            return
+        self.__currentData[DigitNumber] = data
+        self.start()
+        self.writeByte(ADDR_FIXED)
+        self.stop()
+        self.start()
+        self.writeByte(STARTADDR | DigitNumber)
+        self.writeByte(self.coding(data))
+        self.stop()
+        self.start()
+        self.writeByte(0x88 + self.__brightnes)
+        self.stop()
 		
     def SetBrightnes(self, brightnes):
         if( brightnes > 7 ):
-            brightnes = 7;
+            brightnes = 7
         elif( brightnes < 0 ):
-            brightnes = 0;
+            brightnes = 0
         if( self.__brightnes != brightnes):
-            self.__brightnes = brightnes;
-            self.Show(self.__currentData);
+            self.__brightnes = brightnes
+            self.Show(self.__currentData)
 
     def ShowDoublepoint(self, on):
         if( self.__doublePoint != on):
-            self.__doublePoint = on;
-            self.Show(self.__currentData);
+            self.__doublePoint = on
+            self.Show(self.__currentData)
 			
     def writeByte( self, data ):
         for i in range(0,8):
@@ -1713,11 +1713,11 @@ class TM1637:
         if( self.__doublePoint ):
             pointData = 0x80
         else:
-            pointData = 0;
+            pointData = 0
         if(data == 0x7F):
             data = 0
         else:
-            data = HexDigits[data] + pointData;
+            data = HexDigits[data] + pointData
         return data
 
 class keypad_GPIO():
