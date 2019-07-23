@@ -223,5 +223,7 @@ sudo rm -fr /home/pi/tgn_smart_home/setup_files
 clear
 
 echo -e "\e[31m\e[7m>>\e[0m \e[33mReboot System in 10 sec \e[31m\e[7m<<\e[0m"
+sudo rm -fr /home/pi/tgn_smart_home/setup.sh
+sudo rm -fr /home/pi/tgn_smart_home/setup_4.sh
 sleep 10
 reboot
