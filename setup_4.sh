@@ -2,16 +2,16 @@
 #title:          tgn_smart_home
 #description:    Automated TGN Smart Home Installation
 #author:         cyber Ahn
-#date:           20181112
-#version:        2.0
-#usage:          sudo bash setup.sh
+#date:           20190720
+#version:        2.1
+#usage:          sudo bash setup_4.sh
 #Support:        http:caworks-sl.de/TGN
-#OS:             Debian_Stretch_Raspbian_2018.07 / Python3.7 !!!
+#OS:             2019-07-10-raspbian-buster / Python3.7 !!!
 #==============================================================================
 
 echo -e "\e[32m#######################################################"
 echo -e "\e[32m####      \e[31mtgn_smart_home INSTALLATION FOR           \e[32m###"
-echo -e "\e[32m####           \e[31mRASPBERRY PI 3 & PI 3 B+             \e[32m###"
+echo -e "\e[32m####           \e[31mRASPBERRY PI 4                       \e[32m###"
 echo -e "\e[32m####               \e[33mby cyber Ahn                     \e[32m###"
 echo -e "\e[32m####           \e[34mhttp://caworks-sl.de                 \e[32m###"
 echo -e "\e[32m#######################################################"
@@ -201,5 +201,7 @@ sudo rm -fr /home/pi/tgn_smart_home/setup_files
 clear
 
 echo -e "\e[31m\e[7m>>\e[0m \e[33mReboot System in 10 sec \e[31m\e[7m<<\e[0m"
+sudo rm -fr /home/pi/tgn_smart_home/setup.sh
+sudo rm -fr /home/pi/tgn_smart_home/setup_4.sh
 sleep 10
 reboot
