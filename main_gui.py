@@ -1388,12 +1388,12 @@ class WindowB(Frame):
 						output = output+(dataText[35].rstrip())+'\n'
 					output = output+'---------------------------------------------------------\n'
 				output = output+'Ad Blocked:'+str(ADSBLOCKED)+' Client:'+str(CLIENTS)+' DNS Queries:'+str(DNSQUERIES)
-				#channel = thingspeak.Channel(id=channel_id, write_key=write_key, api_key=read_key)
+				channel = thingspeak.Channel(id=channel_id, write_key=write_key, api_key=read_key)
 				global cpu_t
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
 					timespl = format_time(pcf8563ReadTime()).split(" ")
-					#print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
+					print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				global afbground
@@ -1541,7 +1541,6 @@ def webplayer():
 def callback110():
 	Process(target=webplayer).start()
 #Main Prog
-#Process(target=splash).start()
 ini()
 if LCDpower == 1:
 	mylcd.lcd_display_string("TGN Smart Home", 1, 1)
@@ -1563,7 +1562,7 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 
 def normal_screen():
 	root = Tk()
-	#sfullscreen mode
+	#fullscreen mode
 	WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
 	root.overrideredirect(screen) 
 	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
@@ -1862,7 +1861,7 @@ def normal_screen():
 
 def lcars_screen():
 	root = Tk()
-	#sfullscreen mode
+	#fullscreen mode
 	WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
 	root.overrideredirect(screen) 
 	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
