@@ -54,7 +54,7 @@ sudo apt-get -y install mpg321
 sudo apt-get -y install gir1.2-gstreamer-1.0
 sudo apt-get -y install gir1.2-gst-plugins-base-1.0
 sudo apt-get -y install python3-pil.imagetk
-sudo pip3 install thingspeak
+sudo pip3 install thingspeak==0.4.1
 sudo pip3 install gTTS
 sudo pip3 install feedparser
 sudo pip3 install gitpython
