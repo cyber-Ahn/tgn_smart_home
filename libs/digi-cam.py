@@ -81,16 +81,6 @@ def make_image():
 	if sound == "on":
 		os.system('mpg321 /home/pi/tgn_smart_home/sounds/flash.mp3 &')
 
-def pcf8563ReadTime():
-	t = bus.read_i2c_block_data(address,register,7);
-	t[0] = t[0]&0x7F  #sec
-	t[1] = t[1]&0x7F  #min
-	t[2] = t[2]&0x3F  #hour
-	t[3] = t[3]&0x3F  #day
-	t[4] = t[4]&0x07  #month   -> dayname
-	t[5] = t[5]&0x1F  #dayname -> month
-	return("20%x/%x/%x %x:%x:%x  %s" %(t[6],t[5],t[3],t[2],t[1],t[0],w[t[4]]))
-
 ini()
 camera.start_preview()
 camera.led = False
@@ -104,7 +94,7 @@ while x == True:
 			mcp.output(1, 1)
 			make_image()
 			time.sleep(4)
-			camera.led = Fals
+			camera.led = False
 			mcp.output(1, 0)
 		if mcp.input(10) >> 10 == 1:
 			print("recording")

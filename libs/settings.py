@@ -1158,8 +1158,6 @@ if command == "save_nfc":
 	save_nfc()
 if command == "remove_nfc":
 	remove_nfc()
-if command == "read_nfc":
-	read_nfc()
 if command == "show_nfc":
 	show_nfc()
 if command == "thinkspeak":
@@ -1168,8 +1166,6 @@ if command == "webapp":
 	webapp_settings()
 if command == "alarm":
 	alarm_settings()
-if command == "esp":
-	esp_settings()
 if command == "rss":
 	rss_settings()
 if command == "update":
