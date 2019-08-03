@@ -556,6 +556,7 @@ def ini():
 	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
 	client.publish("tgn/mqtt-msg","System Online",qos=0,retain=True)
+	#tgn_sonoff(sonoff_topic,sonoff_homecode,i_modul,i_channel,i_status,i_ip)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
@@ -1083,6 +1084,9 @@ def callback44():
 	os.system(setn)
 	time.sleep(5)
 	os.execv(sys.executable, ['python3'] + sys.argv)
+def sonoff_set(mod, stati):
+	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/tgn_sonoff.py "+mod+" 0 "+stati+" "+get_ip()
+	os.system(setn)
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
@@ -1135,37 +1139,55 @@ def on_message(client, userdata, message):
 	if(message.topic=="tgn/buttons/status/6"):
 		if(int(message.payload.decode("utf-8")) != b6):
 			b6 = int(message.payload.decode("utf-8"))
-			send(6,b6)
+			if "sonoff" in buttons[5]:
+				sonoff_set("6", str(b6))
+			else:
+				send(6,b6)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
 			Process(target=TextToSpeech, args=(buttons[5],spr)).start()
 	if(message.topic=="tgn/buttons/status/5"):
 		if(int(message.payload.decode("utf-8")) != b5):
 			b5 = int(message.payload.decode("utf-8"))
-			send(5,b5)
+			if "sonoff" in buttons[4]:
+				sonoff_set("5", str(b5))
+			else:
+				send(5,b5)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x05,str(b5))
 			Process(target=TextToSpeech, args=(buttons[4],spr)).start()
 	if(message.topic=="tgn/buttons/status/4"):
 		if(int(message.payload.decode("utf-8")) != b4):
 			b4 = int(message.payload.decode("utf-8"))
-			send(4,b4)
+			if "sonoff" in buttons[3]:
+				sonoff_set("4", str(b4))
+			else:
+				send(4,b4)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x04,str(b4))
 			Process(target=TextToSpeech, args=(buttons[3],spr)).start()
 	if(message.topic=="tgn/buttons/status/3"):
 		if(int(message.payload.decode("utf-8")) != b3):
 			b3 = int(message.payload.decode("utf-8"))
-			send(3,b3)
+			if "sonoff" in buttons[2]:
+				sonoff_set("3", str(b3))
+			else:
+				send(3,b3)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x03,str(b3))
 			Process(target=TextToSpeech, args=(buttons[2],spr)).start()
 	if(message.topic=="tgn/buttons/status/2"):
 		if(int(message.payload.decode("utf-8")) != b2):
 			b2 = int(message.payload.decode("utf-8"))
-			send(2,b2)
+			if "sonoff" in buttons[1]:
+				sonoff_set("2", str(b2))
+			else:
+				send(2,b2)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x02,str(b2))
 			Process(target=TextToSpeech, args=(buttons[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/1"):
 		if(int(message.payload.decode("utf-8")) != b1):
 			b1 = int(message.payload.decode("utf-8"))
-			send(1,b1)
+			if "sonoff" in buttons[0]:
+				sonoff_set("1", str(b1))
+			else:
+				send(1,b1)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x01,str(b1))
 			Process(target=TextToSpeech, args=(buttons[0],spr)).start()
 	if(message.topic=="tgn/system/shutdown"):
@@ -1383,6 +1405,12 @@ class WindowB(Frame):
 						client.publish("tgn/room/light",readLight(),qos=0,retain=True)
 						client.publish("tgn/weather/icon",str(data['icon']),qos=0,retain=True)
 						global we_cach
+						if data['sky'] == "Rain":
+							sonoff_set("6", "1")
+						elif data['sky'] == "Thunderstorm":
+							sonoff_set("6", "1")
+						else:
+							sonoff_set("6", "0")
 						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" °C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
