@@ -59,6 +59,7 @@ sudo pip3 install gTTS
 sudo pip3 install feedparser
 sudo pip3 install gitpython
 sudo pip3 install pexpect
+sudo pip3 install py-enigma
 sleep 5
 
 clear
