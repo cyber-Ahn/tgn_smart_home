@@ -109,6 +109,7 @@ api_url = 'http://192.168.0.94/admin/api.php'
 def ini():
 	os.system('clear')
 	global spr
+	Process(target=splash).start()
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
