@@ -532,6 +532,7 @@ def ini():
 	#send status to mqtt
 	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
+	client.publish("tgn/bot/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
 	client.publish("tgn/system/weather","0",qos=0,retain=True)
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
@@ -557,7 +558,6 @@ def ini():
 	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
 	client.publish("tgn/mqtt-msg","System Online",qos=0,retain=True)
-	#tgn_sonoff(sonoff_topic,sonoff_homecode,i_modul,i_channel,i_status,i_ip)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
@@ -1088,6 +1088,9 @@ def callback44():
 def sonoff_set(mod, stati):
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/tgn_sonoff.py "+mod+" 0 "+stati+" "+get_ip()
 	os.system(setn)
+def bot_down():
+	client.publish("tgn/bot/shutdown","1",qos=0,retain=True)
+	Process(target=sound).start()
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
@@ -2088,7 +2091,7 @@ def lcars_screen():
 
 	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback15)
 	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback16)
+	B2 = Button(buttonFrame2, text="Bot Shutdow", bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=bot_down)
 	B2.grid(row=1, column=1, padx=10, pady=3)
 	if ifI2C(NFC_ADDRESS) == "found device":
 		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback30)
