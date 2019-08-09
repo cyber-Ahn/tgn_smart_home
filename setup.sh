@@ -60,6 +60,7 @@ sudo pip3 install feedparser
 sudo pip3 install gitpython
 sudo apt-get -y install lirc
 sudo pip3 install pexpect
+sudo pip3 install py-enigma
 sleep 5
 
 clear
@@ -133,7 +134,6 @@ sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_broker.sh /home/pi
-
 sudo mv /home/pi/tgn_smart_home/setup_files/lircd.conf /etc/lirc
 sudo mv /home/pi/tgn_smart_home/setup_files/lirc_options.conf /etc/lirc
 sudo mv /home/pi/tgn_smart_home/setup_files/hardware.conf /etc/lirc
