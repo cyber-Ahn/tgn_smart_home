@@ -15,6 +15,7 @@ import RPi.GPIO as GPIO
 import requests
 import re
 import pexpect
+import paho.mqtt.client as mqtt
 import speech_recognition as sr
 import sys
 import smbus
@@ -27,12 +28,14 @@ import urllib.request
 import zipfile
 from ctypes import c_int, c_uint16, c_ushort, c_short, c_ubyte, c_char, POINTER, Structure, create_string_buffer, sizeof, byref, addressof, string_at
 from contextlib import closing
+from enigma.machine import EnigmaMachine
 from fcntl import ioctl
 from gtts import gTTS
 from threading import Thread
 from time import gmtime, strftime
 from time import sleep
 from time import localtime
+
 
 address = 0x51
 register = 0x02
@@ -1171,6 +1174,21 @@ def SpeechToText(la,api_key):
     		return("Google Speech Recognition could not understand audio")
 	except sr.RequestError as e:
     		return("Could not request results from Google Speech Recognition service; {0}".format(e))
+
+def enigma_run(ciphertext,mode,keyfile):
+       data = []
+       f = open(keyfile, "r")
+       for x in f:
+              data.append(x.rstrip())
+       f.close()
+       machine = EnigmaMachine.from_key_sheet(rotors=data[0],reflector=data[1],ring_settings=[int(data[2]), int(data[3]), int(data[4])],plugboard_settings=data[5])
+       machine.set_display(data[6])
+       msg_key = machine.process_text(data[7])
+       machine.set_display(msg_key)
+       text = machine.process_text(ciphertext.upper())
+       if mode == 'decode':
+              text = text.replace("X", " ")
+       return text
 
 def revision():
     try:
