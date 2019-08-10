@@ -1553,19 +1553,27 @@ def color_neo():
 	color_set = c_x[0]+"."+c_y[0]+"."+c_z[0]
 	client.publish("tgn/esp_3/neopixel/color",color_set,qos=0,retain=True)
 	Process(target=sound).start()
-def splash():
-	import tkinter as tk
-	root = tk.Tk()
-	root.overrideredirect(True)
-	WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
-	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
-	image_file = "/home/pi/tgn_smart_home/icons/splashScreen.gif"
-	image = tk.PhotoImage(file=image_file)
-	canvas = tk.Canvas(root, height=WMHEIGHT, width=WMWIDTH, bg="black")
-	canvas.create_image(WMWIDTH/2, WMHEIGHT/2, image=image)
-	canvas.pack()
-	root.after(45000, root.destroy)
-	root.mainloop()
+	def splash():
+		import tkinter as tk
+		root = tk.Tk()
+		root.overrideredirect(True)
+		WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
+		root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
+		image_file = "/home/pi/tgn_smart_home/icons/splashScreen.gif"
+		fra = 40
+		frames = [tk.PhotoImage(file=image_file,format = 'gif -index %i' %(i)) for i in range(fra)]
+		def update(ind):
+			frame = frames[ind]
+			ind += 1
+			if ind >= fra:
+				ind = 1
+			label.configure(image=frame)
+			root.after(100, update, ind)
+		label = tk.Label(root, height=WMHEIGHT, width=WMWIDTH, bg="black")
+		label.pack()
+		root.after(0, update, 0)
+		root.after(45000, root.destroy)
+		root.mainloop()
 def webplayer():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/mediaplayer.py"
 	Process(target=sound).start()
