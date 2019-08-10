@@ -35,6 +35,7 @@ from threading import Thread
 from time import gmtime, strftime
 from time import sleep
 from time import localtime
+from twython import Twython
 
 
 address = 0x51
@@ -738,6 +739,39 @@ def is_connected(hostname):
   except:
      pass
   return "Offline"
+
+def ping(hostname):
+    response = os.system("ping -c 1 " + hostname)
+    if response == 0:
+        return 'Online'
+    else:
+        return 'Offline'
+
+def send_twitter(message,image):
+    from tw_auth import (consumer_key,consumer_secret,access_token,access_token_secret)
+    twitter = Twython(consumer_key,consumer_secret,access_token,access_token_secret)
+    if image != "":
+        ima = open(image, 'rb')
+        response = twitter.upload_media(media=ima)
+        media_id = [response['media_id']]
+        twitter.update_status(status=message, media_ids=media_id)
+        print("Tweeted: %s" % message)
+        print("Image: %s" % image)
+    else:
+        twitter.update_status(status=message)
+        print("Tweeted: %s" % message)
+
+def stream_twitter(search):
+    from twython import TwythonStreamer
+    from tw_auth import (consumer_key,consumer_secret,access_token,access_token_secret)
+    class MyStreamer(TwythonStreamer):
+        def on_success(self, data):
+            if 'text' in data:
+                username = data['user']['screen_name']
+                tweet = data['text']
+                print("@{}: {}".format(username, tweet))
+    stream = MyStreamer(consumer_key,consumer_secret,access_token,access_token_secret)
+    stream.statuses.filter(track=search)
 
 def get_BMP085():
     sensor = BMP085.BMP085()
