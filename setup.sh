@@ -55,12 +55,12 @@ sudo apt-get -y install gir1.2-gstreamer-1.0
 sudo apt-get -y install gir1.2-gst-plugins-base-1.0
 sudo apt-get -y install python3-pil.imagetk
 sudo pip3 install thingspeak==0.4.1
-sudo pip3 install gTTS
-sudo pip3 install feedparser
-sudo pip3 install gitpython
+sudo pip3 install gTTS==2.0.3
+sudo pip3 install feedparser==5.2.1
+sudo pip3 install gitpython==2.1.11
 sudo apt-get -y install lirc
-sudo pip3 install pexpect
-sudo pip3 install py-enigma
+sudo pip3 install pexpect==4.7.0
+sudo pip3 install py-enigma==0.1
 sleep 5
 
 clear
