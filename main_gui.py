@@ -1120,14 +1120,15 @@ def on_message(client, userdata, message):
 		esp_li_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/button/b1"):
 		esp_b1_2 = str(message.payload.decode("utf-8"))
-		if(esp_b1_2 == "off"):
-			mcp.output(6, 1)
-			mcp.output(7, 0)
-			esp_b1_2 = "No Rain"
-		else:
-			mcp.output(7, 1)
-			mcp.output(6, 0)
-			esp_b1_2 = "Rain"	
+		if MCPpower == 1:
+			if(esp_b1_2 == "off"):
+				mcp.output(6, 1)
+				mcp.output(7, 0)
+				esp_b1_2 = "No Rain"
+			else:
+				mcp.output(7, 1)
+				mcp.output(6, 0)
+				esp_b1_2 = "Rain"	
 	if(message.topic=="tgn/esp_1/temp/sensor_1"):
 		esp_temp = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/temp/sensor_2"):
@@ -1242,12 +1243,11 @@ class Window(Frame):
 			global mqtt_msg_cach
 			newtime = time.time()
 			if newtime != the_time:
-				mcp.output(0, 0)
+				if MCPpower == 1:
+					mcp.output(0, 0)
 				if mqtt_msg != mqtt_msg_cach:
 					mqtt_msg_cach = mqtt_msg
 					Process(target=TextToSpeech, args=(mqtt_msg,spr)).start()
-				if float(esp_temp) >= float(esp_temp_2):
-					mcp.output(0, 1)
 				if MCPpower == 1:
 					if mcp.input(8) >> 8 == 1:
 						callback7() #digi-cam
@@ -1261,6 +1261,8 @@ class Window(Frame):
 						all_on()     #all on
 					if mcp.input(15) >> 15 == 1:
 						callback15()     #shutdown
+					if float(esp_temp) >= float(esp_temp_2):
+						mcp.output(0, 1)
 				stats = textswitch
 				try:
 					client.publish("tgn/cpu/temp",str(round(getCpuTemperature(),1)),qos=0,retain=True)
@@ -1553,27 +1555,27 @@ def color_neo():
 	color_set = c_x[0]+"."+c_y[0]+"."+c_z[0]
 	client.publish("tgn/esp_3/neopixel/color",color_set,qos=0,retain=True)
 	Process(target=sound).start()
-	def splash():
-		import tkinter as tk
-		root = tk.Tk()
-		root.overrideredirect(True)
-		WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
-		root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
-		image_file = "/home/pi/tgn_smart_home/icons/splashScreen.gif"
-		fra = 40
-		frames = [tk.PhotoImage(file=image_file,format = 'gif -index %i' %(i)) for i in range(fra)]
-		def update(ind):
-			frame = frames[ind]
-			ind += 1
-			if ind >= fra:
-				ind = 1
-			label.configure(image=frame)
-			root.after(100, update, ind)
-		label = tk.Label(root, height=WMHEIGHT, width=WMWIDTH, bg="black")
-		label.pack()
-		root.after(0, update, 0)
-		root.after(45000, root.destroy)
-		root.mainloop()
+def splash():
+	import tkinter as tk
+	root = tk.Tk()
+	root.overrideredirect(True)
+	WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
+	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
+	image_file = "/home/pi/tgn_smart_home/icons/splashScreen.gif"
+	fra = 40
+	frames = [tk.PhotoImage(file=image_file,format = 'gif -index %i' %(i)) for i in range(fra)]
+	def update(ind):
+		frame = frames[ind]
+		ind += 1
+		if ind >= fra:
+			ind = 1
+		label.configure(image=frame)
+		root.after(100, update, ind)
+	label = tk.Label(root, height=WMHEIGHT, width=WMWIDTH, bg="black")
+	label.pack()
+	root.after(0, update, 0)
+	root.after(45000, root.destroy)
+	root.mainloop()
 def webplayer():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/mediaplayer.py"
 	Process(target=sound).start()
