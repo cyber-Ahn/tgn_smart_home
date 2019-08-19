@@ -141,6 +141,8 @@ def capture_time():
 		capture_time()
 
 ini()
+if __name__ == "__main__":
+    print("This is a library, it can not be started directly.")
 command = sys.argv[1]
 timer = int(sys.argv[2])
 if command == "capture":

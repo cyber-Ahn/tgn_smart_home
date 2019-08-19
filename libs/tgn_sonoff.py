@@ -4,6 +4,9 @@ import sys
 sonoff_homecode = "10101"
 sonoff_topic = "tgn/sonoff/data"
 
+if __name__ == "__main__":
+    print("python3 tgn_sonoff.py modulnumber channel status ip")
+
 def tgn_sonoff(topic, homecode, modul, channel, status, mqtt_ip):
     print("send")
     client = mqtt.Client("sonoff Modul")
