@@ -191,7 +191,9 @@ sudo apt-mark hold code-oss
 clear
 fi
 
-echo -e "\e[33m>> \e[31mInstall MQTT-Server\e[32m"
+echo -e "\e[33m>> \e[31mInstall MQTT-Server (y/n)?\e[32m"
+read answer
+if [ "$answer" != "${answer#[Yy]}" ] ;then
 sudo apt-get -y install libwebsockets3
 sudo apt-get -y install mosquitto
 sudo apt install mosquitto mosquitto-clients
@@ -199,6 +201,7 @@ pip3 install paho-mqtt
 sleep 3
 sudo mv /home/pi/tgn_smart_home/setup_files/mosquitto.conf /etc/mosquitto/
 sudo rm -fr /home/pi/tgn_smart_home/setup_files
+fi
 
 clear
 
