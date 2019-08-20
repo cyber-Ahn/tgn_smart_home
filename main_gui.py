@@ -788,8 +788,9 @@ def callback15():
 	if MCPpower == 1:
 		for i in range(int(MCP_num_gpios/2)):
 			mcp.output(i, 0)
-	mylcd.lcd_clear()
-	mylcd.backlight(0)
+	if LCDpower == 1:
+		mylcd.lcd_clear()
+		mylcd.backlight(0)
 	Process(target=TextToSpeech, args=((data[18].rstrip()),spr)).start()
 	call(['shutdown', '-h', 'now'], shell=False)
 def callback16():
@@ -797,8 +798,9 @@ def callback16():
 	if MCPpower == 1:
 		for i in range(int(MCP_num_gpios/2)):
 			mcp.output(i, 0)
-	mylcd.lcd_clear()
-	mylcd.backlight(0)
+	if LCDpower == 1:
+		mylcd.lcd_clear()
+		mylcd.backlight(0)
 	Process(target=TextToSpeech, args=((data[19].rstrip()),spr)).start()
 	call(['reboot', '-h', 'now'], shell=False)
 def callback17():
@@ -1201,8 +1203,9 @@ def on_message(client, userdata, message):
 			Process(target=sound).start()
 			if MCPpower == 1:
 				mcp.output(3, 0)
-			mylcd.lcd_clear()
-			mylcd.backlight(0)
+			if LCDpower == 1:
+				mylcd.lcd_clear()
+				mylcd.backlight(0)
 			call(['shutdown', '-h', 'now'], shell=False)
 	if(message.topic=="tgn/system/reboot"):
 		if(int(message.payload.decode("utf-8")) == 1):
@@ -1210,8 +1213,9 @@ def on_message(client, userdata, message):
 			Process(target=sound).start()
 			if MCPpower == 1:
 				mcp.output(3, 0)
-			mylcd.lcd_clear()
-			mylcd.backlight(0)
+			if LCDpower == 1:
+				mylcd.lcd_clear()
+				mylcd.backlight(0)
 			call(['reboot', '-h', 'now'], shell=False)
 	if(message.topic=="tgn/system/weather"):
 		if(int(message.payload.decode("utf-8")) == 1):
