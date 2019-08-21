@@ -107,7 +107,7 @@ Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
 
 <img src="http://caworks-sl.de/Smart_Home_Images/IMG_20180602_215043.jpg" alt="1" style="width:600px;height:500px;">
 
-<img src="http://caworks-sl.de/Smart_Home_Images/Smart Home Comunications.jpg" alt="1" style="width:600px;height:500px;">
+<img src="http://caworks-sl.de/Smart_Home_Images/Smart Home Comunication.jpg" alt="1" style="width:600px;height:500px;">
 
 <img src="http://caworks-sl.de/Smart_Home_Images/IMG_20180602_214845.jpg" alt="1" style="width:600px;height:500px;">
 
