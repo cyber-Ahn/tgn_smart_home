@@ -536,6 +536,7 @@ def ini():
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
 	client.publish("tgn/system/weather","0",qos=0,retain=True)
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
+	client.publish("tgn/system/clock","0",qos=0,retain=True)
 	client.publish("tgn/esp_1/analog/sensor_1","100",qos=0,retain=True)
 	client.publish("tgn/esp_2/analog/sensor_1","100",qos=0,retain=True)
 	client.publish("tgn/language",spr,qos=0,retain=True)
@@ -1227,6 +1228,10 @@ def on_message(client, userdata, message):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/system/mic","0",qos=0,retain=True)
 			callback33()
+	if(message.topic=="tgn/system/clock"):
+		if(int(message.payload.decode("utf-8")) == 1):
+			client.publish("tgn/system/clock","0",qos=0,retain=True)
+			Process(target=setRTC).start()
 # updating window (Clock and Temps)
 the_time=''
 TIME = newtime = time.time()
