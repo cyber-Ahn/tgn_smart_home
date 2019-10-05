@@ -1327,6 +1327,7 @@ class Window(Frame):
 					mylcd.backlight(0)
 				trigger = pcf8563ReadTimeB()
 				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C\n"+stats
+				client.publish("tgn/system/time",format_time(pcf8563ReadTime()),qos=0,retain=True)
 				global afbground
 				global fground
 				if colorSet == 9:
