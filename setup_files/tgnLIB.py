@@ -722,7 +722,7 @@ def getMAC(interface):
 def allowed_key(id):
 	allowed = "yes"
 	if id == "3aef357118b7ea5d700123785674b45e":
-		if getMAC("eth0") == "dc:a6:32:01:e1:db":
+		if getMAC("eth0") == "b8:27:eb:cd:a3:3f":
 			allowed = "yes"
 		else:
 			allowed = "no"
@@ -746,6 +746,33 @@ def ping(hostname):
         return 'Online'
     else:
         return 'Offline'
+
+def ip_cam_stream(url):
+    import cv2
+    import numpy as np
+    while True:
+        imgResp=urllib.request.urlopen(url)
+        imgNp=np.array(bytearray(imgResp.read()),dtype=np.uint8)
+        img=cv2.imdecode(imgNp,-1)
+        cv2.imshow(url,img)
+        if ord('q')==cv2.waitKey(10):
+            exit(0)
+
+def ip_cam_capture(url, phat):
+    import cv2
+    import numpy as np
+    imgResp=urllib.request.urlopen(url)
+    imgNp=np.array(bytearray(imgResp.read()),dtype=np.uint8)
+    img=cv2.imdecode(imgNp,-1)
+    name = url + " " + pcf8563ReadTime() + ".png"
+    name = name.replace("http://", "")
+    name = name.replace("/capture", "")
+    name = name.replace(":", "-")
+    name = name.replace("/", "-")
+    name = name.replace(" ", "_")
+    print(name)
+    cv2.imwrite(phat+name, img)
+    time.sleep(1)
 
 def send_twitter(message,image):
     from tw_auth import (consumer_key,consumer_secret,access_token,access_token_secret)

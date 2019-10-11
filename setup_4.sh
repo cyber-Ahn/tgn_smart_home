@@ -16,6 +16,8 @@ echo -e "\e[32m####               \e[33mby cyber Ahn                     \e[32m#
 echo -e "\e[32m####           \e[34mhttp://caworks-sl.de                 \e[32m###"
 echo -e "\e[32m#######################################################"
 
+sudo apt-get update
+
 echo -e "\n\e[33m>> \e[31mSetup Clock (y/n)?\e[32m"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then

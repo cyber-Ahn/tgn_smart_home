@@ -560,6 +560,7 @@ def ini():
 	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
 	client.publish("tgn/mqtt-msg","System Online",qos=0,retain=True)
 	client.publish("tgn/esp_32_cam/connection/ip","192.168.0.15",qos=0,retain=True)
+	client.publish("tgn/esp_32_cam/capture","0",qos=0,retain=True)
 	client.publish("tgn/sonoff_1/connection/ip","---.---.---.---",qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
@@ -1232,6 +1233,10 @@ def on_message(client, userdata, message):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/system/clock","0",qos=0,retain=True)
 			Process(target=setRTC).start()
+	if(message.topic=="tgn/esp_32_cam/capture"):
+		if(int(message.payload.decode("utf-8")) == 1):
+			client.publish("tgn/esp_32_cam/capture","0",qos=0,retain=True)
+			Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/")).start()
 # updating window (Clock and Temps)
 the_time=''
 TIME = newtime = time.time()
@@ -1594,6 +1599,8 @@ def webplayer():
 	os.system(setn)
 def callback110():
 	Process(target=webplayer).start()
+def callback47():
+    client.publish("tgn/esp_32_cam/capture","1",qos=0,retain=True)
 #Main Prog
 ini()
 if LCDpower == 1:
@@ -1640,7 +1647,7 @@ def normal_screen():
 	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
 	filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 	filemenu.add_separator()
-	filemenu.add_command(label="Reload", command=callback41)
+	#filemenu.add_command(label="Reload", command=callback41)
 	filemenu.add_command(label=(data[40].rstrip()), command=callback30)
 	filemenu.add_command(label="Backup Rom", command=callback45)
 	filemenu.add_command(label="Restore Rom", command=callback46)
@@ -1939,7 +1946,8 @@ def lcars_screen():
 	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
 	filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 	filemenu.add_separator()
-	filemenu.add_command(label="Reload", command=callback41)
+	#filemenu.add_command(label="Reload", command=callback41)
+	#filemenu.add_command(label="ip_cam", command=callback47)	
 	filemenu.add_command(label=(data[40].rstrip()), command=callback30)
 	filemenu.add_command(label="Backup Rom", command=callback45)
 	filemenu.add_command(label="Restore Rom", command=callback46)
