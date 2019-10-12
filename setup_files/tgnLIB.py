@@ -774,6 +774,32 @@ def ip_cam_capture(url, phat):
     cv2.imwrite(phat+name, img)
     time.sleep(1)
 
+def ip_cam_record(url, fps, width, hight, phat, record_time_min):
+    import cv2
+    import numpy as np
+    name = url + " " + pcf8563ReadTime() + ".avi"
+    name = name.replace("http://", "")
+    name = name.replace("/capture", "")
+    name = name.replace(":", "-")
+    name = name.replace("/", "-")
+    name = name.replace(" ", "_")
+    print(name)
+    record_time_min = int((record_time_min * 60)*5)
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    out = cv2.VideoWriter(phat+name,fourcc, fps, (width,hight))
+    count = 0
+    while True:
+        imgResp=urllib.request.urlopen(url)
+        imgNp=np.array(bytearray(imgResp.read()),dtype=np.uint8)
+        img=cv2.imdecode(imgNp,-1)
+        cv2.imshow(url,img)
+        out.write(img)
+        count = count + 1
+        if count == record_time_min:
+            exit(0)
+        if ord('q')==cv2.waitKey(10):
+            exit(0)
+
 def send_twitter(message,image):
     from tw_auth import (consumer_key,consumer_secret,access_token,access_token_secret)
     twitter = Twython(consumer_key,consumer_secret,access_token,access_token_secret)
