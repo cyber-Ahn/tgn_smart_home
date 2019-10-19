@@ -104,6 +104,9 @@ rssurl = "empty"
 rsslang = "en"
 #PiHole
 api_url = 'http://192.168.0.94/admin/api.php'
+#radar_cam
+radar_on = 0
+radar_sen = 0
 
 #functions
 def ini():
@@ -532,6 +535,7 @@ def ini():
 	#send status to mqtt
 	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
+	client.publish("tgn/esp_3/radar","0",qos=0,retain=True)
 	client.publish("tgn/bot/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
 	client.publish("tgn/system/weather","0",qos=0,retain=True)
@@ -1118,6 +1122,11 @@ def on_message(client, userdata, message):
 	global esp_li_2
 	global esp_b1_2
 	global mqtt_msg
+	global radar_sen
+	if(message.topic=="tgn/esp_3/radar"):
+		if(str(message.payload.decode("utf-8"))=="1"):
+			client.publish("tgn/esp_3/radar","0",qos=0,retain=True)
+			radar_sen = 1
 	if(message.topic=="tgn/mqtt-msg"):
 		mqtt_msg = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/wifi/pre"):
@@ -1238,6 +1247,7 @@ def on_message(client, userdata, message):
 	if(message.topic=="tgn/esp_32_cam/capture"):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/esp_32_cam/capture","0",qos=0,retain=True)
+			radar_sen = 0
 			Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/")).start()
 	if(message.topic=="tgn/esp_32_cam/stream"):
 		if(int(message.payload.decode("utf-8")) == 1):
@@ -1340,8 +1350,13 @@ class Window(Frame):
 					counterLCD = 0
 				if backlight == 0 and LCDpower == 1:
 					mylcd.backlight(0)
+				if(radar_sen==1 and radar_on == 1):
+					client.publish("tgn/esp_32_cam/capture","1",qos=0,retain=True)
 				trigger = pcf8563ReadTimeB()
-				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C\n"+stats
+				rca = ""
+				if radar_on == 1:
+					rca = "R.Cam on"
+				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C "+rca+"\n"+stats
 				client.publish("tgn/system/time",format_time(pcf8563ReadTime()),qos=0,retain=True)
 				global afbground
 				global fground
@@ -1611,6 +1626,13 @@ def callback110():
 	Process(target=webplayer).start()
 def callback47():
     client.publish("tgn/esp_32_cam/record","2",qos=0,retain=True)
+def callback48():
+	global radar_on
+	if radar_on == 1:
+		radar_on = 0
+	elif radar_on == 0:
+		radar_on = 1
+	print(str(radar_on))
 #Main Prog
 ini()
 if LCDpower == 1:
@@ -1670,6 +1692,7 @@ def normal_screen():
 	setmenu.add_command(label=(data[42].rstrip()), command=callback25)
 	setmenu.add_command(label=(data[43].rstrip()), command=callback32)
 	setmenu.add_command(label=(data[44].rstrip()), command=callback34)
+	setmenu.add_command(label="Radar Cam ", command=callback48)
 
 	langmenu = Menu(menu)
 	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
@@ -1956,7 +1979,7 @@ def lcars_screen():
 	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
 	filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 	filemenu.add_separator()
-	#filemenu.add_command(label="Reload", command=callback41)
+	filemenu.add_command(label="Reload", command=callback41)
 	#filemenu.add_command(label="ip_cam_record", command=callback47)	
 	filemenu.add_command(label=(data[40].rstrip()), command=callback30)
 	filemenu.add_command(label="Backup Rom", command=callback45)
@@ -1970,6 +1993,7 @@ def lcars_screen():
 	setmenu.add_command(label=(data[42].rstrip()), command=callback25)
 	setmenu.add_command(label=(data[43].rstrip()), command=callback32)
 	setmenu.add_command(label=(data[44].rstrip()), command=callback34)
+	setmenu.add_command(label="Radar Cam ", command=callback48)
 
 	langmenu = Menu(menu)
 	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
