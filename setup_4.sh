@@ -115,6 +115,16 @@ sleep 5
 clear
 fi
 
+echo -e "\e[33m>> \e[31mInstall PiHole (y/n)?\e[32m"
+read answer
+if [ "$answer" != "${answer#[Yy]}" ] ;then
+curl -sSL https://install.pi-hole.net | bash
+sleep 2
+pihole -a -p Kevin2711
+sleep 5
+clear
+fi
+
 echo -e "\e[33m>> \e[31mMove backup files\e[32m"
 sudo mv /home/pi/tgn_smart_home/setup_files/tgnLIB.py /usr/local/lib/python3.7/dist-packages/
 sudo mv /home/pi/tgn_smart_home/setup_files/haset1.bk /home/pi/habridge/data
