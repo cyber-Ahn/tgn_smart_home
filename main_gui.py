@@ -541,7 +541,7 @@ def ini():
 	client.publish("tgn/system/reboot/cam","0",qos=0,retain=True)
 	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
-	client.publish("tgn/esp_3/radar","0",qos=0,retain=True)
+	client.publish("tgn/system/radar","0",qos=0,retain=True)
 	client.publish("tgn/bot/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/weather","0",qos=0,retain=True)
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
@@ -1128,9 +1128,9 @@ def on_message(client, userdata, message):
 	global esp_b1_2
 	global mqtt_msg
 	global radar_sen
-	if(message.topic=="tgn/esp_3/radar"):
+	if(message.topic=="tgn/system/radar"):
 		if(str(message.payload.decode("utf-8"))=="1"):
-			client.publish("tgn/esp_3/radar","0",qos=0,retain=True)
+			client.publish("tgn/system/radar","0",qos=0,retain=True)
 			radar_sen = 1
 	if(message.topic=="tgn/mqtt-msg"):
 		mqtt_msg = str(message.payload.decode("utf-8"))
