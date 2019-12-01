@@ -533,6 +533,7 @@ def ini():
 	client.connect(get_ip())
 	client.loop_start()
 	#send status to mqtt
+	client.publish("tgn/system/automatic","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/bot","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/esp1","0",qos=0,retain=True)
@@ -605,6 +606,7 @@ def on():
 		if s4 == "1":
 			client.publish("tgn/buttons/status/4","1",qos=0,retain=True)
 		Process(target=TextToSpeech, args=((data[23].rstrip()),spr)).start()
+		client.publish("tgn/system/automatic","1",qos=0,retain=True)
 def off():
 	global son
 	global soff
@@ -621,6 +623,7 @@ def off():
 		if s4 == "1":
 			client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
 		Process(target=TextToSpeech, args=((data[24].rstrip()),spr)).start()
+		client.publish("tgn/system/automatic","0",qos=0,retain=True)
 def sound():
 	if su==1:
 		if colorSet <= 8:
@@ -1361,7 +1364,7 @@ class Window(Frame):
 				rca = ""
 				if radar_on == 1:
 					rca = "R.Cam on"
-				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C "+rca+"\n"+stats
+				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"�C "+rca+"\n"+stats
 				client.publish("tgn/system/time",format_time(pcf8563ReadTime()),qos=0,retain=True)
 				global afbground
 				global fground
@@ -1427,16 +1430,16 @@ class WindowB(Frame):
 					if allowed_key(openweatherkey) == "yes":
 						data = weather_info(zipcode,openweatherkey)
 						output = output+(dataText[24].rstrip())+data['city']+','+data['country']+'\n'
-						output = output+str(data['temp'])+'°C  '+data['sky']+' '
-						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'°C, '+(dataText[26].rstrip())+str(data['temp_min'])+'°C\n'
+						output = output+str(data['temp'])+'�C  '+data['sky']+' '
+						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'�C, '+(dataText[26].rstrip())+str(data['temp_min'])+'�C\n'
 						output = output+(dataText[27].rstrip())+str(data['wind'])+'km/h \n'
 						output = output+(dataText[28].rstrip())+str(data['humidity'])+'% \n'
 						output = output+(dataText[29].rstrip())+str(data['cloudiness'])+'% \n'
 						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+" "+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'LUX\n'
-						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+esp_li_2+'LUX\n'
+						output = output+'ESP:'+esp_temp+'�C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'LUX\n'
+						output = output+'ESP2:'+esp_temp_2+'�C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+esp_li_2+'LUX\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+temp_data+" / "+str(readLight())+'LUX\n'
 						global weather_t
@@ -1464,7 +1467,7 @@ class WindowB(Frame):
 							sonoff_set("6", "1")
 						else:
 							sonoff_set("6", "0")
-						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" °C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
+						we_cach = "Temperature "+str(weather_t)+"�C \n Max Temperature "+str(data['temp_max'])+" �C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
 					output = output+'---------------------------------------------------------\n'
