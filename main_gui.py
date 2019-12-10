@@ -596,7 +596,7 @@ def on():
 	if son == 0:
 		soff = 0
 		son = 1
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh Automatic_on ' + pushbulletkey)
+		pb_send_text(pushbulletkey,"Automatic on")
 		if s1 == "1":
 			client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
 		if s2 == "1":
@@ -613,7 +613,7 @@ def off():
 	if soff == 0:
 		soff = 1
 		son = 0
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh Automatic_off ' + pushbulletkey)
+		pb_send_text(pushbulletkey,"Automatic Off")
 		if s1 == "1":
 			client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
 		if s2 == "1":
@@ -711,12 +711,12 @@ def callback9():
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	if b1 == 0:
-		msg = "Turn_on_" + buttons[0]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn on " + buttons[0]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
 	else:
-		msg = "Turn_off_" + buttons[0]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn off " + buttons[0]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -727,12 +727,12 @@ def callback10():
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	if b2 == 0:
-		msg = "Turn_on_" + buttons[1]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn on " + buttons[1]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/2","1",qos=0,retain=True)
 	else:
-		msg = "Turn_off_" + buttons[1]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn off " + buttons[1]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/2","0",qos=0,retain=True)
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -743,12 +743,12 @@ def callback11():
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	if b3 == 0:
-		msg = "Turn_on_" + buttons[2]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn on " + buttons[2]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/3","1",qos=0,retain=True)
 	else:
-		msg = "Turn_off_" + buttons[2]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn off " + buttons[2]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/3","0",qos=0,retain=True)
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -759,12 +759,12 @@ def callback12():
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	if b4 == 0:
-		msg = "Turn_on_" + buttons[3]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn on " + buttons[3]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/4","1",qos=0,retain=True)
 	else:
-		msg = "Turn_off_" + buttons[3]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn off " + buttons[3]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -775,12 +775,12 @@ def callback13():
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	if b5 == 0:
-		msg = "Turn_on_" + buttons[4]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn on " + buttons[4]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/5","1",qos=0,retain=True)
 	else:
-		msg = "Turn_off_" + buttons[4]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn off " + buttons[4]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/5","0",qos=0,retain=True)
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -791,12 +791,12 @@ def callback14():
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	if b6 == 0:
-		msg = "Turn_on_" + buttons[5]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn on " + buttons[5]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/6","1",qos=0,retain=True)
 	else:
-		msg = "Turn_off_" + buttons[5]
-		os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+		msg = "Turn off " + buttons[5]
+		pb_send_text(pushbulletkey,msg)
 		client.publish("tgn/buttons/status/6","0",qos=0,retain=True)
 	if MCPpower == 1:
 		mcp.output(3, 1)
@@ -920,9 +920,9 @@ def all_off():
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	subprocess.call('xset dpms force on', shell=True)
-	msg = "all_off"
+	msg = "all off"
 	Process(target=TextToSpeech, args=((data[14].rstrip()),spr)).start()
-	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+	pb_send_text(pushbulletkey,msg)
 	client.publish("tgn/buttons/status/6","0",qos=0,retain=True)
 	time.sleep(6.0)
 	client.publish("tgn/buttons/status/5","0",qos=0,retain=True)
@@ -943,9 +943,9 @@ def all_on():
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	subprocess.call('xset dpms force on', shell=True)
-	msg = "all_on"
+	msg = "all on"
 	Process(target=TextToSpeech, args=((data[13].rstrip()),spr)).start()
-	os.system('sudo bash /home/pi/tgn_smart_home/libs/pushbullet.sh ' + msg  + ' ' + pushbulletkey)
+	pb_send_text(pushbulletkey,msg)
 	client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
 	time.sleep(6.0)
 	client.publish("tgn/buttons/status/2","1",qos=0,retain=True)
@@ -1256,7 +1256,7 @@ def on_message(client, userdata, message):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/esp_32_cam/capture","0",qos=0,retain=True)
 			radar_sen = 0
-			Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/")).start()
+			Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/",pushbulletkey)).start()
 	if(message.topic=="tgn/esp_32_cam/stream"):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/esp_32_cam/stream","0",qos=0,retain=True)

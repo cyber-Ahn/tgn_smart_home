@@ -31,6 +31,7 @@ from contextlib import closing
 from enigma.machine import EnigmaMachine
 from fcntl import ioctl
 from gtts import gTTS
+from pushbullet import Pushbullet
 from threading import Thread
 from time import gmtime, strftime
 from time import sleep
@@ -758,7 +759,7 @@ def ip_cam_stream(url):
         if ord('q')==cv2.waitKey(10):
             exit(0)
 
-def ip_cam_capture(url, phat):
+def ip_cam_capture(url, phat, pushbulletkey):
     import cv2
     import numpy as np
     imgResp=urllib.request.urlopen(url)
@@ -773,6 +774,7 @@ def ip_cam_capture(url, phat):
     print(name)
     cv2.imwrite(phat+name, img)
     time.sleep(1)
+    pb_send_image(pushbulletkey,phat+name,"ESP32 Cam")
 
 def ip_cam_record(url, fps, width, hight, phat, record_time_min):
     import cv2
@@ -1242,6 +1244,16 @@ def encode(text):
 def decode(text):
     decoded = base64.decodestring(text).decode('utf-8')
     return decoded
+
+def pb_send_text(api_key, msg):
+    pb = Pushbullet(api_key)
+    push = pb.push_note("Raspberry Pi", msg)
+
+def pb_send_image(api_key, file, f_name):
+    pb = Pushbullet(api_key)
+    with open(file, "rb") as pic:
+        file_data = pb.upload_file(pic, f_name)
+    push = pb.push_file(**file_data)
 
 def TextToSpeech(text,ln):
 	tts = gTTS(text=text, lang=ln, slow=False)
