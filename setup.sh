@@ -100,7 +100,6 @@ clear
 fi
 
 echo -e "\e[33m>> \e[31mset authority\e[32m"
-chmod +x /home/pi/tgn_smart_home/libs/pushbullet.sh
 chmod +x start_gui.sh
 chmod +x start_mqtt_broker.sh
 chmod +x habridge_install.sh
