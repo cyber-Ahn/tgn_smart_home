@@ -544,6 +544,7 @@ def ini():
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/radar","0",qos=0,retain=True)
 	client.publish("tgn/bot/shutdown","0",qos=0,retain=True)
+	client.publish("tgn/bot/status","offline",qos=0,retain=True)
 	client.publish("tgn/system/weather","0",qos=0,retain=True)
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
 	client.publish("tgn/system/clock","0",qos=0,retain=True)
