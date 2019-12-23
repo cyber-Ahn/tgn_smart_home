@@ -60,7 +60,6 @@ sudo pip3 install thingspeak==0.4.1
 sudo pip3 install gTTS==2.0.3
 sudo pip3 install feedparser==5.2.1
 sudo pip3 install gitpython==2.1.11
-sudo apt-get -y install lirc
 sudo pip3 install pexpect==4.7.0
 sudo pip3 install py-enigma==0.1
 sudo pip3 install pushbullet.py==0.11.0
