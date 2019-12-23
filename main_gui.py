@@ -118,7 +118,7 @@ radar_sen = 0
 def ini():
 	os.system('clear')
 	global spr
-	#Process(target=splash).start()
+	Process(target=splash).start()
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
