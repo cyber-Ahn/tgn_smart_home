@@ -1377,7 +1377,7 @@ class Window(Frame):
 				rca = ""
 				if radar_on == 1:
 					rca = "R.Cam on"
-				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"�C "+rca+"\n"+stats
+				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C "+rca+"\n"+stats
 				client.publish("tgn/system/time",format_time(pcf8563ReadTime()),qos=0,retain=True)
 				global afbground
 				global fground
@@ -1444,7 +1444,7 @@ class WindowB(Frame):
 						data = weather_info(zipcode,openweatherkey)
 						output = output+(dataText[24].rstrip())+data['city']+','+data['country']+'\n'
 						output = output+str(data['temp'])+'°C  '+data['sky']+' '
-						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'°C, '+(dataText[26].rstrip())+str(data['temp_min'])+'�C\n'
+						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'°C, '+(dataText[26].rstrip())+str(data['temp_min'])+'°C\n'
 						output = output+(dataText[27].rstrip())+str(data['wind'])+'km/h \n'
 						output = output+(dataText[28].rstrip())+str(data['humidity'])+'% \n'
 						output = output+(dataText[29].rstrip())+str(data['cloudiness'])+'% \n'
