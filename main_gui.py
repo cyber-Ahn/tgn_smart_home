@@ -44,6 +44,12 @@ b3 = 0
 b4 = 0
 b5 = 0
 b6 = 0
+b1A = ""
+b2A = ""
+b3A = ""
+b4A = ""
+b5A = ""
+b6A = ""
 weather_t = -0.41
 weather_c = 0
 weather_w = 4.1
@@ -112,7 +118,7 @@ radar_sen = 0
 def ini():
 	os.system('clear')
 	global spr
-	Process(target=splash).start()
+	#Process(target=splash).start()
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
@@ -196,6 +202,12 @@ def ini():
 	global rssurl
 	global rsslang
 	global client
+	global b1A
+	global b2A
+	global b3A
+	global b4A
+	global b5A
+	global b6A
 	if ifI2C(address) == "found device":
 		RTCpower = 1
 	print(">>initialize EEPROM")
@@ -1431,16 +1443,16 @@ class WindowB(Frame):
 					if allowed_key(openweatherkey) == "yes":
 						data = weather_info(zipcode,openweatherkey)
 						output = output+(dataText[24].rstrip())+data['city']+','+data['country']+'\n'
-						output = output+str(data['temp'])+'�C  '+data['sky']+' '
-						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'�C, '+(dataText[26].rstrip())+str(data['temp_min'])+'�C\n'
+						output = output+str(data['temp'])+'°C  '+data['sky']+' '
+						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'°C, '+(dataText[26].rstrip())+str(data['temp_min'])+'�C\n'
 						output = output+(dataText[27].rstrip())+str(data['wind'])+'km/h \n'
 						output = output+(dataText[28].rstrip())+str(data['humidity'])+'% \n'
 						output = output+(dataText[29].rstrip())+str(data['cloudiness'])+'% \n'
 						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+" "+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+'ESP:'+esp_temp+'�C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'LUX\n'
-						output = output+'ESP2:'+esp_temp_2+'�C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+esp_li_2+'LUX\n'
+						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'LUX\n'
+						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+esp_li_2+'LUX\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+temp_data+" / "+str(readLight())+'LUX\n'
 						global weather_t
@@ -1468,7 +1480,7 @@ class WindowB(Frame):
 							sonoff_set("6", "1")
 						else:
 							sonoff_set("6", "0")
-						we_cach = "Temperature "+str(weather_t)+"�C \n Max Temperature "+str(data['temp_max'])+" �C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
+						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" �C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
 					output = output+'---------------------------------------------------------\n'
