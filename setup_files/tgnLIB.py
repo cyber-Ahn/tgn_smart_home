@@ -723,7 +723,7 @@ def getMAC(interface):
 def allowed_key(id):
 	allowed = "yes"
 	if id == "3aef357118b7ea5d700123785674b45e":
-		if getMAC("eth0") == "b8:27:eb:cd:a3:3f":
+		if getMAC("eth0") == "dc:a6:32:01:e1:db":
 			allowed = "yes"
 		else:
 			allowed = "no"
