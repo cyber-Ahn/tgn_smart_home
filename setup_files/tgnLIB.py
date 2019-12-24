@@ -1095,25 +1095,33 @@ def getCpuTemperature():
 	return float(cpu_temp)/1000
 
 def pcf8563ReadTime():
-	t = bus.read_i2c_block_data(address,register,7)
-	t[0] = t[0]&0x7F  #sec
-	t[1] = t[1]&0x7F  #min
-	t[2] = t[2]&0x3F  #hour
-	t[3] = t[3]&0x3F  #day
-	t[4] = t[4]&0x07  #month   -> dayname
-	t[5] = t[5]&0x1F  #dayname -> month
-	return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
+    if ifI2C(address) == "found device":
+        t = bus.read_i2c_block_data(address,register,7)
+        t[0] = t[0]&0x7F  #sec
+        t[1] = t[1]&0x7F  #min
+        t[2] = t[2]&0x3F  #hour
+        t[3] = t[3]&0x3F  #day
+        t[4] = t[4]&0x07  #month   -> dayname
+        t[5] = t[5]&0x1F  #dayname -> month
+        return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
+    else:
+        from time import localtime
+        time_out = strftime("%a  %Y/%m/%d %H:%M:%S", localtime())
+        return time_out
 
 def format_time(inputtime):
     timefo = inputtime
+    print(timefo)
     cachfo = timefo.split(" ")
     cachfi = cachfo[3].split(":")
     timese = cachfi[2]
     timemi = cachfi[1]
     if int(timese) <= 9:
-        timese = "0"+timese
+        if len(timese)<=1:
+            timese = "0"+timese
     if int(timemi) <= 9:
-        timemi = "0"+timemi
+        if len(timemi)<=1:
+            timemi = "0"+timemi
     timefo = cachfo[0]+"  "+cachfo[2]+" "+cachfi[0]+":"+timemi+":"+timese
     return timefo
 

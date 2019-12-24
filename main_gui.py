@@ -667,10 +667,10 @@ def pcf8563ReadTimeB():
 		t[4] = t[4]&0x07  #month   -> dayname
 		t[5] = t[5]&0x1F  #dayname -> month
 		cach_time = ("%x:%x" %(t[2],t[1]))
-		time_out = "%s  20%x/%x/%x %x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1])
+		time_out = "%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0])
 	else:
 		from time import localtime
-		time_out = strftime("%Y-%m-%d %H:%M:%S", localtime())
+		time_out = strftime("%a  %Y/%m/%d %H:%M:%S", localtime())
 		hour = strftime("%H", localtime())
 		min = strftime("%M", localtime())
 		h1 = hour.find("0")
