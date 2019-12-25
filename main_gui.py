@@ -659,15 +659,25 @@ def pcf8563ReadTimeB():
 	cach_time = ""
 	time_out = ""
 	if RTCpower == 1:
-		t = bus.read_i2c_block_data(address,register,7)
-		t[0] = t[0]&0x7F  #sec
-		t[1] = t[1]&0x7F  #min
-		t[2] = t[2]&0x3F  #hour
-		t[3] = t[3]&0x3F  #day
-		t[4] = t[4]&0x07  #month   -> dayname
-		t[5] = t[5]&0x1F  #dayname -> month
-		cach_time = ("%x:%x" %(t[2],t[1]))
-		time_out = "%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0])
+		if address == 0x68:
+			register = 0x00
+			t = bus.read_i2c_block_data(address,register,7)
+			t[0] = t[0]&0x7F  #sec
+			t[1] = t[1]&0x7F  #min
+			t[2] = t[2]&0x3F  #hour
+			t[3] = t[3]&0x07  #week = dayname
+			t[4] = t[4]&0x3F  #day
+			t[5] = t[5]&0x1F  #month
+			return("%s  20%x/%x/%x %x:%x:%x" %(w[t[3]],t[6],t[5],t[4],t[2],t[1],t[0]))
+		else:
+			t = bus.read_i2c_block_data(address,register,7)
+			t[0] = t[0]&0x7F  #sec
+			t[1] = t[1]&0x7F  #min
+			t[2] = t[2]&0x3F  #hour
+			t[3] = t[3]&0x3F  #day
+			t[4] = t[4]&0x07  #month   -> dayname
+			t[5] = t[5]&0x1F  #dayname -> month
+			return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
 	else:
 		from time import localtime
 		time_out = strftime("%a  %Y/%m/%d %H:%M:%S", localtime())

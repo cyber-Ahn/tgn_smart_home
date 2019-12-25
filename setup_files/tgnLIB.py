@@ -39,7 +39,7 @@ from time import localtime
 from twython import Twython
 
 
-address = 0x51
+address = 0x68
 register = 0x02
 zone = 0
 w  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
@@ -1096,14 +1096,25 @@ def getCpuTemperature():
 
 def pcf8563ReadTime():
     if ifI2C(address) == "found device":
-        t = bus.read_i2c_block_data(address,register,7)
-        t[0] = t[0]&0x7F  #sec
-        t[1] = t[1]&0x7F  #min
-        t[2] = t[2]&0x3F  #hour
-        t[3] = t[3]&0x3F  #day
-        t[4] = t[4]&0x07  #month   -> dayname
-        t[5] = t[5]&0x1F  #dayname -> month
-        return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
+        if address == 0x68:
+            register = 0x00
+            t = bus.read_i2c_block_data(address,register,7)
+            t[0] = t[0]&0x7F  #sec
+            t[1] = t[1]&0x7F  #min
+            t[2] = t[2]&0x3F  #hour
+            t[3] = t[3]&0x07  #week = dayname
+            t[4] = t[4]&0x3F  #day
+            t[5] = t[5]&0x1F  #month
+            return("%s  20%x/%x/%x %x:%x:%x" %(w[t[3]],t[6],t[5],t[4],t[2],t[1],t[0]))
+        else:
+            t = bus.read_i2c_block_data(address,register,7)
+            t[0] = t[0]&0x7F  #sec
+            t[1] = t[1]&0x7F  #min
+            t[2] = t[2]&0x3F  #hour
+            t[3] = t[3]&0x3F  #day
+            t[4] = t[4]&0x07  #month   -> dayname
+            t[5] = t[5]&0x1F  #dayname -> month
+            return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
     else:
         from time import localtime
         time_out = strftime("%a  %Y/%m/%d %H:%M:%S", localtime())
@@ -1126,25 +1137,30 @@ def format_time(inputtime):
     return timefo
 
 def setRTC():
-	var1 = strftime("%a-%Y-%m-%d-%H-%M-%S", localtime())
-	var2 = var1.split("-")
-	year_s = "0x"+str(int(var2[1]) - 2000)
-	year = int(year_s,16)
-	day_s = "0x"+str(int(var2[3]))
-	day = int(day_s,16)
-	h_s = "0x"+str(int(var2[4])+zone)
-	h = int(h_s,16)
-	min_s = "0x"+str(int(var2[5]))
-	min = int(min_s,16)
-	sec_s = "0x"+str(int(var2[6]))
-	sec = int(sec_s,16)
-	day_n_s = "0x"+str(w.index(var2[0]))
-	day_n = int(day_n_s,16)
-	mon_s = "0x"+str(int(var2[2]))
-	mon = int(mon_s,16)
-	NowTime = [sec,min,h,day,day_n,mon,year]
-	bus.write_i2c_block_data(address,register,NowTime)
-	print("RTC set to:" + strftime("%a-%Y-%m-%d-%H-%M-%S", gmtime()) + " +" + str(zone) + "h")
+    var1 = strftime("%a-%Y-%m-%d-%H-%M-%S", localtime())
+    var2 = var1.split("-")
+    year_s = "0x"+str(int(var2[1]) - 2000)
+    year = int(year_s,16)
+    day_s = "0x"+str(int(var2[3]))
+    day = int(day_s,16)
+    h_s = "0x"+str(int(var2[4])+zone)
+    h = int(h_s,16)
+    min_s = "0x"+str(int(var2[5]))
+    min = int(min_s,16)
+    sec_s = "0x"+str(int(var2[6]))
+    sec = int(sec_s,16)
+    day_n_s = "0x"+str(w.index(var2[0]))
+    day_n = int(day_n_s,16)
+    mon_s = "0x"+str(int(var2[2]))
+    mon = int(mon_s,16)
+    if address == 0x68:
+        register = 0x00
+        NowTime = [sec,min,h,day_n,day,mon,year]
+        bus.write_i2c_block_data(address,register,NowTime)
+    else:
+        NowTime = [sec,min,h,day,day_n,mon,year]
+        bus.write_i2c_block_data(address,register,NowTime)
+    print("RTC set to:" + strftime("%a-%Y-%m-%d-%H-%M-%S", gmtime()) + " +" + str(zone) + "h")
 
 def time_converter(time):
     converted_time = datetime.datetime.fromtimestamp(
