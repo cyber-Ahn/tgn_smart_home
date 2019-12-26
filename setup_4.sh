@@ -5,7 +5,7 @@
 #date:           20190720
 #version:        2.1
 #usage:          sudo bash setup_4.sh
-#Support:        http:caworks-sl.de/TGN
+#Support:        http:caworks-sl.de
 #OS:             2019-07-10-raspbian-buster / Python3.7 !!!
 #==============================================================================
 
