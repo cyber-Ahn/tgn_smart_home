@@ -5,7 +5,7 @@
 #date:           20181112
 #version:        2.0
 #usage:          sudo bash setup.sh
-#Support:        http:caworks-sl.de/TGN
+#Support:        http:caworks-sl.de
 #OS:             Debian_Stretch_Raspbian_2018.07 / Python3.5 !!!
 #==============================================================================
 
