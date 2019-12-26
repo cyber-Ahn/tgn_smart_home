@@ -21,6 +21,7 @@ import sys
 import smbus
 import socket
 import string
+import struct
 import subprocess
 import thingspeak
 import time
@@ -1138,6 +1139,18 @@ def format_time(inputtime):
 
 def setRTC():
     var1 = strftime("%a-%Y-%m-%d-%H-%M-%S", localtime())
+    try:
+        sock = socket.socket(type=socket.SOCK_DGRAM)
+        sock.settimeout(5)
+        sock.sendto(b"\x13" + b"\00"*47, ("pool.ntp.org", 123))
+        data = struct.unpack(">3Bb11I", sock.recv(48))
+        sock.close()
+        cach = (time.ctime(data[11] + float(data[12]) / 2**32 - 2208988800)).split(" ")
+        mon = ["xx","Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"]
+        var1 = cach[0]+"-"+cach[4]+"-"+str(mon.index(cach[1]))+"-"+cach[2]+"-"+cach[3].split(":")[0]+"-"+cach[3].split(":")[1]+"-"+cach[3].split(":")[2]
+        print("use NTP Server")
+    except socket.timeout:
+        print("server timeout - use system localtime")
     var2 = var1.split("-")
     year_s = "0x"+str(int(var2[1]) - 2000)
     year = int(year_s,16)

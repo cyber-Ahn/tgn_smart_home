@@ -668,6 +668,7 @@ def pcf8563ReadTimeB():
 			t[3] = t[3]&0x07  #week = dayname
 			t[4] = t[4]&0x3F  #day
 			t[5] = t[5]&0x1F  #month
+			cach_time = ("%x:%x" %(t[2],t[1]))
 			return("%s  20%x/%x/%x %x:%x:%x" %(w[t[3]],t[6],t[5],t[4],t[2],t[1],t[0]))
 		else:
 			t = bus.read_i2c_block_data(address,register,7)
@@ -677,6 +678,7 @@ def pcf8563ReadTimeB():
 			t[3] = t[3]&0x3F  #day
 			t[4] = t[4]&0x07  #month   -> dayname
 			t[5] = t[5]&0x1F  #dayname -> month
+			cach_time = ("%x:%x" %(t[2],t[1]))
 			return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
 	else:
 		from time import localtime
