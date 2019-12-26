@@ -552,6 +552,7 @@ def ini():
 	client.publish("tgn/system/reboot/esp2","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/esp3","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/cam","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot/sonoff","0",qos=0,retain=True)
 	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
 	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/radar","0",qos=0,retain=True)
