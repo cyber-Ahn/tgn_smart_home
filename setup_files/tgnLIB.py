@@ -1123,7 +1123,6 @@ def pcf8563ReadTime():
 
 def format_time(inputtime):
     timefo = inputtime
-    print(timefo)
     cachfo = timefo.split(" ")
     cachfi = cachfo[3].split(":")
     timese = cachfi[2]

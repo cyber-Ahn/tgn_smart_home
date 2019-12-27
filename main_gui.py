@@ -83,6 +83,7 @@ color_button = []
 mqtt_msg = "empty"
 mqtt_msg_cach = "empty"
 ttiv = 50000
+cach_time = ""
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
@@ -657,8 +658,8 @@ def alarm_go():
 		time.sleep(60)
 		alarm_p = 0	
 def pcf8563ReadTimeB():
-	cach_time = ""
 	time_out = ""
+	global cach_time
 	if RTCpower == 1:
 		if address == 0x68:
 			register = 0x00
@@ -670,7 +671,7 @@ def pcf8563ReadTimeB():
 			t[4] = t[4]&0x3F  #day
 			t[5] = t[5]&0x1F  #month
 			cach_time = ("%x:%x" %(t[2],t[1]))
-			return("%s  20%x/%x/%x %x:%x:%x" %(w[t[3]],t[6],t[5],t[4],t[2],t[1],t[0]))
+			#return("%s  20%x/%x/%x %x:%x:%x" %(w[t[3]],t[6],t[5],t[4],t[2],t[1],t[0]))
 		else:
 			t = bus.read_i2c_block_data(address,register,7)
 			t[0] = t[0]&0x7F  #sec
@@ -680,7 +681,7 @@ def pcf8563ReadTimeB():
 			t[4] = t[4]&0x07  #month   -> dayname
 			t[5] = t[5]&0x1F  #dayname -> month
 			cach_time = ("%x:%x" %(t[2],t[1]))
-			return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
+			#return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
 	else:
 		from time import localtime
 		time_out = strftime("%a  %Y/%m/%d %H:%M:%S", localtime())
