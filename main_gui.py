@@ -119,7 +119,7 @@ radar_sen = 0
 def ini():
 	os.system('clear')
 	global spr
-	Process(target=splash).start()
+	#Process(target=splash).start()
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
@@ -1391,8 +1391,9 @@ class Window(Frame):
 				rca = ""
 				if radar_on == 1:
 					rca = "R.Cam on"
-				the_time= format_time(pcf8563ReadTime())+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C "+rca+"\n"+stats
-				client.publish("tgn/system/time",format_time(pcf8563ReadTime()),qos=0,retain=True)
+				cach_time = pcf8563ReadTime()
+				the_time= format_time(cach_time)+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C "+rca+"\n"+stats
+				client.publish("tgn/system/time",format_time(cach_time),qos=0,retain=True)
 				global afbground
 				global fground
 				if colorSet == 9:

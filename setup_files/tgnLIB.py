@@ -43,7 +43,7 @@ from twython import Twython
 address = 0x68
 register = 0x02
 zone = 0
-w  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
+w  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
 bus = smbus.SMBus(1)
 
 RPI_DEFAULT_I2C_NEW = 0x01
