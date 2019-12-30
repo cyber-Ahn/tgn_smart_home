@@ -114,12 +114,16 @@ api_url = 'http://192.168.0.94/admin/api.php'
 #radar_cam
 radar_on = 0
 radar_sen = 0
+radar_sw_pin = 25
+radar_sw_state = 1
 
 #functions
 def ini():
 	os.system('clear')
 	global spr
-	#Process(target=splash).start()
+	Process(target=splash).start()
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(radar_sw_pin, GPIO.IN)
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
@@ -1312,6 +1316,7 @@ class Window(Frame):
 			global the_time
 			global counterLCD
 			global mqtt_msg_cach
+			global radar_sw_state
 			newtime = time.time()
 			if newtime != the_time:
 				if MCPpower == 1:
@@ -1319,6 +1324,15 @@ class Window(Frame):
 				if mqtt_msg != mqtt_msg_cach:
 					mqtt_msg_cach = mqtt_msg
 					Process(target=TextToSpeech, args=(mqtt_msg,spr)).start()
+				if GPIO.input(radar_sw_pin) == 0:
+					if radar_sw_state == 1 and radar_on == 1:
+						radar_sw_state = 0
+						print("Picture Off")
+				else:
+					if radar_sw_state == 0 and radar_on == 1:
+						radar_sw_state = 1
+						print("Take a Picture and send to Pushbullet.....")
+						Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/",pushbulletkey)).start()
 				if MCPpower == 1:
 					if mcp.input(8) >> 8 == 1:
 						callback7() #digi-cam
