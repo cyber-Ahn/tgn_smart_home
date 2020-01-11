@@ -33,6 +33,7 @@ def update(ver):
         shutil.move("/home/pi/Desktop/update/language", "/home/pi/tgn_smart_home/language")
         shutil.move("/home/pi/Desktop/update/libs", "/home/pi/tgn_smart_home/libs")
         shutil.move("/home/pi/Desktop/update/update.py", "/home/pi/tgn_smart_home/update.py")
+        shutil.move("/home/pi/Desktop/update/update_4.py", "/home/pi/tgn_smart_home/update_4.py")
         shutil.move("/home/pi/Desktop/update/setup_files/tgnLIB.py", "/usr/local/lib/python3.5/dist-packages/tgnLIB.py")
         shutil.rmtree('/home/pi/Desktop/update', ignore_errors=True)
         return("New version available SHA:"+read_data+"\nUpdate successful")
