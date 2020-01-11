@@ -37,7 +37,7 @@ def update(ver):
         shutil.move("/home/pi/Desktop/update/setup_files/tgnLIB.py", "/usr/local/lib/python3.7/dist-packages/tgnLIB.py")
         shutil.rmtree('/home/pi/Desktop/update', ignore_errors=True)
         return("New version available SHA:"+read_data+"\nUpdate successful")
-print(update("0c69e44a720f9b4d3a027ff39876d8b16ecb54d5"))
+print(update("5c7f4367f03ad2422f807ca535f8b1b397dcbb6b"))
 setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py update"
 os.system(setn)
 time.sleep(6)
