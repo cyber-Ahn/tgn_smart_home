@@ -443,7 +443,7 @@ def thinkspeak_settings():
 	print((data[104].rstrip()))
 
 def update_ver():
-	version = "V.2.3.1"
+	version = "V.2.3"
 	start_add_I = 0x68
 	index = 0 
 	while index < 5:
@@ -461,7 +461,7 @@ def update_ver():
 		print("Write: "+str(start_add_I))
 
 def prog_rom():
-	version = "V.2.3.1"
+	version = "V.2.3"
 	ontime = "23:10|4:31"
 	offtime = "23:11|5:41"
 	s1 = "0"
