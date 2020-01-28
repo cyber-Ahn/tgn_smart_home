@@ -1406,14 +1406,14 @@ class Window(Frame):
 				if radar_on == 1:
 					rca = "R.Cam on"
 				cach_time = pcf8563ReadTime()
-				the_time= format_time(cach_time)+"\n"+textcpu+" "+str(round(getCpuTemperature(),1))+"°C "+rca+"\n"+stats
+				the_time= format_time(cach_time)+" / "+textcpu+" "+str(round(getCpuTemperature(),1))+"°C "+rca+"\n"+stats
 				client.publish("tgn/system/time",format_time(cach_time),qos=0,retain=True)
 				global afbground
 				global fground
 				if colorSet == 9:
 					afbground = '#000000'
 					fground = '#003f7e'
-				self.display_time.config(text=the_time, font=('times', 18, 'bold'), bg=afbground, fg=fground)
+				self.display_time.config(text=the_time, font=('times', 14, 'bold'), bg=afbground, fg=fground)
 			self.display_time.after(5000, change_value_the_time)
 		change_value_the_time()
 # updating window (Weather and PiHole)
@@ -1437,10 +1437,14 @@ class WindowB(Frame):
 					DNSQUERIES = dataPIhole['dns_queries_today']
 					ADSBLOCKED = dataPIhole['ads_blocked_today']
 					CLIENTS = dataPIhole['unique_clients']
+					DNSONLIST = dataPIhole['domains_being_blocked']
+					PIHOLECSTATUS = dataPIhole['status']
 				except:
 					DNSQUERIES = "XXX"
 					ADSBLOCKED = "XXX"
 					CLIENTS = "XXX"
+					DNSONLIST = "0"
+					PIHOLECSTATUS = "0"
 				temp_data = "Room Luxmeter:"
 				try:
 					f = open(spr_phat+"text.config","r")
@@ -1499,6 +1503,8 @@ class WindowB(Frame):
 						client.publish("tgn/pihole/adBlock",ADSBLOCKED,qos=0,retain=True)
 						client.publish("tgn/pihole/queries",DNSQUERIES,qos=0,retain=True)
 						client.publish("tgn/pihole/clients",CLIENTS,qos=0,retain=True)
+						client.publish("tgn/pihole/dnslist",DNSONLIST,qos=0,retain=True)
+						client.publish("tgn/pihole/status",PIHOLECSTATUS,qos=0,retain=True)
 						client.publish("tgn/room/temp",temp_data,qos=0,retain=True)
 						client.publish("tgn/room/light",readLight(),qos=0,retain=True)
 						client.publish("tgn/weather/icon",str(data['icon']),qos=0,retain=True)
@@ -1509,7 +1515,7 @@ class WindowB(Frame):
 							sonoff_set("6", "1")
 						else:
 							sonoff_set("6", "0")
-						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" �C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
+						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" °C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
 					output = output+'---------------------------------------------------------\n'
@@ -1527,7 +1533,7 @@ class WindowB(Frame):
 				if colorSet == 9:
 					afbground = '#000000'
 					fground = '#eaa424'
-				self.display_time.config(text=output, font=('times', 17, 'bold'), bg=afbground, fg=fground)
+				self.display_time.config(text=output, font=('times', 16, 'bold'), bg=afbground, fg=fground)
 				if is_connected(REMOTE_SERVER)=="Online":
 					if allowed_key(openweatherkey) == "yes":
 						phatI = phat+get_icon_name(str(data['icon']))
@@ -1902,15 +1908,15 @@ def normal_screen():
 	buttonLabel2.configure(background=bground, foreground=fground)
 	buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg=buttonb, fg=fground, width=10, command=callback15)
+	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg=buttonb, fg=fground, width=9, command=callback15)
 	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg=buttonb, fg=fground, width=10, command=callback16)
+	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg=buttonb, fg=fground, width=9, command=callback16)
 	B2.grid(row=1, column=1, padx=10, pady=3)
 	if ifI2C(NFC_ADDRESS) == "found device":
-		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg=buttona, fg=fground, width=10, command=callback30)
+		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg=buttona, fg=fground, width=9, command=callback30)
 		B3.grid(row=1, column=2, padx=10, pady=3)
 	else:
-		B3 = Button(buttonFrame2, text=("xxx"), bg=buttona, fg=fground, width=10, command=callback100)
+		B3 = Button(buttonFrame2, text=("xxx"), bg=buttona, fg=fground, width=9, command=callback100)
 		B3.grid(row=1, column=2, padx=10, pady=3)
 	B4 = Button(buttonFrame2, text="WebPlayer", bg=buttonb, fg=fground, width=9, command=callback110)
 	B4.grid(row=1, column=3, padx=10, pady=3)
@@ -1919,11 +1925,11 @@ def normal_screen():
 	buttonFrame3.configure(background=bground)
 	buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
 
-	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=10, command=callback20)
+	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=9, command=callback20)
 	B1.grid(row=0, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=10, command=callback21)
+	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=9, command=callback21)
 	B2.grid(row=0, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=10, command=callback40)
+	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=9, command=callback40)
 	B3.grid(row=0, column=2, padx=10, pady=3)
 	B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg=buttonb, fg=fground, width=9, command=callback43)
 	B4.grid(row=0, column=3, padx=10, pady=3)
@@ -2203,15 +2209,15 @@ def lcars_screen():
 	buttonLabel2.configure(background='#000000', foreground='#eaa424')
 	buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback15)
+	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback15)
 	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame2, text="Bot Shutdow", bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=bot_down)
+	B2 = Button(buttonFrame2, text="Bot Shutdow", bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=bot_down)
 	B2.grid(row=1, column=1, padx=10, pady=3)
 	if ifI2C(NFC_ADDRESS) == "found device":
-		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback30)
+		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback30)
 		B3.grid(row=1, column=2, padx=10, pady=3)
 	else:
-		B3 = Button(buttonFrame2, text=("xxx"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback100)
+		B3 = Button(buttonFrame2, text=("xxx"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback100)
 		B3.grid(row=1, column=2, padx=10, pady=3)
 	B4 = Button(buttonFrame2, text="WebPlayer", bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback110)
 	B4.grid(row=1, column=3, padx=10, pady=3)
@@ -2220,11 +2226,11 @@ def lcars_screen():
 	buttonFrame3.configure(background=bground)
 	buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
 
-	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback20)
+	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback20)
 	B1.grid(row=0, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback21)
+	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback21)
 	B2.grid(row=0, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=10, command=callback40)
+	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback40)
 	B3.grid(row=0, column=2, padx=10, pady=3)
 	B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback43)
 	B4.grid(row=0, column=3, padx=10, pady=3)
