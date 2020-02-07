@@ -1,44 +1,27 @@
-import Adafruit_DHT
-import Adafruit_BMP.BMP085 as BMP085
-import base64
 import csv
 import datetime
-import feedparser
-import itertools
-import json
 import logging
 import os
 import os.path
 import posix
-import picamera
 import RPi.GPIO as GPIO
 import requests
 import re
-import pexpect
-import paho.mqtt.client as mqtt
-import speech_recognition as sr
 import sys
 import smbus
 import socket
 import string
 import struct
 import subprocess
-import thingspeak
 import time
 import urllib.request
-import zipfile
 from ctypes import c_int, c_uint16, c_ushort, c_short, c_ubyte, c_char, POINTER, Structure, create_string_buffer, sizeof, byref, addressof, string_at
 from contextlib import closing
-from enigma.machine import EnigmaMachine
 from fcntl import ioctl
-from gtts import gTTS
-from pushbullet import Pushbullet
 from threading import Thread
 from time import gmtime, strftime
 from time import sleep
 from time import localtime
-from twython import Twython
-
 
 address = 0x68
 register = 0x02
@@ -616,6 +599,7 @@ class PlayerStatus:
     QUITTED = 4
 
 class MPyg321Player:
+    import pexpect
     """Main class for mpg321 player management"""
     player = None
     status = None
@@ -724,7 +708,7 @@ def getMAC(interface):
 def allowed_key(id):
 	allowed = "yes"
 	if id == "3aef357118b7ea5d700123785674b45e":
-		if getMAC("eth0") == "dc:a6:32:01:e1:db":
+		if getMAC("eth0") == "dc:a6:32:59:a2:6f":
 			allowed = "yes"
 		else:
 			allowed = "no"
@@ -804,6 +788,7 @@ def ip_cam_record(url, fps, width, hight, phat, record_time_min):
             exit(0)
 
 def send_twitter(message,image):
+    from twython import Twython
     from tw_auth import (consumer_key,consumer_secret,access_token,access_token_secret)
     twitter = Twython(consumer_key,consumer_secret,access_token,access_token_secret)
     if image != "":
@@ -830,6 +815,7 @@ def stream_twitter(search):
     stream.statuses.filter(track=search)
 
 def get_BMP085():
+    import Adafruit_BMP.BMP085 as BMP085
     sensor = BMP085.BMP085()
     databmp=(sensor.read_pressure() / 100.0)
     return databmp
@@ -865,6 +851,7 @@ def readLight(addr=BH1750_ADDRESS):
         return "error "
 
 def rss(url,num):
+    import feedparser
     feed = feedparser.parse(url)
     feed_title = feed['feed']['title']
     feed_entries = feed.entries
@@ -1025,6 +1012,7 @@ def restore_rom (blocknum, phatB):
 
 out_zip = "searchig....."
 def crack_zip(zip, pwd):
+    import zipfile
     try:
         global out_zip
         zip.extractall(pwd=str.encode(pwd))
@@ -1033,6 +1021,7 @@ def crack_zip(zip, pwd):
         print(out_zip)
         pass
 def get_zip_pwd(file):
+    import itertools
     myLetters = string.ascii_letters + string.digits + string.punctuation
     zipFile = zipfile.ZipFile(file)
     for i in range(1, 15):
@@ -1225,6 +1214,7 @@ def get_icon_name(data):
 	return icon
 
 def weather_info(city_id,apikey):
+    import json
     user_api = apikey
     unit = 'metric'  # For Fahrenheit use imperial, for Celsius use metric, and the default is Kelvin.
     api = 'http://api.openweathermap.org/data/2.5/weather?id='
@@ -1267,51 +1257,59 @@ def read_ts(channel):
 		return("connection failed")
 
 def get_dht11():
-	humidity, temperature = Adafruit_DHT.read_retry(11, 18)
-	if humidity is not None and temperature is not None:
-   		return('Room:{0:0.1f}°C / {1:0.1f}%'.format(temperature, humidity))
-	else:
-		return('error')
+    import Adafruit_DHT
+    humidity, temperature = Adafruit_DHT.read_retry(11, 18)
+    if humidity is not None and temperature is not None:
+        return('Room:{0:0.1f}°C / {1:0.1f}%'.format(temperature, humidity))
+    else:
+        return('error')
 
 def encode(text):
+    import base64
     encoded = base64.encodestring(text.encode('utf-8'))
     return encoded
 
 def decode(text):
+    import base64
     decoded = base64.decodestring(text).decode('utf-8')
     return decoded
 
 def pb_send_text(api_key, msg):
+    from pushbullet import Pushbullet
     pb = Pushbullet(api_key)
     push = pb.push_note("Raspberry Pi", msg)
 
 def pb_send_image(api_key, file, f_name):
+    from pushbullet import Pushbullet
     pb = Pushbullet(api_key)
     with open(file, "rb") as pic:
         file_data = pb.upload_file(pic, f_name)
     push = pb.push_file(**file_data)
 
 def TextToSpeech(text,ln):
-	tts = gTTS(text=text, lang=ln, slow=False)
-	tts.save("temp.mp3")
-	os.system('mpg321 temp.mp3 &')
-	time.sleep(1)
-	os.system('rm temp.mp3 &')
+    from gtts import gTTS
+    tts = gTTS(text=text, lang=ln, slow=False)
+    tts.save("temp.mp3")
+    os.system('mpg321 temp.mp3 &')
+    time.sleep(1)
+    os.system('rm temp.mp3 &')
 
 def SpeechToText(la,api_key):
-	r = sr.Recognizer()
-	with sr.Microphone() as source:
-		print("Say something!")
-		audio = r.listen(source)
-	try:
-    		return(r.recognize_google(audio, language=la, key=api_key))
-	except sr.UnknownValueError:
-    		return("Google Speech Recognition could not understand audio")
-	except sr.RequestError as e:
-    		return("Could not request results from Google Speech Recognition service; {0}".format(e))
+    import speech_recognition as sr
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Say something!")
+        audio = r.listen(source)
+    try:
+        return(r.recognize_google(audio, language=la, key=api_key))
+    except sr.UnknownValueError:
+        return("Google Speech Recognition could not understand audio")
+    except sr.RequestError as e:
+        return("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 def enigma_run(ciphertext,mode,keyfile):
        data = []
+       from enigma.machine import EnigmaMachine
        f = open(keyfile, "r")
        for x in f:
               data.append(x.rstrip())
@@ -1446,6 +1444,7 @@ def generate_keys(P,q):
     return open_key+"-"+private_key
 
 def crypt(open_key, msg):
+    import base64
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZüöäÜÖÄ"
     cach = msg.split(" ")
     z = len(cach)
@@ -1470,6 +1469,7 @@ def crypt(open_key, msg):
     return base64.b64encode(msg_c.encode()).decode()
 
 def decrypt(private_key, msg):
+    import base64
     letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZüöäÜÖÄ"
     msg = base64.b64decode(msg).decode()
     cach = msg.split("_")

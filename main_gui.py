@@ -2,7 +2,7 @@
 import binascii
 import PIL
 import paho.mqtt.client as mqtt
-import subprocess
+import thingspeak
 from subprocess import call
 from tkinter import *
 from PIL import Image, ImageTk
