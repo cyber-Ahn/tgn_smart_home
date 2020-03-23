@@ -8,6 +8,7 @@ from subprocess import call
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter.colorchooser import *
+from mcstatus import MinecraftServer
 from multiprocessing import Process
 from tgnLIB import *
 
@@ -117,6 +118,8 @@ radar_on = 0
 radar_sen = 0
 radar_sw_pin = 25
 radar_sw_state = 1
+#minecraft server address
+mc_add_s = "192.168.0.90"
 
 #functions
 def ini():
@@ -1460,6 +1463,7 @@ class WindowB(Frame):
 					global esp_ls
 					global rssfeed
 					global ttiv
+					mc_check(mc_add_s)
 					if rssurl == "empty":
 						rssfeed = "Please set a Newsfeed"
 					else:
@@ -1690,6 +1694,19 @@ def callback48():
 	elif radar_on == 0:
 		radar_on = 1
 	print(str(radar_on))
+def mc_check(ipadd):
+	server = MinecraftServer.lookup(ipadd)
+	try:
+		status = server.status()
+		onlpl=status.players.online
+		servtim=status.latency
+		client.publish("tgn/mc_server/status","online",qos=0,retain=True)
+		client.publish("tgn/mc_server/ping",servtim,qos=0,retain=True)
+		client.publish("tgn/mc_server/player",onlpl,qos=0,retain=True)
+	except:
+		client.publish("tgn/mc_server/status","offline",qos=0,retain=True)
+		client.publish("tgn/mc_server/ping","0",qos=0,retain=True)
+		client.publish("tgn/mc_server/player","0",qos=0,retain=True)
 #Main Prog
 ini()
 if LCDpower == 1:
