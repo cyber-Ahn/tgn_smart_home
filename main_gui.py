@@ -1146,6 +1146,14 @@ def sonoff_set(mod, stati):
 def bot_down():
 	client.publish("tgn/bot/shutdown","1",qos=0,retain=True)
 	Process(target=sound).start()
+def shutdown_other():
+	cmd='ssh pi@192.168.0.90 "sudo systemctl stop minecraft"'
+	os.system(cmd)
+	time.sleep(60)
+	cmd='ssh pi@192.168.0.90 "sudo shutdown -h"'
+	os.system(cmd)
+	cmd='ssh pi@192.168.0.94 "sudo shutdown -h"'
+	os.system(cmd)
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
@@ -1170,6 +1178,9 @@ def on_message(client, userdata, message):
 		if(str(message.payload.decode("utf-8"))=="1"):
 			client.publish("tgn/system/radar","0",qos=0,retain=True)
 			radar_sen = 1
+	if(message.topic=="tgn/bot/shutdown"):
+		if(str(message.payload.decode("utf-8"))=="1"):
+			shutdown_other()
 	if(message.topic=="tgn/mqtt-msg"):
 		mqtt_msg = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/wifi/pre"):
