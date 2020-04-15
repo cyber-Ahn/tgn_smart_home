@@ -13,7 +13,6 @@ from multiprocessing import Process
 from tgnLIB import *
 
 # var
-ROM_ADDRESS = 0x53
 LCD_ADDRESS = 0x3f
 MCP_ADDRESS = 0x20
 NFC_ADDRESS = 0x24
@@ -120,6 +119,8 @@ radar_sw_pin = 25
 radar_sw_state = 1
 #minecraft server address
 mc_add_s = "192.168.0.90"
+#test server
+REMOTE_SERVER = "www.google.com"
 
 #functions
 def ini():
@@ -1154,6 +1155,9 @@ def shutdown_other():
 	os.system(cmd)
 	cmd='ssh pi@192.168.0.94 "sudo shutdown -h"'
 	os.system(cmd)
+	cmd='ssh root@192.168.0.31 "shutdown -h now"'
+	os.system(cmd)
+
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
@@ -1302,7 +1306,7 @@ def on_message(client, userdata, message):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/esp_32_cam/capture","0",qos=0,retain=True)
 			radar_sen = 0
-			Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/",pushbulletkey)).start()
+			ip_cam_capture("http://192.168.0.15/capture","/home/pi/Pictures/",pushbulletkey)
 	if(message.topic=="tgn/esp_32_cam/stream"):
 		if(int(message.payload.decode("utf-8")) == 1):
 			client.publish("tgn/esp_32_cam/stream","0",qos=0,retain=True)

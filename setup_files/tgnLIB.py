@@ -7,21 +7,21 @@ import posix
 import RPi.GPIO as GPIO
 import requests
 import re
-import sys
+import serial
 import smbus
 import socket
 import string
 import struct
 import subprocess
+import sys
+import threading
 import time
 import urllib.request
 from ctypes import c_int, c_uint16, c_ushort, c_short, c_ubyte, c_char, POINTER, Structure, create_string_buffer, sizeof, byref, addressof, string_at
 from contextlib import closing
 from fcntl import ioctl
 from threading import Thread
-from time import gmtime, strftime
-from time import sleep
-from time import localtime
+from time import gmtime, strftime, sleep, localtime
 
 address = 0x68
 register = 0x02
@@ -29,59 +29,8 @@ zone = 0
 w  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
 bus = smbus.SMBus(1)
 
-RPI_DEFAULT_I2C_NEW = 0x01
-RPI_DEFAULT_I2C_OLD = 0x00
-LOGGING_ENABLED = False
-LOG_LEVEL = logging.DEBUG
-DEFAULT_DELAY = 0.005
-
-MCP23017_IODIRA = 0x00
-MCP23017_IODIRB = 0x01
-MCP23017_GPIOA  = 0x12
-MCP23017_GPIOB  = 0x13
-MCP23017_GPPUA  = 0x0C
-MCP23017_GPPUB  = 0x0D
-MCP23017_OLATA  = 0x14
-MCP23017_OLATB  = 0x15
-MCP23008_GPIOA  = 0x09
-MCP23008_GPPUA  = 0x06
-MCP23008_OLATA  = 0x0A
-
-I2CBUS = 1
-LCD_ADDRESS = 0x3f
-LCD_CLEARDISPLAY = 0x01
-LCD_RETURNHOME = 0x02
-LCD_ENTRYMODESET = 0x04
-LCD_DISPLAYCONTROL = 0x08
-LCD_CURSORSHIFT = 0x10
-LCD_FUNCTIONSET = 0x20
-LCD_SETCGRAMADDR = 0x40
-LCD_SETDDRAMADDR = 0x80
-LCD_ENTRYRIGHT = 0x00
-LCD_ENTRYLEFT = 0x02
-LCD_ENTRYSHIFTINCREMENT = 0x01
-LCD_ENTRYSHIFTDECREMENT = 0x00
-LCD_DISPLAYON = 0x04
-LCD_DISPLAYOFF = 0x00
-LCD_CURSORON = 0x02
-LCD_CURSOROFF = 0x00
-LCD_BLINKON = 0x01
-LCD_BLINKOFF = 0x00
-LCD_DISPLAYMOVE = 0x08
-LCD_CURSORMOVE = 0x00
-LCD_MOVERIGHT = 0x04
-LCD_MOVELEFT = 0x00
-LCD_8BITMODE = 0x10
-LCD_4BITMODE = 0x00
-LCD_2LINE = 0x08
-LCD_1LINE = 0x00
-LCD_5x10DOTS = 0x04
-LCD_5x8DOTS = 0x00
-LCD_BACKLIGHT = 0x08
-LCD_NOBACKLIGHT = 0x00
-En = 0b00000100
-Rw = 0b00000010
-Rs = 0b00000001
+ROM_ADDRESS = 0x53
+phatC = "/home/pi/tgn_smart_home/config/rom.csv"
 
 I2C_M_TEN = 0x0010
 I2C_M_RD = 0x0001
@@ -99,39 +48,7 @@ I2C_TENBIT = 0x0704
 I2C_FUNCS = 0x0705
 I2C_RDWR = 0x0707
 
-PN532_COMMAND_GETFIRMWAREVERSION = 0x02
-PN532_COMMAND_SAMCONFIGURATION = 0x14
-PN532_COMMAND_INLISTPASSIVETARGET = 0x4A
-PN532_COMMAND_RFCONFIGURATION = 0x32
-PN532_COMMAND_INDATAEXCHANGE = 0x40
-PN532_COMMAND_INDESELECT = 0x44
-PN532_IDENTIFIER_HOST_TO_PN532 = 0xD4
-PN532_IDENTIFIER_PN532_TO_HOST = 0xD5
-PN532_SAMCONFIGURATION_MODE_NORMAL = 0x01
-PN532_SAMCONFIGURATION_MODE_VIRTUAL_CARD = 0x02
-PN532_SAMCONFIGURATION_MODE_WIRED_CARD = 0x03
-PN532_SAMCONFIGURATION_MODE_DUAL_CARD = 0X04
-PN532_SAMCONFIGURATION_TIMEOUT_50MS = 0x01
-PN532_SAMCONFIGURATION_IRQ_OFF = 0x00
-PN532_SAMCONFIGURATION_IRQ_ON = 0x01
-PN532_RFCONFIGURATION_CFGITEM_MAXRETRIES = 0x05
-PN532_PREAMBLE = 0x00
-PN532_START_CODE_1 = 0x00
-PN532_START_CODE_2 = 0xFF
-PN532_POSTAMBLE = 0x00
-PN532_FRAME_POSITION_STATUS_CODE = 0
-PN532_FRAME_POSITION_PREAMBLE = 1
-PN532_FRAME_POSITION_START_CODE_1 = 2
-PN532_FRAME_POSITION_START_CODE_2 = 3
-PN532_FRAME_POSITION_LENGTH = 4
-PN532_FRAME_POSITION_LENGTH_CHECKSUM = 5
-PN532_FRAME_POSITION_FRAME_IDENTIFIER = 6
-PN532_FRAME_POSITION_DATA_START = 7
-PN532_FRAME_TYPE_DATA = 0
-PN532_FRAME_TYPE_ACK = 1
-PN532_FRAME_TYPE_NACK = 2
-PN532_FRAME_TYPE_ERROR = 3
-
+BH1750_ADDRESS = 0x23
 BH1750_POWER_DOWN = 0x00
 BH1750_POWER_ON = 0x01
 BH1750_RESET = 0x07
@@ -142,561 +59,20 @@ BH1750_ONE_TIME_HIGH_RES_MODE_1 = 0x20
 BH1750_ONE_TIME_HIGH_RES_MODE_2 = 0x21
 BH1750_ONE_TIME_LOW_RES_MODE = 0x23
 
-ROM_ADDRESS = 0x53
-PN532_I2C_SLAVE_ADDRESS = 0x24
-BH1750_ADDRESS = 0x23
-
-REMOTE_SERVER = "www.google.com"
-
-phatC = "/home/pi/tgn_smart_home/config/rom.csv"
-
-HexDigits = [0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71]
-ADDR_AUTO = 0x40
-ADDR_FIXED = 0x44
-STARTADDR = 0xC0
-BRIGHT_DARKEST = 0
-BRIGHT_TYPICAL = 2
-BRIGHT_HIGHEST = 7
-OUTPUT = GPIO.OUT
-INPUT = GPIO.IN
-LOW = GPIO.LOW
-HIGH = GPIO.HIGH
-
-class MCP230XX(object):
-    OUTPUT = 0
-    INPUT = 1
-
-    def __init__(self, address, num_gpios, busnum=-1):
-        assert num_gpios >= 0 and num_gpios <= 16, "Number of GPIOs must be between 0 and 16"
-        self.i2c = I2C(address=address, busnum=busnum)
-        self.address = address
-        self.num_gpios = num_gpios
-
-        # set defaults
-        if num_gpios <= 8:
-            self.i2c.write8(MCP23017_IODIRA, 0xFF)  # all inputs on port A
-            self.direction = self.i2c.readU8(MCP23017_IODIRA)
-            self.i2c.write8(MCP23008_GPPUA, 0x00)
-        elif num_gpios > 8 and num_gpios <= 16:
-            self.i2c.write8(MCP23017_IODIRA, 0xFF)  # all inputs on port A
-            self.i2c.write8(MCP23017_IODIRB, 0xFF)  # all inputs on port B
-            self.direction = self.i2c.readU8(MCP23017_IODIRA)
-            self.direction |= self.i2c.readU8(MCP23017_IODIRB) << 8
-            self.i2c.write8(MCP23017_GPPUA, 0x00)
-            self.i2c.write8(MCP23017_GPPUB, 0x00)
-
-    def _changebit(self, bitmap, bit, value):
-        assert value == 1 or value == 0, "Value is %s must be 1 or 0" % value
-        if value == 0:
-            return bitmap & ~(1 << bit)
-        elif value == 1:
-            return bitmap | (1 << bit)
-
-    def _readandchangepin(self, port, pin, value, currvalue = None):
-        assert pin >= 0 and pin < self.num_gpios, "Pin number %s is invalid, only 0-%s are valid" % (pin, self.num_gpios)
-        #assert self.direction & (1 << pin) == 0, "Pin %s not set to output" % pin
-        if not currvalue:
-             currvalue = self.i2c.readU8(port)
-        newvalue = self._changebit(currvalue, pin, value)
-        self.i2c.write8(port, newvalue)
-        return newvalue
-
-
-    def pullup(self, pin, value):
-        if self.num_gpios <= 8:
-            return self._readandchangepin(MCP23008_GPPUA, pin, value)
-        if self.num_gpios <= 16:
-            lvalue = self._readandchangepin(MCP23017_GPPUA, pin, value)
-            if (pin < 8):
-                return
-            else:
-                return self._readandchangepin(MCP23017_GPPUB, pin-8, value) << 8
-
-    # Set pin to either input or output mode
-    def config(self, pin, mode):
-        if self.num_gpios <= 8:
-            self.direction = self._readandchangepin(MCP23017_IODIRA, pin, mode)
-        if self.num_gpios <= 16:
-            if (pin < 8):
-                self.direction = self._readandchangepin(MCP23017_IODIRA, pin, mode)
-            else:
-                self.direction |= self._readandchangepin(MCP23017_IODIRB, pin-8, mode) << 8
-
-        return self.direction
-
-    def output(self, pin, value):
-        # assert self.direction & (1 << pin) == 0, "Pin %s not set to output" % pin
-        if self.num_gpios <= 8:
-            self.outputvalue = self._readandchangepin(MCP23008_GPIOA, pin, value, self.i2c.readU8(MCP23008_OLATA))
-        if self.num_gpios <= 16:
-            if (pin < 8):
-                self.outputvalue = self._readandchangepin(MCP23017_GPIOA, pin, value, self.i2c.readU8(MCP23017_OLATA))
-            else:
-                self.outputvalue = self._readandchangepin(MCP23017_GPIOB, pin-8, value, self.i2c.readU8(MCP23017_OLATB)) << 8
-
-        return self.outputvalue
-
-
-        self.outputvalue = self._readandchangepin(MCP23017_IODIRA, pin, value, self.outputvalue)
-        return self.outputvalue
-
-    def input(self, pin):
-        assert pin >= 0 and pin < self.num_gpios, "Pin number %s is invalid, only 0-%s are valid" % (pin, self.num_gpios)
-        assert self.direction & (1 << pin) != 0, "Pin %s not set to input" % pin
-        if self.num_gpios <= 8:
-            value = self.i2c.readU8(MCP23008_GPIOA)
-        elif self.num_gpios > 8 and self.num_gpios <= 16:
-            value = self.i2c.readU8(MCP23017_GPIOA)
-            value |= self.i2c.readU8(MCP23017_GPIOB) << 8
-        return value & (1 << pin)
-
-    def readU8(self):
-        result = self.i2c.readU8(MCP23008_OLATA)
-        return(result)
-
-    def readS8(self):
-        result = self.i2c.readU8(MCP23008_OLATA)
-        if (result > 127): result -= 256
-        return result
-
-    def readU16(self):
-        assert self.num_gpios >= 16, "16bits required"
-        lo = self.i2c.readU8(MCP23017_OLATA)
-        hi = self.i2c.readU8(MCP23017_OLATB)
-        return((hi << 8) | lo)
-
-    def readS16(self):
-        assert self.num_gpios >= 16, "16bits required"
-        lo = self.i2c.readU8(MCP23017_OLATA)
-        hi = self.i2c.readU8(MCP23017_OLATB)
-        if (hi > 127): hi -= 256
-        return((hi << 8) | lo)
-
-    def write8(self, value):
-        self.i2c.write8(MCP23008_OLATA, value)
-
-    def write16(self, value):
-        assert self.num_gpios >= 16, "16bits required"
-        self.i2c.write8(MCP23017_OLATA, value & 0xFF)
-        self.i2c.write8(MCP23017_OLATB, (value >> 8) & 0xFF)
-
-class MCP230XX_GPIO(object):
-    OUT = 0
-    IN = 1
-    BCM = 0
-    BOARD = 0
-    def __init__(self, busnum, address, num_gpios):
-        self.chip = Adafruit_MCP230XX(address, num_gpios, busnum)
-    def setmode(self, mode):
-        # do nothing
-        pass
-    def setup(self, pin, mode):
-        self.chip.config(pin, mode)
-    def input(self, pin):
-        return self.chip.input(pin)
-    def output(self, pin, value):
-        self.chip.output(pin, value)
-    def pullup(self, pin, value):
-        self.chip.pullup(pin, value)
-
-class I2C(object):
-
-  @staticmethod
-  def getPiRevision():
-    "Gets the version number of the Raspberry Pi board"
-    # Revision list available at: http://elinux.org/RPi_HardwareHistory#Board_Revision_History
-    try:
-      with open('/proc/cpuinfo', 'r') as infile:
-        for line in infile:
-          # Match a line of the form "Revision : 0002" while ignoring extra
-          # info in front of the revsion (like 1000 when the Pi was over-volted).
-          match = re.match('Revision\s+:\s+.*(\w{4})$', line)
-          if match and match.group(1) in ['0000', '0002', '0003']:
-            # Return revision 1 if revision ends with 0000, 0002 or 0003.
-            return 1
-          elif match:
-            # Assume revision 2 if revision ends with any other 4 chars.
-            return 2
-        # Couldn't find the revision, assume revision 0 like older code for compatibility.
-        return 0
-    except:
-      return 0
-
-  @staticmethod
-  def getPiI2CBusNumber():
-    # Gets the I2C bus number /dev/i2c#
-    return 1 if Adafruit_I2C.getPiRevision() > 1 else 0
-
-  def __init__(self, address, busnum=-1, debug=False):
-    self.address = address
-    # By default, the correct I2C bus is auto-detected using /proc/cpuinfo
-    # Alternatively, you can hard-code the bus version below:
-    # self.bus = smbus.SMBus(0); # Force I2C0 (early 256MB Pi's)
-    # self.bus = smbus.SMBus(1); # Force I2C1 (512MB Pi's)
-    self.bus = smbus.SMBus(busnum if busnum >= 0 else Adafruit_I2C.getPiI2CBusNumber())
-    self.debug = debug
-
-  def reverseByteOrder(self, data):
-    "Reverses the byte order of an int (16-bit) or long (32-bit) value"
-    # Courtesy Vishal Sapre
-    byteCount = len(hex(data)[2:].replace('L','')[::2])
-    val       = 0
-    for i in range(byteCount):
-      val    = (val << 8) | (data & 0xff)
-      data >>= 8
-    return val
-
-  def errMsg(self):
-    print("Error accessing 0x%02X: Check your I2C address" % self.address)
-    return -1
-
-  def write8(self, reg, value):
-    "Writes an 8-bit value to the specified register/address"
-    try:
-      self.bus.write_byte_data(self.address, reg, value)
-      if self.debug:
-        print("I2C: Wrote 0x%02X to register 0x%02X" % (value, reg))
-    except IOError:
-      return self.errMsg()
-
-  def write16(self, reg, value):
-    "Writes a 16-bit value to the specified register/address pair"
-    try:
-      self.bus.write_word_data(self.address, reg, value)
-      if self.debug:
-        print ("I2C: Wrote 0x%02X to register pair 0x%02X,0x%02X" %
-         (value, reg, reg+1))
-    except IOError:
-      return self.errMsg()
-
-  def writeRaw8(self, value):
-    "Writes an 8-bit value on the bus"
-    try:
-      self.bus.write_byte(self.address, value)
-      if self.debug:
-        print("I2C: Wrote 0x%02X" % value)
-    except IOError:
-      return self.errMsg()
-
-  def writeList(self, reg, list):
-    "Writes an array of bytes using I2C format"
-    try:
-      if self.debug:
-        print("I2C: Writing list to register 0x%02X:" % reg)
-        print(list)
-      self.bus.write_i2c_block_data(self.address, reg, list)
-    except IOError:
-      return self.errMsg()
-
-  def readList(self, reg, length):
-    "Read a list of bytes from the I2C device"
-    try:
-      results = self.bus.read_i2c_block_data(self.address, reg, length)
-      if self.debug:
-        print ("I2C: Device 0x%02X returned the following from reg 0x%02X" %
-         (self.address, reg))
-        print(results)
-      return results
-    except IOError:
-      return self.errMsg()
-
-  def readU8(self, reg):
-    "Read an unsigned byte from the I2C device"
-    try:
-      result = self.bus.read_byte_data(self.address, reg)
-      if self.debug:
-        print ("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" %
-         (self.address, result & 0xFF, reg))
-      return result
-    except IOError:
-      return self.errMsg()
-
-  def readS8(self, reg):
-    "Reads a signed byte from the I2C device"
-    try:
-      result = self.bus.read_byte_data(self.address, reg)
-      if result > 127: result -= 256
-      if self.debug:
-        print ("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" %
-         (self.address, result & 0xFF, reg))
-      return result
-    except IOError:
-      return self.errMsg()
-
-  def readU16(self, reg, little_endian=True):
-    "Reads an unsigned 16-bit value from the I2C device"
-    try:
-      result = self.bus.read_word_data(self.address,reg)
-      # Swap bytes if using big endian because read_word_data assumes little 
-      # endian on ARM (little endian) systems.
-      if not little_endian:
-        result = ((result << 8) & 0xFF00) + (result >> 8)
-      if (self.debug):
-        print("I2C: Device 0x%02X returned 0x%04X from reg 0x%02X" % (self.address, result & 0xFFFF, reg))
-      return result
-    except IOError:
-      return self.errMsg()
-
-  def readS16(self, reg, little_endian=True):
-    "Reads a signed 16-bit value from the I2C device"
-    try:
-      result = self.readU16(reg,little_endian)
-      if result > 32767: result -= 65536
-      return result
-    except IOError:
-      return self.errMsg()
-
-class RemoteSwitch(object):
-        repeat = 10 # Number of transmissions
-        pulselength = 300 # microseconds
-        GPIOMode = GPIO.BCM
-       
-        def __init__(self, device, key=[1,1,1,1,1], pin=4):            
-                self.pin = pin
-                self.key = key
-                self.device = device
-                GPIO.setmode(self.GPIOMode)
-                GPIO.setup(self.pin, GPIO.OUT)
-               
-        def switchOn(self):
-                self._switch(GPIO.HIGH)
- 
-        def switchOff(self):
-                self._switch(GPIO.LOW)
- 
-        def _switch(self, switch):
-                self.bit = [142, 142, 142, 142, 142, 142, 142, 142, 142, 142, 142, 136, 128, 0, 0, 0]          
- 
-                for t in range(5):
-                        if self.key[t]:
-                                self.bit[t]=136
-                x=1
-                for i in range(1,6):
-                        if self.device & x > 0:
-                                self.bit[4+i] = 136
-                        x = x<<1
- 
-                if switch == GPIO.HIGH:
-                        self.bit[10] = 136
-                        self.bit[11] = 142
-                               
-                bangs = []
-                for y in range(16):
-                        x = 128
-                        for i in range(1,9):
-                                b = (self.bit[y] & x > 0) and GPIO.HIGH or GPIO.LOW
-                                bangs.append(b)
-                                x = x>>1
-                               
-                GPIO.output(self.pin, GPIO.LOW)
-                for z in range(self.repeat):
-                        for b in bangs:
-                                GPIO.output(self.pin, b)
-                                time.sleep(self.pulselength/1000000.)
-
-class i2c_device:
-   def __init__(self, addr, port=I2CBUS):
-      self.addr = addr
-      self.bus = smbus.SMBus(port)
-   def write_cmd(self, cmd):
-      self.bus.write_byte(self.addr, cmd)
-      sleep(0.0001)
-   def write_cmd_arg(self, cmd, data):
-      self.bus.write_byte_data(self.addr, cmd, data)
-      sleep(0.0001)
-   def write_block_data(self, cmd, data):
-      self.bus.write_block_data(self.addr, cmd, data)
-      sleep(0.0001)
-   def read(self):
-      return self.bus.read_byte(self.addr)
-   def read_data(self, cmd):
-      return self.bus.read_byte_data(self.addr, cmd)
-   def read_block_data(self, cmd):
-      return self.bus.read_block_data(self.addr, cmd)
-
-class lcd:
-   #initializes objects and lcd
-   def __init__(self):
-      self.lcd_device = i2c_device(LCD_ADDRESS)
-      self.lcd_write(0x03)
-      self.lcd_write(0x03)
-      self.lcd_write(0x03)
-      self.lcd_write(0x02)
-      self.lcd_write(LCD_FUNCTIONSET | LCD_2LINE | LCD_5x8DOTS | LCD_4BITMODE)
-      self.lcd_write(LCD_DISPLAYCONTROL | LCD_DISPLAYON)
-      self.lcd_write(LCD_CLEARDISPLAY)
-      self.lcd_write(LCD_ENTRYMODESET | LCD_ENTRYLEFT)
-      sleep(0.2)
-   def lcd_strobe(self, data):
-      self.lcd_device.write_cmd(data | En | LCD_BACKLIGHT)
-      sleep(.0005)
-      self.lcd_device.write_cmd(((data & ~En) | LCD_BACKLIGHT))
-      sleep(.0001)
-   def lcd_write_four_bits(self, data):
-      self.lcd_device.write_cmd(data | LCD_BACKLIGHT)
-      self.lcd_strobe(data)
-   def lcd_write(self, cmd, mode=0):
-      self.lcd_write_four_bits(mode | (cmd & 0xF0))
-      self.lcd_write_four_bits(mode | ((cmd << 4) & 0xF0))
-   def lcd_write_char(self, charvalue, mode=1):
-      self.lcd_write_four_bits(mode | (charvalue & 0xF0))
-      self.lcd_write_four_bits(mode | ((charvalue << 4) & 0xF0))
-   def lcd_display_string(self, string, line=1, pos=0):
-    if line == 1:
-      pos_new = pos
-    elif line == 2:
-      pos_new = 0x40 + pos
-    elif line == 3:
-      pos_new = 0x14 + pos
-    elif line == 4:
-      pos_new = 0x54 + pos
-    self.lcd_write(0x80 + pos_new)
-    for char in string:
-      self.lcd_write(ord(char), Rs)
-   def lcd_clear(self):
-      self.lcd_write(LCD_CLEARDISPLAY)
-      self.lcd_write(LCD_RETURNHOME)
-   def backlight(self, state): # for state, 1 = on, 0 = off
-      if state == 1:
-         self.lcd_device.write_cmd(LCD_BACKLIGHT)
-      elif state == 0:
-         self.lcd_device.write_cmd(LCD_NOBACKLIGHT)
-   def lcd_load_custom_chars(self, fontdata):
-      self.lcd_write(0x40)
-      for char in fontdata:
-         for line in char:
-            self.lcd_write_char(line)
-
-mpgouts = [
-    {
-        "mpg_code": "@P 0",
-        "action": "user_stop",
-        "description": "Music has been stopped by the user."
-    },
-    {
-        "mpg_code": "@P 1",
-        "action": "user_pause",
-        "description": "Music has been paused by the user."
-    },
-    {
-        "mpg_code": "@P 2",
-        "action": "user_resume",
-        "description": "Music has been resumed by the user."
-    },
-    {
-        "mpg_code": "@P 3",
-        "action": "end_of_song",
-        "description": "Player has reached the end of the song."
-    }
-]
-mpgcodes = [v["mpg_code"] for v in mpgouts]
-
-class PlayerStatus:
-    INSTANCIATED = 0
-    PLAYING = 1
-    PAUSED = 2
-    STOPPED = 3
-    QUITTED = 4
-
-class MPyg321Player:
-    import pexpect
-    """Main class for mpg321 player management"""
-    player = None
-    status = None
-    output_processor = None
-
-    def __init__(self):
-        """Builds the player and creates the callbacks"""
-        self.player = pexpect.spawn("mpg321 -R somerandomword", timeout=None)
-        self.status = PlayerStatus.INSTANCIATED
-        self.output_processor = Thread(target=self.process_output)
-        self.output_processor.daemon = True
-        self.output_processor.start()
-
-    def process_output(self):
-        """Parses the output"""
-        while True:
-            index = self.player.expect(mpgcodes)
-            action = mpgouts[index]["action"]
-            if action == "user_stop":
-                self.onAnyStop()
-                self.onUserStop()
-            if action == "user_pause":
-                self.onAnyStop()
-                self.onUserPause()
-            if action == "user_resume":
-                self.onUserResume()
-            if action == "end_of_song":
-                self.onAnyStop()
-                self.onMusicEnd()
-
-    def play_song(self, path):
-        """Plays the song"""
-        self.player.sendline("LOAD " + path)
-        self.status = PlayerStatus.PLAYING
-
-    def pause(self):
-        """Pauses the player"""
-        if self.status == PlayerStatus.PLAYING:
-            self.player.sendline("PAUSE")
-            self.status = PlayerStatus.PAUSED
-
-    def resume(self):
-        """Resume the player"""
-        if self.status == PlayerStatus.PAUSED:
-            self.player.sendline("PAUSE")
-            self.status = PlayerStatus.PLAYING
-
-    def stop(self):
-        """Stops the player"""
-        self.player.sendline("STOP")
-        self.status = PlayerStatus.STOPPED
-
-    def quit(self):
-        """Quits the player"""
-        self.player.sendline("QUIT")
-        self.status = PlayerStatus.QUITTED
-    
-    def gain(self, vol):
-        """set volume"""
-        self.player.sendline("GAIN "+str(vol))
-        self.status = PlayerStatus.PLAYING
-
-    # # # Callbacks # # #
-    def onAnyStop(self):
-        """Callback when the music stops for any reason"""
-        pass
-
-    def onUserPause(self):
-        """Callback when user pauses the music"""
-        pass
-
-    def onUserResume(self):
-        """Callback when user resumes the music"""
-        pass
-
-    def onUserStop(self):
-        """Callback when user stops music"""
-        pass
-
-    def onMusicEnd(self):
-        """Callback when music ends"""
-        pass
-
 def ifI2C(add):
-	add = hex(add)
-	p = subprocess.Popen(['i2cdetect', '-y','1'],stdout=subprocess.PIPE,)
-	out = "not found"
-	for i in range(0,9):
-		line = str(p.stdout.readline()).rstrip()
-		if i >> 0:
-			cach=line.split(": ")
-			cachB=cach[1].split(" ")
-			for x in range(len(cachB)):
-				if cachB[x]!="" and cachB[x]!="--":
-					if add==("0x"+cachB[x]):
-						out="found device"
-	return out
+    add = hex(add)
+    p = subprocess.Popen(['i2cdetect', '-y','1'],stdout=subprocess.PIPE,)
+    out = "not found"
+    for i in range(0,9):
+        line = str(p.stdout.readline()).rstrip()
+        if i >> 0:
+            cach=line.split(": ")
+            cachB=cach[1].split(" ")
+            for x in range(len(cachB)):
+                if cachB[x]!="" and cachB[x]!="--":
+                    if add==("0x"+cachB[x]):
+                        out="found device"
+    return out
 
 def getMAC(interface):
 	try:
@@ -708,7 +84,7 @@ def getMAC(interface):
 def allowed_key(id):
 	allowed = "yes"
 	if id == "3aef357118b7ea5d700123785674b45e":
-		if getMAC("eth0") == "dc:a6:32:59:a2:6f":
+		if getMAC("eth0") == "b8:27:eb:cd:a3:3f":
 			allowed = "yes"
 		else:
 			allowed = "no"
@@ -1491,7 +867,785 @@ def decrypt(private_key, msg):
         else:
             msg_c = msg_c + " " + word
     return msg_c
-#-----------------------------------------
+
+class STM32F105R8(object):
+    TRUE         =  1
+    FALSE        =  0
+    # Basic response message definition
+    ACK_SUCCESS           = 0x00
+    ACK_FAIL              = 0x01
+    ACK_FULL              = 0x04
+    ACK_NO_USER           = 0x05
+    ACK_TIMEOUT           = 0x08
+    ACK_GO_OUT            = 0x0F 
+    # User information definition
+    ACK_ALL_USER          = 0x00
+    ACK_GUEST_USER        = 0x01
+    ACK_NORMAL_USER       = 0x02
+    ACK_MASTER_USER       = 0x03
+    USER_MAX_CNT          = 1000
+    # Command definition
+    CMD_HEAD              = 0xF5
+    CMD_TAIL              = 0xF5
+    CMD_ADD_1             = 0x01
+    CMD_ADD_2             = 0x02
+    CMD_ADD_3             = 0x03
+    CMD_MATCH             = 0x0C
+    CMD_DEL               = 0x04
+    CMD_DEL_ALL           = 0x05
+    CMD_USER_CNT          = 0x09
+    CMD_COM_LEV           = 0x28
+    CMD_LP_MODE           = 0x2C
+    CMD_TIMEOUT           = 0x2E
+    CMD_FINGER_DETECTED   = 0x14
+    #set GPIO
+    Finger_WAKE_Pin   = 23
+    Finger_RST_Pin    = 24
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(Finger_WAKE_Pin, GPIO.IN)  
+    GPIO.setup(Finger_RST_Pin, GPIO.OUT) 
+    GPIO.setup(Finger_RST_Pin, GPIO.OUT, initial=GPIO.HIGH)
+    #var
+    g_rx_buf            = []
+    PC_Command_RxBuf    = []
+    Finger_SleepFlag    = 0
+    #start serial
+    rLock = threading.RLock()
+    try:
+        ser = serial.Serial("/dev/ttyS0", 19200)
+    except:
+        print("No Serial Device found")
+
+    def  TxAndRxCmd(command_buf, rx_bytes_need, timeout):
+        global g_rx_buf
+        CheckSum = 0
+        tx_buf = []
+        tx_buf.append(CMD_HEAD)         
+        for byte in command_buf:
+            tx_buf.append(byte)  
+            CheckSum ^= byte
+        tx_buf.append(CheckSum)  
+        tx_buf.append(CMD_TAIL)  
+        ser.flushInput()
+        ser.write(tx_buf)
+        g_rx_buf = [] 
+        time_before = time.time()
+        time_after = time.time()
+        while time_after - time_before < timeout and len(g_rx_buf) < rx_bytes_need:  # Waiting for response
+            bytes_can_recv = ser.inWaiting()
+            if bytes_can_recv != 0:
+                g_rx_buf += ser.read(bytes_can_recv)    
+            time_after = time.time()
+        if len(g_rx_buf) != rx_bytes_need:
+            return ACK_TIMEOUT
+        if g_rx_buf[0] != CMD_HEAD:       
+            return ACK_FAIL
+        if g_rx_buf[rx_bytes_need - 1] != CMD_TAIL:
+            return ACK_FAIL
+        if g_rx_buf[1] != tx_buf[1]:     
+            return ACK_FAIL
+        CheckSum = 0
+        for index, byte in enumerate(g_rx_buf):
+            if index == 0:
+                continue
+            if index == 6:
+                if CheckSum != byte:
+                    return ACK_FAIL
+            CheckSum ^= byte
+        return  ACK_SUCCESS;
+
+    def  GetCompareLevel():
+        global g_rx_buf
+        command_buf = [CMD_COM_LEV, 0, 0, 1, 0]
+        r = TxAndRxCmd(command_buf, 8, 0.1)
+        if r == ACK_TIMEOUT:
+            return ACK_TIMEOUT
+        if r == ACK_SUCCESS and g_rx_buf[4] == ACK_SUCCESS:
+            return g_rx_buf[3]
+        else:
+            return 0xFF
+
+    def SetCompareLevel(level):
+        global g_rx_buf
+        command_buf = [CMD_COM_LEV, 0, level, 0, 0]
+        r = TxAndRxCmd(command_buf, 8, 0.1)   
+        
+        if r == ACK_TIMEOUT:
+            return ACK_TIMEOUT
+        if r == ACK_SUCCESS and g_rx_buf[4] == ACK_SUCCESS:	
+            return  g_rx_buf[3]
+        else:
+            return 0xFF
+
+    def GetUserCount():
+        global g_rx_buf
+        command_buf = [CMD_USER_CNT, 0, 0, 0, 0]
+        r = TxAndRxCmd(command_buf, 8, 0.1)
+        if r == ACK_TIMEOUT:
+            return ACK_TIMEOUT
+        if r == ACK_SUCCESS and g_rx_buf[4] == ACK_SUCCESS:
+            return g_rx_buf[3]
+        else:
+            return 0xFF
+
+    def GetTimeOut():
+        global g_rx_buf
+        command_buf = [CMD_TIMEOUT, 0, 0, 1, 0]
+        r = TxAndRxCmd(command_buf, 8, 0.1)
+        if r == ACK_TIMEOUT:
+            return ACK_TIMEOUT
+        if r == ACK_SUCCESS and g_rx_buf[4] == ACK_SUCCESS:
+            return g_rx_buf[3]
+        else:
+            return 0xFF
+    
+    def AddUser():
+        global g_rx_buf
+        r = GetUserCount()
+        if r >= USER_MAX_CNT:
+            return ACK_FULL	
+            
+        command_buf = [CMD_ADD_1, 0, r+1, 3, 0]
+        r = TxAndRxCmd(command_buf, 8, 6)
+        if r == ACK_TIMEOUT:
+            return ACK_TIMEOUT
+        if r == ACK_SUCCESS and g_rx_buf[4] == ACK_SUCCESS:
+            command_buf[0] = CMD_ADD_3
+            r = TxAndRxCmd(command_buf, 8, 2)
+            if r == ACK_TIMEOUT:
+                return ACK_TIMEOUT
+            if r == ACK_SUCCESS and g_rx_buf[4] == ACK_SUCCESS:
+                return ACK_SUCCESS
+            else:
+                return ACK_FAIL 
+        else:
+            return 
+    
+    def ClearAllUser():
+        global g_rx_buf
+        command_buf = [CMD_DEL_ALL, 0, 0, 0, 0]
+        r = TxAndRxCmd(command_buf, 8, 5)
+        if r == ACK_TIMEOUT:
+            return ACK_TIMEOUT
+        if r == ACK_SUCCESS and g_rx_buf[4] == ACK_SUCCESS:  
+            return ACK_SUCCESS
+        else:
+            return ACK_FAIL
+    
+    def IsMasterUser(user_id):
+        if user_id == 1 or user_id == 2 or user_id == 3: 
+            return TRUE
+        else: 
+            return FALSE
+    
+    def VerifyUser():
+        global g_rx_buf
+        command_buf = [CMD_MATCH, 0, 0, 0, 0]
+        r = TxAndRxCmd(command_buf, 8, 5);
+        if r == ACK_TIMEOUT:
+            return ACK_TIMEOUT
+        if r == ACK_SUCCESS and IsMasterUser(g_rx_buf[4]) == TRUE:
+            return ACK_SUCCESS
+        elif g_rx_buf[4] == ACK_NO_USER:
+            return ACK_NO_USER
+        elif g_rx_buf[4] == ACK_TIMEOUT:
+            return ACK_TIMEOUT
+        else:
+            return ACK_GO_OUT
+    
+    def Analysis_PC_Command():
+        global Finger_SleepFlag 
+        if  PC_Command_RxBuf[0] == "CMD1" and Finger_SleepFlag != 1:
+            return ("Number of fingerprints already available:  %d"  % GetUserCount())
+        elif PC_Command_RxBuf[0] == "CMD2" and Finger_SleepFlag != 1:
+            return ("Add fingerprint  (Each entry needs to be read two times: \"beep\",put the finger on sensor, \"beep\", put up ,\"beep\", put on again) ")
+            r = AddUser()
+            if r == ACK_SUCCESS:
+                return ("Fingerprint added successfully !")
+            elif r == ACK_FAIL:
+                return ("Failed: Please try to place the center of the fingerprint flat to sensor, or this fingerprint already exists !")
+            elif r == ACK_FULL:
+                return ("Failed: The fingerprint library is full !")           
+        elif PC_Command_RxBuf[0] == "CMD3" and Finger_SleepFlag != 1:
+            return ("Waiting Finger......Please try to place the center of the fingerprint flat to sensor !")
+            r = VerifyUser()
+            if r == ACK_SUCCESS:
+                return ("Matching successful !")
+            elif r == ACK_NO_USER:
+                return ("Failed: This fingerprint was not found in the library !")
+            elif r == ACK_TIMEOUT:
+                return ("Failed: Time out !")
+            elif r == ACK_GO_OUT:
+                return ("Failed: Please try to place the center of the fingerprint flat to sensor !")
+        elif PC_Command_RxBuf[0] == "CMD4" and Finger_SleepFlag != 1:
+            ClearAllUser()
+            return ("All fingerprints have been cleared !")
+        elif PC_Command_RxBuf[0] == "CMD5" and Finger_SleepFlag != 1:
+            GPIO.output(Finger_RST_Pin, GPIO.LOW)
+            Finger_SleepFlag = 1
+            return ("Module has entered sleep mode: you can use the finger Automatic wake-up function, in this mode, only CMD6 is valid, send CMD6 to pull up the RST pin of module, so that the module exits sleep !")
+        elif PC_Command_RxBuf[0] == "CMD6":
+            if rLock.acquire(blocking=True, timeout=0.6) == True: 
+                Finger_SleepFlag = 0
+                GPIO.output(Finger_RST_Pin, GPIO.HIGH)
+                time.sleep(0.25)    # Wait for module to start
+                return ("The module is awake. All commands are valid !")
+                rLock.release()
+
+
+class MCP230XX(object):
+    OUTPUT = 0
+    INPUT = 1
+    MCP23017_IODIRA = 0x00
+    MCP23017_IODIRB = 0x01
+    MCP23017_GPIOA  = 0x12
+    MCP23017_GPIOB  = 0x13
+    MCP23017_GPPUA  = 0x0C
+    MCP23017_GPPUB  = 0x0D
+    MCP23017_OLATA  = 0x14
+    MCP23017_OLATB  = 0x15
+    MCP23008_GPIOA  = 0x09
+    MCP23008_GPPUA  = 0x06
+    MCP23008_OLATA  = 0x0A
+
+    def __init__(self, address, num_gpios, busnum=-1):
+        assert num_gpios >= 0 and num_gpios <= 16, "Number of GPIOs must be between 0 and 16"
+        self.i2c = I2C(address=address, busnum=busnum)
+        self.address = address
+        self.num_gpios = num_gpios
+
+        # set defaults
+        if num_gpios <= 8:
+            self.i2c.write8(MCP23017_IODIRA, 0xFF)  # all inputs on port A
+            self.direction = self.i2c.readU8(MCP23017_IODIRA)
+            self.i2c.write8(MCP23008_GPPUA, 0x00)
+        elif num_gpios > 8 and num_gpios <= 16:
+            self.i2c.write8(MCP23017_IODIRA, 0xFF)  # all inputs on port A
+            self.i2c.write8(MCP23017_IODIRB, 0xFF)  # all inputs on port B
+            self.direction = self.i2c.readU8(MCP23017_IODIRA)
+            self.direction |= self.i2c.readU8(MCP23017_IODIRB) << 8
+            self.i2c.write8(MCP23017_GPPUA, 0x00)
+            self.i2c.write8(MCP23017_GPPUB, 0x00)
+
+    def _changebit(self, bitmap, bit, value):
+        assert value == 1 or value == 0, "Value is %s must be 1 or 0" % value
+        if value == 0:
+            return bitmap & ~(1 << bit)
+        elif value == 1:
+            return bitmap | (1 << bit)
+
+    def _readandchangepin(self, port, pin, value, currvalue = None):
+        assert pin >= 0 and pin < self.num_gpios, "Pin number %s is invalid, only 0-%s are valid" % (pin, self.num_gpios)
+        #assert self.direction & (1 << pin) == 0, "Pin %s not set to output" % pin
+        if not currvalue:
+             currvalue = self.i2c.readU8(port)
+        newvalue = self._changebit(currvalue, pin, value)
+        self.i2c.write8(port, newvalue)
+        return newvalue
+
+
+    def pullup(self, pin, value):
+        if self.num_gpios <= 8:
+            return self._readandchangepin(MCP23008_GPPUA, pin, value)
+        if self.num_gpios <= 16:
+            lvalue = self._readandchangepin(MCP23017_GPPUA, pin, value)
+            if (pin < 8):
+                return
+            else:
+                return self._readandchangepin(MCP23017_GPPUB, pin-8, value) << 8
+
+    # Set pin to either input or output mode
+    def config(self, pin, mode):
+        if self.num_gpios <= 8:
+            self.direction = self._readandchangepin(MCP23017_IODIRA, pin, mode)
+        if self.num_gpios <= 16:
+            if (pin < 8):
+                self.direction = self._readandchangepin(MCP23017_IODIRA, pin, mode)
+            else:
+                self.direction |= self._readandchangepin(MCP23017_IODIRB, pin-8, mode) << 8
+
+        return self.direction
+
+    def output(self, pin, value):
+        # assert self.direction & (1 << pin) == 0, "Pin %s not set to output" % pin
+        if self.num_gpios <= 8:
+            self.outputvalue = self._readandchangepin(MCP23008_GPIOA, pin, value, self.i2c.readU8(MCP23008_OLATA))
+        if self.num_gpios <= 16:
+            if (pin < 8):
+                self.outputvalue = self._readandchangepin(MCP23017_GPIOA, pin, value, self.i2c.readU8(MCP23017_OLATA))
+            else:
+                self.outputvalue = self._readandchangepin(MCP23017_GPIOB, pin-8, value, self.i2c.readU8(MCP23017_OLATB)) << 8
+
+        return self.outputvalue
+
+
+        self.outputvalue = self._readandchangepin(MCP23017_IODIRA, pin, value, self.outputvalue)
+        return self.outputvalue
+
+    def input(self, pin):
+        assert pin >= 0 and pin < self.num_gpios, "Pin number %s is invalid, only 0-%s are valid" % (pin, self.num_gpios)
+        assert self.direction & (1 << pin) != 0, "Pin %s not set to input" % pin
+        if self.num_gpios <= 8:
+            value = self.i2c.readU8(MCP23008_GPIOA)
+        elif self.num_gpios > 8 and self.num_gpios <= 16:
+            value = self.i2c.readU8(MCP23017_GPIOA)
+            value |= self.i2c.readU8(MCP23017_GPIOB) << 8
+        return value & (1 << pin)
+
+    def readU8(self):
+        result = self.i2c.readU8(MCP23008_OLATA)
+        return(result)
+
+    def readS8(self):
+        result = self.i2c.readU8(MCP23008_OLATA)
+        if (result > 127): result -= 256
+        return result
+
+    def readU16(self):
+        assert self.num_gpios >= 16, "16bits required"
+        lo = self.i2c.readU8(MCP23017_OLATA)
+        hi = self.i2c.readU8(MCP23017_OLATB)
+        return((hi << 8) | lo)
+
+    def readS16(self):
+        assert self.num_gpios >= 16, "16bits required"
+        lo = self.i2c.readU8(MCP23017_OLATA)
+        hi = self.i2c.readU8(MCP23017_OLATB)
+        if (hi > 127): hi -= 256
+        return((hi << 8) | lo)
+
+    def write8(self, value):
+        self.i2c.write8(MCP23008_OLATA, value)
+
+    def write16(self, value):
+        assert self.num_gpios >= 16, "16bits required"
+        self.i2c.write8(MCP23017_OLATA, value & 0xFF)
+        self.i2c.write8(MCP23017_OLATB, (value >> 8) & 0xFF)
+
+class MCP230XX_GPIO(object):
+    OUT = 0
+    IN = 1
+    BCM = 0
+    BOARD = 0
+    def __init__(self, busnum, address, num_gpios):
+        self.chip = Adafruit_MCP230XX(address, num_gpios, busnum)
+    def setmode(self, mode):
+        # do nothing
+        pass
+    def setup(self, pin, mode):
+        self.chip.config(pin, mode)
+    def input(self, pin):
+        return self.chip.input(pin)
+    def output(self, pin, value):
+        self.chip.output(pin, value)
+    def pullup(self, pin, value):
+        self.chip.pullup(pin, value)
+
+class I2C(object):
+
+  @staticmethod
+  def getPiRevision():
+    "Gets the version number of the Raspberry Pi board"
+    try:
+      with open('/proc/cpuinfo', 'r') as infile:
+        for line in infile:
+          match = re.match('Revision\s+:\s+.*(\w{4})$', line)
+          if match and match.group(1) in ['0000', '0002', '0003']:
+            return 1
+          elif match:
+            return 2
+        return 0
+    except:
+      return 0
+
+  @staticmethod
+  def getPiI2CBusNumber():
+    return 1 if Adafruit_I2C.getPiRevision() > 1 else 0
+
+  def __init__(self, address, busnum=-1, debug=False):
+    self.address = address
+    self.bus = smbus.SMBus(busnum if busnum >= 0 else Adafruit_I2C.getPiI2CBusNumber())
+    self.debug = debug
+
+  def reverseByteOrder(self, data):
+    "Reverses the byte order of an int (16-bit) or long (32-bit) value"
+    byteCount = len(hex(data)[2:].replace('L','')[::2])
+    val       = 0
+    for i in range(byteCount):
+      val    = (val << 8) | (data & 0xff)
+      data >>= 8
+    return val
+
+  def errMsg(self):
+    print("Error accessing 0x%02X: Check your I2C address" % self.address)
+    return -1
+
+  def write8(self, reg, value):
+    "Writes an 8-bit value to the specified register/address"
+    try:
+      self.bus.write_byte_data(self.address, reg, value)
+      if self.debug:
+        print("I2C: Wrote 0x%02X to register 0x%02X" % (value, reg))
+    except IOError:
+      return self.errMsg()
+
+  def write16(self, reg, value):
+    "Writes a 16-bit value to the specified register/address pair"
+    try:
+      self.bus.write_word_data(self.address, reg, value)
+      if self.debug:
+        print ("I2C: Wrote 0x%02X to register pair 0x%02X,0x%02X" %
+         (value, reg, reg+1))
+    except IOError:
+      return self.errMsg()
+
+  def writeRaw8(self, value):
+    "Writes an 8-bit value on the bus"
+    try:
+      self.bus.write_byte(self.address, value)
+      if self.debug:
+        print("I2C: Wrote 0x%02X" % value)
+    except IOError:
+      return self.errMsg()
+
+  def writeList(self, reg, list):
+    "Writes an array of bytes using I2C format"
+    try:
+      if self.debug:
+        print("I2C: Writing list to register 0x%02X:" % reg)
+        print(list)
+      self.bus.write_i2c_block_data(self.address, reg, list)
+    except IOError:
+      return self.errMsg()
+
+  def readList(self, reg, length):
+    "Read a list of bytes from the I2C device"
+    try:
+      results = self.bus.read_i2c_block_data(self.address, reg, length)
+      if self.debug:
+        print ("I2C: Device 0x%02X returned the following from reg 0x%02X" %
+         (self.address, reg))
+        print(results)
+      return results
+    except IOError:
+      return self.errMsg()
+
+  def readU8(self, reg):
+    "Read an unsigned byte from the I2C device"
+    try:
+      result = self.bus.read_byte_data(self.address, reg)
+      if self.debug:
+        print ("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" %
+         (self.address, result & 0xFF, reg))
+      return result
+    except IOError:
+      return self.errMsg()
+
+  def readS8(self, reg):
+    "Reads a signed byte from the I2C device"
+    try:
+      result = self.bus.read_byte_data(self.address, reg)
+      if result > 127: result -= 256
+      if self.debug:
+        print ("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" %
+         (self.address, result & 0xFF, reg))
+      return result
+    except IOError:
+      return self.errMsg()
+
+  def readU16(self, reg, little_endian=True):
+    "Reads an unsigned 16-bit value from the I2C device"
+    try:
+      result = self.bus.read_word_data(self.address,reg)
+      if not little_endian:
+        result = ((result << 8) & 0xFF00) + (result >> 8)
+      if (self.debug):
+        print("I2C: Device 0x%02X returned 0x%04X from reg 0x%02X" % (self.address, result & 0xFFFF, reg))
+      return result
+    except IOError:
+      return self.errMsg()
+
+  def readS16(self, reg, little_endian=True):
+    "Reads a signed 16-bit value from the I2C device"
+    try:
+      result = self.readU16(reg,little_endian)
+      if result > 32767: result -= 65536
+      return result
+    except IOError:
+      return self.errMsg()
+
+class RemoteSwitch(object):
+        repeat = 10 # Number of transmissions
+        pulselength = 300 # microseconds
+        GPIOMode = GPIO.BCM
+       
+        def __init__(self, device, key=[1,1,1,1,1], pin=4):            
+                self.pin = pin
+                self.key = key
+                self.device = device
+                GPIO.setmode(self.GPIOMode)
+                GPIO.setup(self.pin, GPIO.OUT)
+               
+        def switchOn(self):
+                self._switch(GPIO.HIGH)
+ 
+        def switchOff(self):
+                self._switch(GPIO.LOW)
+ 
+        def _switch(self, switch):
+                self.bit = [142, 142, 142, 142, 142, 142, 142, 142, 142, 142, 142, 136, 128, 0, 0, 0]          
+ 
+                for t in range(5):
+                        if self.key[t]:
+                                self.bit[t]=136
+                x=1
+                for i in range(1,6):
+                        if self.device & x > 0:
+                                self.bit[4+i] = 136
+                        x = x<<1
+ 
+                if switch == GPIO.HIGH:
+                        self.bit[10] = 136
+                        self.bit[11] = 142
+                               
+                bangs = []
+                for y in range(16):
+                        x = 128
+                        for i in range(1,9):
+                                b = (self.bit[y] & x > 0) and GPIO.HIGH or GPIO.LOW
+                                bangs.append(b)
+                                x = x>>1
+                               
+                GPIO.output(self.pin, GPIO.LOW)
+                for z in range(self.repeat):
+                        for b in bangs:
+                                GPIO.output(self.pin, b)
+                                time.sleep(self.pulselength/1000000.)
+
+I2CBUS = 1
+class i2c_device:
+   def __init__(self, addr, port=I2CBUS):
+      self.addr = addr
+      self.bus = smbus.SMBus(port)
+   def write_cmd(self, cmd):
+      self.bus.write_byte(self.addr, cmd)
+      sleep(0.0001)
+   def write_cmd_arg(self, cmd, data):
+      self.bus.write_byte_data(self.addr, cmd, data)
+      sleep(0.0001)
+   def write_block_data(self, cmd, data):
+      self.bus.write_block_data(self.addr, cmd, data)
+      sleep(0.0001)
+   def read(self):
+      return self.bus.read_byte(self.addr)
+   def read_data(self, cmd):
+      return self.bus.read_byte_data(self.addr, cmd)
+   def read_block_data(self, cmd):
+      return self.bus.read_block_data(self.addr, cmd)
+
+class lcd:
+    LCD_ADDRESS = 0x3f
+    LCD_CLEARDISPLAY = 0x01
+    LCD_RETURNHOME = 0x02
+    LCD_ENTRYMODESET = 0x04
+    LCD_DISPLAYCONTROL = 0x08
+    LCD_CURSORSHIFT = 0x10
+    LCD_FUNCTIONSET = 0x20
+    LCD_SETCGRAMADDR = 0x40
+    LCD_SETDDRAMADDR = 0x80
+    LCD_ENTRYRIGHT = 0x00
+    LCD_ENTRYLEFT = 0x02
+    LCD_ENTRYSHIFTINCREMENT = 0x01
+    LCD_ENTRYSHIFTDECREMENT = 0x00
+    LCD_DISPLAYON = 0x04
+    LCD_DISPLAYOFF = 0x00
+    LCD_CURSORON = 0x02
+    LCD_CURSOROFF = 0x00
+    LCD_BLINKON = 0x01
+    LCD_BLINKOFF = 0x00
+    LCD_DISPLAYMOVE = 0x08
+    LCD_CURSORMOVE = 0x00
+    LCD_MOVERIGHT = 0x04
+    LCD_MOVELEFT = 0x00
+    LCD_8BITMODE = 0x10
+    LCD_4BITMODE = 0x00
+    LCD_2LINE = 0x08
+    LCD_1LINE = 0x00
+    LCD_5x10DOTS = 0x04
+    LCD_5x8DOTS = 0x00
+    LCD_BACKLIGHT = 0x08
+    LCD_NOBACKLIGHT = 0x00
+    En = 0b00000100
+    Rw = 0b00000010
+    Rs = 0b00000001
+   #initializes objects and lcd
+    def __init__(self):
+        self.lcd_device = i2c_device(LCD_ADDRESS)
+        self.lcd_write(0x03)
+        self.lcd_write(0x03)
+        self.lcd_write(0x03)
+        self.lcd_write(0x02)
+        self.lcd_write(LCD_FUNCTIONSET | LCD_2LINE | LCD_5x8DOTS | LCD_4BITMODE)
+        self.lcd_write(LCD_DISPLAYCONTROL | LCD_DISPLAYON)
+        self.lcd_write(LCD_CLEARDISPLAY)
+        self.lcd_write(LCD_ENTRYMODESET | LCD_ENTRYLEFT)
+        sleep(0.2)
+    def lcd_strobe(self, data):
+        self.lcd_device.write_cmd(data | En | LCD_BACKLIGHT)
+        sleep(.0005)
+        self.lcd_device.write_cmd(((data & ~En) | LCD_BACKLIGHT))
+        sleep(.0001)
+    def lcd_write_four_bits(self, data):
+        self.lcd_device.write_cmd(data | LCD_BACKLIGHT)
+        self.lcd_strobe(data)
+    def lcd_write(self, cmd, mode=0):
+        self.lcd_write_four_bits(mode | (cmd & 0xF0))
+        self.lcd_write_four_bits(mode | ((cmd << 4) & 0xF0))
+    def lcd_write_char(self, charvalue, mode=1):
+        self.lcd_write_four_bits(mode | (charvalue & 0xF0))
+        self.lcd_write_four_bits(mode | ((charvalue << 4) & 0xF0))
+    def lcd_display_string(self, string, line=1, pos=0):
+        if line == 1:
+            pos_new = pos
+        elif line == 2:
+            pos_new = 0x40 + pos
+        elif line == 3:
+            pos_new = 0x14 + pos
+        elif line == 4:
+            pos_new = 0x54 + pos
+            self.lcd_write(0x80 + pos_new)
+        for char in string:
+            self.lcd_write(ord(char), Rs)
+    def lcd_clear(self):
+        self.lcd_write(LCD_CLEARDISPLAY)
+        self.lcd_write(LCD_RETURNHOME)
+    def backlight(self, state): # for state, 1 = on, 0 = off
+        if state == 1:
+            self.lcd_device.write_cmd(LCD_BACKLIGHT)
+        elif state == 0:
+            self.lcd_device.write_cmd(LCD_NOBACKLIGHT)
+    def lcd_load_custom_chars(self, fontdata):
+        self.lcd_write(0x40)
+        for char in fontdata:
+            for line in char:
+                self.lcd_write_char(line)
+
+mpgouts = [
+    {
+        "mpg_code": "@P 0",
+        "action": "user_stop",
+        "description": "Music has been stopped by the user."
+    },
+    {
+        "mpg_code": "@P 1",
+        "action": "user_pause",
+        "description": "Music has been paused by the user."
+    },
+    {
+        "mpg_code": "@P 2",
+        "action": "user_resume",
+        "description": "Music has been resumed by the user."
+    },
+    {
+        "mpg_code": "@P 3",
+        "action": "end_of_song",
+        "description": "Player has reached the end of the song."
+    }
+]
+mpgcodes = [v["mpg_code"] for v in mpgouts]
+
+class PlayerStatus:
+    INSTANCIATED = 0
+    PLAYING = 1
+    PAUSED = 2
+    STOPPED = 3
+    QUITTED = 4
+
+class MPyg321Player:
+    import pexpect
+    """Main class for mpg321 player management"""
+    player = None
+    status = None
+    output_processor = None
+
+    def __init__(self):
+        """Builds the player and creates the callbacks"""
+        self.player = pexpect.spawn("mpg321 -R somerandomword", timeout=None)
+        self.status = PlayerStatus.INSTANCIATED
+        self.output_processor = Thread(target=self.process_output)
+        self.output_processor.daemon = True
+        self.output_processor.start()
+
+    def process_output(self):
+        """Parses the output"""
+        while True:
+            index = self.player.expect(mpgcodes)
+            action = mpgouts[index]["action"]
+            if action == "user_stop":
+                self.onAnyStop()
+                self.onUserStop()
+            if action == "user_pause":
+                self.onAnyStop()
+                self.onUserPause()
+            if action == "user_resume":
+                self.onUserResume()
+            if action == "end_of_song":
+                self.onAnyStop()
+                self.onMusicEnd()
+
+    def play_song(self, path):
+        """Plays the song"""
+        self.player.sendline("LOAD " + path)
+        self.status = PlayerStatus.PLAYING
+
+    def pause(self):
+        """Pauses the player"""
+        if self.status == PlayerStatus.PLAYING:
+            self.player.sendline("PAUSE")
+            self.status = PlayerStatus.PAUSED
+
+    def resume(self):
+        """Resume the player"""
+        if self.status == PlayerStatus.PAUSED:
+            self.player.sendline("PAUSE")
+            self.status = PlayerStatus.PLAYING
+
+    def stop(self):
+        """Stops the player"""
+        self.player.sendline("STOP")
+        self.status = PlayerStatus.STOPPED
+
+    def quit(self):
+        """Quits the player"""
+        self.player.sendline("QUIT")
+        self.status = PlayerStatus.QUITTED
+    
+    def gain(self, vol):
+        """set volume"""
+        self.player.sendline("GAIN "+str(vol))
+        self.status = PlayerStatus.PLAYING
+
+    # # # Callbacks # # #
+    def onAnyStop(self):
+        """Callback when the music stops for any reason"""
+        pass
+
+    def onUserPause(self):
+        """Callback when user pauses the music"""
+        pass
+
+    def onUserResume(self):
+        """Callback when user resumes the music"""
+        pass
+
+    def onUserStop(self):
+        """Callback when user stops music"""
+        pass
+
+    def onMusicEnd(self):
+        """Callback when music ends"""
+        pass
+
 class i2c_msg(Structure):
     _fields_ = [
         ('addr', c_uint16),
@@ -1550,6 +1704,38 @@ def i2c_msg_to_bytes(m):
     return string_at(m.buf, m.len)
 
 class Pn532Frame:
+    PN532_COMMAND_GETFIRMWAREVERSION = 0x02
+    PN532_COMMAND_SAMCONFIGURATION = 0x14
+    PN532_COMMAND_INLISTPASSIVETARGET = 0x4A
+    PN532_COMMAND_RFCONFIGURATION = 0x32
+    PN532_COMMAND_INDATAEXCHANGE = 0x40
+    PN532_COMMAND_INDESELECT = 0x44
+    PN532_IDENTIFIER_HOST_TO_PN532 = 0xD4
+    PN532_IDENTIFIER_PN532_TO_HOST = 0xD5
+    PN532_SAMCONFIGURATION_MODE_NORMAL = 0x01
+    PN532_SAMCONFIGURATION_MODE_VIRTUAL_CARD = 0x02
+    PN532_SAMCONFIGURATION_MODE_WIRED_CARD = 0x03
+    PN532_SAMCONFIGURATION_MODE_DUAL_CARD = 0X04
+    PN532_SAMCONFIGURATION_TIMEOUT_50MS = 0x01
+    PN532_SAMCONFIGURATION_IRQ_OFF = 0x00
+    PN532_SAMCONFIGURATION_IRQ_ON = 0x01
+    PN532_RFCONFIGURATION_CFGITEM_MAXRETRIES = 0x05
+    PN532_PREAMBLE = 0x00
+    PN532_START_CODE_1 = 0x00
+    PN532_START_CODE_2 = 0xFF
+    PN532_POSTAMBLE = 0x00
+    PN532_FRAME_POSITION_STATUS_CODE = 0
+    PN532_FRAME_POSITION_PREAMBLE = 1
+    PN532_FRAME_POSITION_START_CODE_1 = 2
+    PN532_FRAME_POSITION_START_CODE_2 = 3
+    PN532_FRAME_POSITION_LENGTH = 4
+    PN532_FRAME_POSITION_LENGTH_CHECKSUM = 5
+    PN532_FRAME_POSITION_FRAME_IDENTIFIER = 6
+    PN532_FRAME_POSITION_DATA_START = 7
+    PN532_FRAME_TYPE_DATA = 0
+    PN532_FRAME_TYPE_ACK = 1
+    PN532_FRAME_TYPE_NACK = 2
+    PN532_FRAME_TYPE_ERROR = 3
     def __init__(
         self, frame_type=PN532_FRAME_TYPE_DATA,
         preamble=PN532_PREAMBLE,
@@ -1656,10 +1842,16 @@ class Pn532Frame:
         return False
 
 class Pn532_i2c:
+    RPI_DEFAULT_I2C_NEW = 0x01
+    RPI_DEFAULT_I2C_OLD = 0x00
+    LOGGING_ENABLED = False
+    LOG_LEVEL = logging.DEBUG
+    DEFAULT_DELAY = 0.005
     PN532 = None
     address = None
     i2c_channel = None
     logger = None
+    PN532_I2C_SLAVE_ADDRESS = 0x24
     def __init__(self, address=PN532_I2C_SLAVE_ADDRESS, i2c_channel=RPI_DEFAULT_I2C_NEW):
         self.logger = logging.getLogger()
         self.logger.propagate = LOGGING_ENABLED
@@ -1760,6 +1952,17 @@ class Pn532_i2c:
         del self.PN532
 
 class TM1637:
+    HexDigits = [0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f,0x77,0x7c,0x39,0x5e,0x79,0x71]
+    ADDR_AUTO = 0x40
+    ADDR_FIXED = 0x44
+    STARTADDR = 0xC0
+    BRIGHT_DARKEST = 0
+    BRIGHT_TYPICAL = 2
+    BRIGHT_HIGHEST = 7
+    OUTPUT = GPIO.OUT
+    INPUT = GPIO.IN
+    LOW = GPIO.LOW
+    HIGH = GPIO.HIGH
     __doublePoint = False
     __Clkpin = 0
     __Datapin = 0
