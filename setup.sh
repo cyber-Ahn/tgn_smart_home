@@ -51,22 +51,48 @@ fi
 clear
 
 echo -e "\e[33m>> \e[31mDownload Libs\e[32m"
+sudo apt-get -y install firefox-esr
 sudo apt-get -y install python-matplotlib
 sudo apt-get -y install mpg321
 sudo apt-get -y install gir1.2-gstreamer-1.0
 sudo apt-get -y install gir1.2-gst-plugins-base-1.0
 sudo apt-get -y install python3-pil.imagetk
+sudo apt-get -y install p7zip
 sudo pip3 install thingspeak==0.4.1
 sudo pip3 install gTTS==2.0.3
 sudo pip3 install feedparser==5.2.1
 sudo pip3 install gitpython==2.1.11
+sudo pip3 install fabric3==1.14.post1
+sudo pip3 install youtube_dl==2019.7.16
+sudo pip3 install spotipy==2.4.4
+sudo pip3 install FFmpeg==1.4
+sudo pip3 install websockets==7.0
+sudo pip3 install aiohttp==3.5.4
+sudo pip3 install python-dateutil==2.8.0
+sudo pip3 install selenium==3.141.0
+sudo pip3 install paho-mqtt==1.4.0
 sudo pip3 install pexpect==4.7.0
 sudo pip3 install py-enigma==0.1
+sudo pip3 install discord.py==0.16.12
+sudo pip3 install SQLAlchemy==1.2.15
+sudo pip3 install ChatterBot==0.8.7
+sudo pip3 install chatterbot-corpus==1.1.4
+sudo pip3 install opencv-python==3.4.4.19
 sudo pip3 install pushbullet.py==0.11.0
 sudo pip3 install twython==3.7.0
-pip3 install mcstatus==2.3.0
+sudo pip3 install mcstatus==2.3.0
+sudo pip3 uninstall numpy
+sudo pip3 install numpy==1.12.1
+sudo apt-get install -y libcblas-dev
+sudo apt-get install -y libhdf5-dev
+sudo apt-get install -y libhdf5-serial-dev
+sudo apt-get install -y libatlas-base-dev
+sudo apt-get install -y libjasper-dev
+sudo apt-get install -y libqtgui4
+sudo apt-get install -y libqt4-test
+sudo mkdir /home/pi/Pictures
+sudo chmod +777 /home/pi/Pictures/
 sleep 5
-
 clear
 
 echo -e "\e[33m>> \e[31mInstall Adafruit_Python_DHT\e[32m"
