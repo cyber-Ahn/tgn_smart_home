@@ -1184,7 +1184,7 @@ def on_message(client, userdata, message):
 			radar_sen = 1
 	if(message.topic=="tgn/bot/shutdown"):
 		if(str(message.payload.decode("utf-8"))=="1"):
-			shutdown_other()
+			Process(target=shutdown_other).start()
 	if(message.topic=="tgn/mqtt-msg"):
 		mqtt_msg = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/wifi/pre"):
