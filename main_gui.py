@@ -79,12 +79,14 @@ mcp = ""
 mylcd = ""
 ontime = "10:19|10:21"
 offtime = "10:20|10:22"
+onoff_day = ["Mon","Tue","Wed","Thu","Fri"]
 phat = "/home/pi/tgn_smart_home/icons/"
 color_button = []
 mqtt_msg = "empty"
 mqtt_msg_cach = "empty"
 ttiv = 50000
 cach_time = ""
+day_n = ""
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
@@ -614,6 +616,18 @@ def ini():
 		client.publish("tgn/i2c/lcd","online",qos=0,retain=True)
 	else:
 		client.publish("tgn/i2c/lcd","offline",qos=0,retain=True)
+	try:
+		print(">>Load themes.config")
+		f_d = open("/home/pi/tgn_smart_home/config/system.config","r")
+		global onoff_day
+		onoff_day = []
+		count_d = 0
+		for line in f_d:
+			count_d = count_d + 1
+			if count_d <= 7:
+				onoff_day.append(line.rstrip())
+	except IOError:
+		print("cannot open system.config.... file not found")
 def on():
 	global son
 	global soff
@@ -669,6 +683,7 @@ def alarm_go():
 def pcf8563ReadTimeB():
 	time_out = ""
 	global cach_time
+	global day_n
 	if RTCpower == 1:
 		if address == 0x68:
 			register = 0x00
@@ -680,6 +695,7 @@ def pcf8563ReadTimeB():
 			t[4] = t[4]&0x3F  #day
 			t[5] = t[5]&0x1F  #month
 			cach_time = ("%x:%x" %(t[2],t[1]))
+			day_n = w[t[3]]
 			#return("%s  20%x/%x/%x %x:%x:%x" %(w[t[3]],t[6],t[5],t[4],t[2],t[1],t[0]))
 		else:
 			t = bus.read_i2c_block_data(address,register,7)
@@ -690,6 +706,7 @@ def pcf8563ReadTimeB():
 			t[4] = t[4]&0x07  #month   -> dayname
 			t[5] = t[5]&0x1F  #dayname -> month
 			cach_time = ("%x:%x" %(t[2],t[1]))
+			day_n = w[t[3]]
 			#return("%s  20%x/%x/%x %x:%x:%x" %(w[t[4]],t[6],t[5],t[3],t[2],t[1],t[0]))
 	else:
 		from time import localtime
@@ -705,12 +722,13 @@ def pcf8563ReadTimeB():
 			m2 = min.split("0")
 			min = m2[1]
 		cach_time = hour+":"+min
+		day_n = strftime("%a", localtime())
 	on1,on2 = ontime.split("|")
 	off1,off2 = offtime.split("|")
 	ond = "yes"
-	if ond == "yes" and cach_time == on1 or cach_time == on2:
+	if day_n in onoff_day and int(esp_li) < esp_switch and ond == "yes" and cach_time == on1 or cach_time == on2:
 		on()
-	if ond == "yes" and cach_time == off1 or cach_time == off2:
+	if day_n in onoff_day and int(esp_li) < esp_switch and ond == "yes" and cach_time == off1 or cach_time == off2:
 		off()
 	if alarm_s == "on" and alarm_t == cach_time:
 		alarm_go()
@@ -2039,6 +2057,10 @@ def normal_screen():
 	infLabel6 = Label(infFrame1, text=oText5)
 	infLabel6.configure(background=bground, foreground=fground)
 	infLabel6.grid(row=2, column=2, padx=10, pady=3)
+	oText6 = onoff_day
+	infLabel6 = Label(infFrame1, text=oText6)
+	infLabel6.configure(background='#000000', foreground='#eaa424')
+	infLabel6.grid(row=2, column=1, padx=10, pady=3)
 
 	root.mainloop()
 
@@ -2340,6 +2362,10 @@ def lcars_screen():
 	infLabel6 = Label(infFrame1, text=oText5)
 	infLabel6.configure(background='#000000', foreground='#eaa424')
 	infLabel6.grid(row=2, column=2, padx=10, pady=3)
+	oText6 = onoff_day
+	infLabel6 = Label(infFrame1, text=oText6)
+	infLabel6.configure(background='#000000', foreground='#eaa424')
+	infLabel6.grid(row=2, column=1, padx=10, pady=3)
 
 	root.mainloop()
 
