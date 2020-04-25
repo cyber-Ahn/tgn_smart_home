@@ -59,6 +59,8 @@ BH1750_ONE_TIME_HIGH_RES_MODE_1 = 0x20
 BH1750_ONE_TIME_HIGH_RES_MODE_2 = 0x21
 BH1750_ONE_TIME_LOW_RES_MODE = 0x23
 
+GPIO.setwarnings(False)
+
 def ifI2C(add):
     add = hex(add)
     p = subprocess.Popen(['i2cdetect', '-y','1'],stdout=subprocess.PIPE,)

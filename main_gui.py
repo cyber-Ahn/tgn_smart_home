@@ -617,7 +617,7 @@ def ini():
 	else:
 		client.publish("tgn/i2c/lcd","offline",qos=0,retain=True)
 	try:
-		print(">>Load themes.config")
+		print(">>Load system.config")
 		f_d = open("/home/pi/tgn_smart_home/config/system.config","r")
 		global onoff_day
 		onoff_day = []
@@ -626,6 +626,18 @@ def ini():
 			count_d = count_d + 1
 			if count_d <= 7:
 				onoff_day.append(line.rstrip())
+			if count_d == 9:
+				global phat
+				phat = line.rstrip()
+			if count_d == 10:
+				global esp_switch
+				esp_switch = int(line.rstrip())
+			if count_d == 11:
+				global esp_switch_b
+				esp_switch_b = int(line.rstrip())
+			if count_d == 12:
+				global api_url
+				api_url = line.rstrip()
 	except IOError:
 		print("cannot open system.config.... file not found")
 def on():
