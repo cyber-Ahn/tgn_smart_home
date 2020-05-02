@@ -23,6 +23,8 @@ from fcntl import ioctl
 from threading import Thread
 from time import gmtime, strftime, sleep, localtime
 
+__version__="2.5.0"
+
 address = 0x68
 register = 0x02
 zone = 0
