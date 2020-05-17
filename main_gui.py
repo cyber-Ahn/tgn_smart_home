@@ -79,7 +79,7 @@ mcp = ""
 mylcd = ""
 ontime = "10:19|10:21"
 offtime = "10:20|10:22"
-onoff_day = ["Mon","Tue","Wed","Thu","Fri"]
+onoff_day = ["Mon","Tue","Wed","Thu","Fri","xxx","xxx"]
 phat = "/home/pi/tgn_smart_home/icons/"
 color_button = []
 mqtt_msg = "empty"
@@ -638,6 +638,7 @@ def ini():
 			if count_d == 12:
 				global api_url
 				api_url = line.rstrip()
+		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")
 def on():
@@ -740,7 +741,7 @@ def pcf8563ReadTimeB():
 	ond = "yes"
 	if day_n in onoff_day and int(esp_li) < esp_switch and ond == "yes" and cach_time == on1 or cach_time == on2:
 		on()
-	if day_n in onoff_day and int(esp_li) < esp_switch and ond == "yes" and cach_time == off1 or cach_time == off2:
+	if ond == "yes" and cach_time == off1 or cach_time == off2:
 		off()
 	if alarm_s == "on" and alarm_t == cach_time:
 		alarm_go()
