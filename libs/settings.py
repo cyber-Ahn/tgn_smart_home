@@ -1141,7 +1141,7 @@ def show_nfc():
 		print(line)
 
 if __name__ == "__main__":
-	setRTC()
+	#setRTC()
 	print("python3 settings.py command")
 	print("commands: rtc / funk / install_rom / cam / weather / pushb / save_nfc / remove_nfc / show_nfc / thinkspeak / alarm / rss / update / backup / restore")
 
