@@ -1,3 +1,4 @@
+
 # load Libs
 import binascii
 import json
@@ -87,6 +88,7 @@ mqtt_msg_cach = "empty"
 ttiv = 50000
 cach_time = ""
 day_n = ""
+count_pos_b = "1"
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
@@ -574,7 +576,7 @@ def ini():
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
 	client.publish("tgn/system/clock","0",qos=0,retain=True)
 	client.publish("tgn/esp_1/analog/sensor_1","100",qos=0,retain=True)
-	client.publish("tgn/esp_2/analog/sensor_1","100",qos=0,retain=True)
+	client.publish("tgn/esp_2/analog/sensor_1","200",qos=0,retain=True)
 	client.publish("tgn/language",spr,qos=0,retain=True)
 	client.publish("tgn/version",version,qos=0,retain=True)
 	client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
@@ -599,6 +601,8 @@ def ini():
 	client.publish("tgn/esp_32_cam/capture","0",qos=0,retain=True)
 	client.publish("tgn/esp_32_cam/stream","0",qos=0,retain=True)
 	client.publish("tgn/esp_32_cam/record","0",qos=0,retain=True)
+	client.publish("tgn/gesture/touch","0",qos=0,retain=True)
+	client.publish("tgn/gesture/btn_ni_li","6",qos=0,retain=True)
 	client.publish("tgn/sonoff_1/connection/ip","---.---.---.---",qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
@@ -1209,6 +1213,7 @@ def on_message(client, userdata, message):
 	global esp_b1_2
 	global mqtt_msg
 	global radar_sen
+	global count_pos_b
 	if(message.topic=="tgn/system/radar"):
 		if(str(message.payload.decode("utf-8"))=="1"):
 			client.publish("tgn/system/radar","0",qos=0,retain=True)
@@ -1218,6 +1223,41 @@ def on_message(client, userdata, message):
 			Process(target=shutdown_other).start()
 	if(message.topic=="tgn/mqtt-msg"):
 		mqtt_msg = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/gesture/btn_ni_li"):
+		count_pos_b = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/gesture/touch"):
+		if(str(message.payload.decode("utf-8"))=="1"):
+			print("click " + count_pos_b)
+			if count_pos_b == "6":
+				if b6 == 1:
+					client.publish("tgn/buttons/status/6","0",qos=0,retain=True)
+				else:
+					client.publish("tgn/buttons/status/6","1",qos=0,retain=True)
+			if count_pos_b == "6":
+				if b5 == 1:
+					client.publish("tgn/buttons/status/5","0",qos=0,retain=True)
+				else:
+					client.publish("tgn/buttons/status/5","1",qos=0,retain=True)
+			if count_pos_b == "6":
+				if b4 == 1:
+					client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
+				else:
+					client.publish("tgn/buttons/status/4","1",qos=0,retain=True)
+			if count_pos_b == "6":
+				if b3 == 1:
+					client.publish("tgn/buttons/status/3","0",qos=0,retain=True)
+				else:
+					client.publish("tgn/buttons/status/3","1",qos=0,retain=True)
+			if count_pos_b == "6":
+				if b2 == 1:
+					client.publish("tgn/buttons/status/2","0",qos=0,retain=True)
+				else:
+					client.publish("tgn/buttons/status/2","1",qos=0,retain=True)
+			if count_pos_b == "6":
+				if b1 == 1:
+					client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
+				else:
+					client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
 	if(message.topic=="tgn/esp_2/wifi/pre"):
 		esp_pr_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/wifi/rssi"):
@@ -1428,6 +1468,7 @@ class Window(Frame):
 					stats=stats+'OFF'
 				if b6 == 1:
 					stats=stats+'On'
+				stats = stats +"|BTN Num. " + count_pos_b
 				if LCDpower == 1:
 					counterLCD = counterLCD + 1
 				if counterLCD == 30 and LCDpower == 1:
@@ -1535,8 +1576,8 @@ class WindowB(Frame):
 						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+" "+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+esp_li+'LUX\n'
-						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+esp_li_2+'LUX\n'
+						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(format_lux(int(esp_li)))+'LUX\n'
+						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(format_lux(int(esp_li_2)))+'LUX\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+temp_data+" / "+str(readLight())+'LUX\n'
 						global weather_t
