@@ -81,6 +81,7 @@ mylcd = ""
 ontime = "10:19|10:21"
 offtime = "10:20|10:22"
 onoff_day = ["Mon","Tue","Wed","Thu","Fri","xxx","xxx"]
+ond = "yes"
 phat = "/home/pi/tgn_smart_home/icons/"
 color_button = []
 mqtt_msg = "empty"
@@ -130,7 +131,7 @@ REMOTE_SERVER = "www.google.com"
 def ini():
 	os.system('clear')
 	global spr
-	Process(target=splash).start()
+	#Process(target=splash).start()
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(radar_sw_pin, GPIO.IN)
 	#MCP23017 I2C
@@ -742,14 +743,19 @@ def pcf8563ReadTimeB():
 		day_n = strftime("%a", localtime())
 	on1,on2 = ontime.split("|")
 	off1,off2 = offtime.split("|")
-	ond = "yes"
-	if day_n in onoff_day and int(esp_li) < esp_switch and ond == "yes" and cach_time == on1 or cach_time == on2:
+	if (day_n in onoff_day and int(esp_li) < esp_switch and ond == "yes") and (cach_time == on1 or cach_time == on2):
 		on()
-	if ond == "yes" and cach_time == off1 or cach_time == off2:
+	if ond == "yes" and (cach_time == off1 or cach_time == off2):
 		off()
 	if alarm_s == "on" and alarm_t == cach_time:
 		alarm_go()
 	return(time_out)
+def auto_clock():
+	global ond
+	if ond == "yes":
+		ond = "no"
+	elif ond == "no":
+		ond = "yes"
 def About():
 	print("TGN Smart Home "+version)
 	Process(target=sound).start()
@@ -1497,7 +1503,7 @@ class Window(Frame):
 				if radar_on == 1:
 					rca = "R.Cam on"
 				cach_time = pcf8563ReadTime()
-				the_time= format_time(cach_time)+" / "+textcpu+" "+str(round(getCpuTemperature(),1))+"°C "+rca+"\n"+stats
+				the_time= format_time(cach_time)+" / Automatic: "+ond+" "+rca+"\n"+stats
 				client.publish("tgn/system/time",format_time(cach_time),qos=0,retain=True)
 				global afbground
 				global fground
@@ -1840,10 +1846,11 @@ def normal_screen():
 	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
 	filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 	filemenu.add_separator()
-	#filemenu.add_command(label="Reload", command=callback41)
+	filemenu.add_command(label=(data[132].rstrip()), command=callback41)
+	filemenu.add_command(label=(data[133].rstrip()), command=callback47)
+	filemenu.add_command(label=(data[134].rstrip()), command=callback45)
+	filemenu.add_command(label=(data[135].rstrip()), command=callback46)
 	filemenu.add_command(label=(data[40].rstrip()), command=callback30)
-	filemenu.add_command(label="Backup Rom", command=callback45)
-	filemenu.add_command(label="Restore Rom", command=callback46)
 
 	setmenu = Menu(menu)
 	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
@@ -1853,7 +1860,8 @@ def normal_screen():
 	setmenu.add_command(label=(data[42].rstrip()), command=callback25)
 	setmenu.add_command(label=(data[43].rstrip()), command=callback32)
 	setmenu.add_command(label=(data[44].rstrip()), command=callback34)
-	setmenu.add_command(label="Radar Cam ", command=callback48)
+	setmenu.add_command(label=(data[130].rstrip()), command=callback48)
+	setmenu.add_command(label=(data[131].rstrip()), command=auto_clock)
 
 	langmenu = Menu(menu)
 	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
@@ -2144,11 +2152,11 @@ def lcars_screen():
 	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
 	filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 	filemenu.add_separator()
-	filemenu.add_command(label="Reload", command=callback41)
-	#filemenu.add_command(label="ip_cam_record", command=callback47)	
+	filemenu.add_command(label=(data[132].rstrip()), command=callback41)
+	filemenu.add_command(label=(data[133].rstrip()), command=callback47)
+	filemenu.add_command(label=(data[134].rstrip()), command=callback45)
+	filemenu.add_command(label=(data[135].rstrip()), command=callback46)
 	filemenu.add_command(label=(data[40].rstrip()), command=callback30)
-	filemenu.add_command(label="Backup Rom", command=callback45)
-	filemenu.add_command(label="Restore Rom", command=callback46)
 
 	setmenu = Menu(menu)
 	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
@@ -2158,7 +2166,8 @@ def lcars_screen():
 	setmenu.add_command(label=(data[42].rstrip()), command=callback25)
 	setmenu.add_command(label=(data[43].rstrip()), command=callback32)
 	setmenu.add_command(label=(data[44].rstrip()), command=callback34)
-	setmenu.add_command(label="Radar Cam ", command=callback48)
+	setmenu.add_command(label=(data[130].rstrip()), command=callback48)
+	setmenu.add_command(label=(data[131].rstrip()), command=auto_clock)
 
 	langmenu = Menu(menu)
 	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
