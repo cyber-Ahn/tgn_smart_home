@@ -124,6 +124,7 @@ radar_sw_pin = 25
 radar_sw_state = 1
 #minecraft server address
 mc_add_s = "192.168.0.90"
+mc_add_sV6 = "2a02:908:521:b820:6738:6f10:e91b:281d"
 #test server
 REMOTE_SERVER = "www.google.com"
 
@@ -1556,7 +1557,7 @@ class WindowB(Frame):
 					global esp_ls
 					global rssfeed
 					global ttiv
-					mc_check(mc_add_s)
+					mc_check(mc_add_s, mc_add_sV6)
 					if rssurl == "empty":
 						rssfeed = "Please set a Newsfeed"
 					else:
@@ -1787,7 +1788,7 @@ def callback48():
 	elif radar_on == 0:
 		radar_on = 1
 	print(str(radar_on))
-def mc_check(ipadd):
+def mc_check(ipadd, ipV6add):
 	server = MinecraftServer.lookup(ipadd)
 	try:
 		status = server.status()
@@ -1796,10 +1797,14 @@ def mc_check(ipadd):
 		client.publish("tgn/mc_server/status","online",qos=0,retain=True)
 		client.publish("tgn/mc_server/ping",servtim,qos=0,retain=True)
 		client.publish("tgn/mc_server/player",onlpl,qos=0,retain=True)
+		client.publish("tgn/mc_server/ip",ipadd,qos=0,retain=True)
+		client.publish("tgn/mc_server/ipV6",ipV6add,qos=0,retain=True)
 	except:
 		client.publish("tgn/mc_server/status","offline",qos=0,retain=True)
 		client.publish("tgn/mc_server/ping","0",qos=0,retain=True)
 		client.publish("tgn/mc_server/player","0",qos=0,retain=True)
+		client.publish("tgn/mc_server/ip",ipadd,qos=0,retain=True)
+		client.publish("tgn/mc_server/ipV6",ipV6add,qos=0,retain=True)
 #Main Prog
 ini()
 if LCDpower == 1:
