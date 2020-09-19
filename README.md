@@ -3,36 +3,6 @@ Project for a smarthome control with 433MHz transmitter, weather info, pi camera
 
 The setup installs all required libraries and programs.
 
-Contain:
-* xrdp
-* python-matplotlib
-* mpg321
-* gir1.2-gstreamer-1.0
-* gir1.2-gst-plugins-base-1.0
-* python3-pil.imagetk
-* thingspeak
-* gTTS
-* Adafruit_Python_DHT
-* Adafruit_Python_BMP
-* habridge
-* routes
-* pyopenssl
-* simplejson
-* cherrypy
-* pushbullet
-* pi-hole
-* tgnLIB.py
-* flac
-* libportaudio
-* SpeechRecognition
-* ddclient
-* libwebsockets3
-* libssl1.0.0
-* mosquitto server
-* paho-mqtt
-* lirc
-
-
 Required hardware:
 * Raspberry Pi 3 with min. 16GB SD-Card installed 'Debian Stretch Raspbian 2017.09' and Python 3.5
 or
