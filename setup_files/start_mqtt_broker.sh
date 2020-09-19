@@ -1,1 +1,0 @@
-sudo mosquitto -v
