@@ -9,6 +9,11 @@
 #OS:             2019-07-10-raspbian-buster / Python3.7 !!!
 #==============================================================================
 
+if [ "$(id -u)" != "0" ]; then
+   echo "The script must be executed as root!"
+   exit 1
+fi
+
 echo -e "\e[32m#######################################################"
 echo -e "\e[32m####      \e[31mtgn_smart_home INSTALLATION FOR           \e[32m###"
 echo -e "\e[32m####           \e[31mRASPBERRY PI 4                       \e[32m###"
