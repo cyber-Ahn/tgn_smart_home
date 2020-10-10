@@ -606,6 +606,7 @@ def ini():
 	client.publish("tgn/gesture/touch","0",qos=0,retain=True)
 	client.publish("tgn/gesture/btn_ni_li","6",qos=0,retain=True)
 	client.publish("tgn/sonoff_1/connection/ip","---.---.---.---",qos=0,retain=True)
+	client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
@@ -1610,10 +1611,13 @@ class WindowB(Frame):
 						global we_cach
 						if data['sky'] == "Rain":
 							sonoff_set("6", "1")
+							client.publish("tgn/weather/rain","Rain",qos=0,retain=True)
 						elif data['sky'] == "Thunderstorm":
 							sonoff_set("6", "1")
+							client.publish("tgn/weather/rain","Rain",qos=0,retain=True)
 						else:
 							sonoff_set("6", "0")
+							client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
 						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" °C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
