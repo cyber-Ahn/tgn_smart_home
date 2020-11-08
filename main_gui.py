@@ -607,6 +607,8 @@ def ini():
 	client.publish("tgn/gesture/btn_ni_li","6",qos=0,retain=True)
 	client.publish("tgn/sonoff_1/connection/ip","---.---.---.---",qos=0,retain=True)
 	client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
+	client.publish("tgn/codeswitch/data","0",qos=0,retain=True)
+	client.publish("tgn/codeswitch/msg","empty",qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
