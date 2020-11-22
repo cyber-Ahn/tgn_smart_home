@@ -577,7 +577,7 @@ def ini():
 	client.publish("tgn/system/weather","0",qos=0,retain=True)
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
 	client.publish("tgn/system/clock","0",qos=0,retain=True)
-	client.publish("tgn/esp_1/analog/sensor_1","100",qos=0,retain=True)
+	client.publish("tgn/esp_1/analog/sensor_1","50",qos=0,retain=True)
 	client.publish("tgn/esp_2/analog/sensor_1","200",qos=0,retain=True)
 	client.publish("tgn/language",spr,qos=0,retain=True)
 	client.publish("tgn/version",version,qos=0,retain=True)
@@ -1565,7 +1565,7 @@ class WindowB(Frame):
 						rssfeed = "Please set a Newsfeed"
 					else:
 						rssfeed = rss(rssurl,10)
-					if int(esp_li)==100:
+					if int(esp_li)==50:
 						ttiv = 50000
 					else:
 						ttiv = 1200000
