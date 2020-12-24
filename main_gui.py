@@ -2340,7 +2340,7 @@ def lcars_screen():
 
 	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback15)
 	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame2, text="Bot Shutdow", bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=bot_down)
+	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback16)
 	B2.grid(row=1, column=1, padx=10, pady=3)
 	if ifI2C(NFC_ADDRESS) == "found device":
 		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback30)
