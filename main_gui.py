@@ -46,12 +46,18 @@ b3 = 0
 b4 = 0
 b5 = 0
 b6 = 0
+b7 = 0
+b8 = 0
+b9 = 0
 b1A = ""
 b2A = ""
 b3A = ""
 b4A = ""
 b5A = ""
 b6A = ""
+b7A = ""
+b8A = ""
+b9A = ""
 weather_t = -0.41
 weather_c = 0
 weather_w = 4.1
@@ -132,7 +138,7 @@ REMOTE_SERVER = "www.google.com"
 def ini():
 	os.system('clear')
 	global spr
-	#Process(target=splash).start()
+	Process(target=splash).start()
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(radar_sw_pin, GPIO.IN)
 	#MCP23017 I2C
@@ -185,6 +191,9 @@ def ini():
 	global b4
 	global b5
 	global b6
+	global b7
+	global b8
+	global b9
 	global colorSet
 	global bground
 	global fground
@@ -224,6 +233,9 @@ def ini():
 	global b4A
 	global b5A
 	global b6A
+	global b7A
+	global b8A
+	global b9A
 	if ifI2C(address) == "found device":
 		RTCpower = 1
 	print(">>initialize EEPROM")
@@ -310,6 +322,7 @@ def ini():
 				b5A = b5A + cach
 			index = index + 1
 			start_add_G = start_add_G + 1
+		# code button
 		start_add_H = 0x5c
 		index = 0 
 		b6A = ""
@@ -320,6 +333,36 @@ def ini():
 				b6A = b6A + cach
 			index = index + 1
 			start_add_H = start_add_H + 1
+		start_add_AAA = 0x6d
+		index = 0 
+		b7A = ""
+		while index < 10:
+			cach = read_eeprom(1,ROM_ADDRESS,0x02,start_add_AAA)
+			print(">>Read Byte "+str(start_add_AAA))
+			if cach != "X":
+				b7A = b7A + cach
+			index = index + 1
+			start_add_AAA = start_add_AAA+ 1
+		start_add_AAB = 0x78
+		index = 0 
+		b8A = ""
+		while index < 10:
+			cach = read_eeprom(1,ROM_ADDRESS,0x02,start_add_AAB)
+			print(">>Read Byte "+str(start_add_AAB))
+			if cach != "X":
+				b8A = b8A + cach
+			index = index + 1
+			start_add_AAB = start_add_AAB+ 1
+		start_add_AAC = 0x83
+		index = 0 
+		b9A = ""
+		while index < 10:
+			cach = read_eeprom(1,ROM_ADDRESS,0x02,start_add_AAC)
+			print(">>Read Byte "+str(start_add_AAC))
+			if cach != "X":
+				b9A = b9A + cach
+			index = index + 1
+			start_add_AAC = start_add_AAC+ 1
 		buttons = []
 		buttons.append(b1A)
 		buttons.append(b2A)
@@ -327,6 +370,9 @@ def ini():
 		buttons.append(b4A)
 		buttons.append(b5A)
 		buttons.append(b6A)
+		buttons.append(b7A)
+		buttons.append(b8A)
+		buttons.append(b9A)
 		s1 = read_eeprom(1,ROM_ADDRESS,0x00,0x08)
 		s2 = read_eeprom(1,ROM_ADDRESS,0x00,0x09)
 		s3 = read_eeprom(1,ROM_ADDRESS,0x00,0x0a)
@@ -363,6 +409,12 @@ def ini():
 		b5=int(dataX)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x06)
 		b6=int(dataX)
+		dataX = read_eeprom(1,ROM_ADDRESS,0x02,0x6a)		
+		b7=int(dataX)
+		dataX = read_eeprom(1,ROM_ADDRESS,0x02,0x6b)
+		b8=int(dataX)
+		dataX = read_eeprom(1,ROM_ADDRESS,0x02,0x6c)
+		b9=int(dataX)
 		esp_2_button = read_eeprom(1,ROM_ADDRESS,0x01,0x5b)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x07)
 		colorSet=int(dataX)
@@ -587,12 +639,18 @@ def ini():
 	client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
 	client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
 	client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
+	client.publish("tgn/buttons/status/7",b7,qos=0,retain=True)
+	client.publish("tgn/buttons/status/8",b8,qos=0,retain=True)
+	client.publish("tgn/buttons/status/9",b9,qos=0,retain=True)
 	client.publish("tgn/buttons/name/1",b1A,qos=0,retain=True)
 	client.publish("tgn/buttons/name/2",b2A,qos=0,retain=True)
 	client.publish("tgn/buttons/name/3",b3A,qos=0,retain=True)
 	client.publish("tgn/buttons/name/4",b4A,qos=0,retain=True)
 	client.publish("tgn/buttons/name/5",b5A,qos=0,retain=True)
 	client.publish("tgn/buttons/name/6",b6A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/7",b7A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/8",b8A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/9",b9A,qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/color","0.0.0.255",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/color_cach","-65279",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
@@ -882,6 +940,54 @@ def callback14():
 	if MCPpower == 1:
 		mcp.output(3, 1)
 		mcp.output(2, 0)
+def callback914():
+	Process(target=sound).start()
+	if MCPpower == 1:
+		mcp.output(3, 0)
+		mcp.output(2, 1)
+	if b7 == 0:
+		msg = "Turn on " + buttons[6]
+		pb_send_text(pushbulletkey,msg)
+		client.publish("tgn/buttons/status/7","1",qos=0,retain=True)
+	else:
+		msg = "Turn off " + buttons[6]
+		pb_send_text(pushbulletkey,msg)
+		client.publish("tgn/buttons/status/7","0",qos=0,retain=True)
+	if MCPpower == 1:
+		mcp.output(3, 1)
+		mcp.output(2, 0)
+def callback915():
+	Process(target=sound).start()
+	if MCPpower == 1:
+		mcp.output(3, 0)
+		mcp.output(2, 1)
+	if b8 == 0:
+		msg = "Turn on " + buttons[7]
+		pb_send_text(pushbulletkey,msg)
+		client.publish("tgn/buttons/status/8","1",qos=0,retain=True)
+	else:
+		msg = "Turn off " + buttons[7]
+		pb_send_text(pushbulletkey,msg)
+		client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
+	if MCPpower == 1:
+		mcp.output(3, 1)
+		mcp.output(2, 0)
+def callback916():
+	Process(target=sound).start()
+	if MCPpower == 1:
+		mcp.output(3, 0)
+		mcp.output(2, 1)
+	if b9 == 0:
+		msg = "Turn on " + buttons[8]
+		pb_send_text(pushbulletkey,msg)
+		client.publish("tgn/buttons/status/9","1",qos=0,retain=True)
+	else:
+		msg = "Turn off " + buttons[8]
+		pb_send_text(pushbulletkey,msg)
+		client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
+	if MCPpower == 1:
+		mcp.output(3, 1)
+		mcp.output(2, 0)
 def callback15():
 	Process(target=sound).start()
 	if MCPpower == 1:
@@ -1004,6 +1110,12 @@ def all_off():
 	msg = "all off"
 	Process(target=TextToSpeech, args=((data[14].rstrip()),spr)).start()
 	pb_send_text(pushbulletkey,msg)
+	client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/7","0",qos=0,retain=True)
+	time.sleep(6.0)
 	client.publish("tgn/buttons/status/6","0",qos=0,retain=True)
 	time.sleep(6.0)
 	client.publish("tgn/buttons/status/5","0",qos=0,retain=True)
@@ -1038,6 +1150,12 @@ def all_on():
 	client.publish("tgn/buttons/status/5","1",qos=0,retain=True)
 	time.sleep(6.0)
 	client.publish("tgn/buttons/status/6","1",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/7","1",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/8","1",qos=0,retain=True)
+	time.sleep(6.0)
+	client.publish("tgn/buttons/status/9","1",qos=0,retain=True)
 	if MCPpower == 1:
 		mcp.output(3, 1)
 		mcp.output(2, 0)
@@ -1211,6 +1329,9 @@ def on_message(client, userdata, message):
 	global esp_hum_2
 	global esp_rssi
 	global esp_li
+	global b9
+	global b8
+	global b7
 	global b6
 	global b5
 	global b4
@@ -1297,6 +1418,33 @@ def on_message(client, userdata, message):
 		esp_rssi = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/analog/sensor_1"):
 		esp_li = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/buttons/status/9"):
+		if(int(message.payload.decode("utf-8")) != b9):
+			b9 = int(message.payload.decode("utf-8"))
+			if "sonoff" in buttons[8]:
+				sonoff_set("9", str(b9))
+			else:
+				send(9,b9)
+			write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9))
+			Process(target=TextToSpeech, args=(buttons[8],spr)).start()
+	if(message.topic=="tgn/buttons/status/8"):
+		if(int(message.payload.decode("utf-8")) != b8):
+			b8 = int(message.payload.decode("utf-8"))
+			if "sonoff" in buttons[7]:
+				sonoff_set("8", str(b8))
+			else:
+				send(8,b8)
+			write_eeprom(1,ROM_ADDRESS,0x02,0x6b,str(b8))
+			Process(target=TextToSpeech, args=(buttons[7],spr)).start()
+	if(message.topic=="tgn/buttons/status/7"):
+		if(int(message.payload.decode("utf-8")) != b7):
+			b7 = int(message.payload.decode("utf-8"))
+			if "sonoff" in buttons[6]:
+				sonoff_set("7", str(b7))
+			else:
+				send(7,b7)
+			write_eeprom(1,ROM_ADDRESS,0x02,0x6a,str(b7))
+			Process(target=TextToSpeech, args=(buttons[6],spr)).start()
 	if(message.topic=="tgn/buttons/status/6"):
 		if(int(message.payload.decode("utf-8")) != b6):
 			b6 = int(message.payload.decode("utf-8"))
@@ -1475,10 +1623,21 @@ class Window(Frame):
 				if b5 == 1:
 					stats=stats+'On|'
 				if b6 == 0:
-					stats=stats+'OFF'
+					stats=stats+'OFF|'
 				if b6 == 1:
+					stats=stats+'On|'
+				if b7 == 0:
+					stats=stats+'OFF|'
+				if b7 == 1:
+					stats=stats+'On|'
+				if b8 == 0:
+					stats=stats+'OFF|'
+				if b8 == 1:
+					stats=stats+'On|'
+				if b9 == 0:
+					stats=stats+'OFF'
+				if b9 == 1:
 					stats=stats+'On'
-				stats = stats +"|BTN Num. " + count_pos_b
 				if LCDpower == 1:
 					counterLCD = counterLCD + 1
 				if counterLCD == 30 and LCDpower == 1:
@@ -1985,19 +2144,6 @@ def normal_screen():
 
 	app=Window(rightFrame)
 
-	buttonFrame = Frame(rightFrame)
-	buttonFrame.configure(background=bground)
-	buttonFrame.grid(row=2, column=0, padx=10, pady=3)
-	buttonLabel1 = Label(buttonFrame, text=(data[0].rstrip()))
-	buttonLabel1.configure(background=bground, foreground=fground)
-	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
-	B4 = Button(buttonFrame, text=(data[3].rstrip()), bg=buttonb, fg=fground, width=15, command=callback5)
-	B4.grid(row=3, column=0, padx=10, pady=3)
-	B7 = Button(buttonFrame, text=(data[7].rstrip()), bg=buttonb, fg=fground, width=15, command=callback7)
-	B7.grid(row=3, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame, text=(data[8].rstrip()), bg=buttonb, fg=fground, width=15, command=callback6)
-	B6.grid(row=3, column=2, padx=10, pady=3)
-
 	buttonFrame1 = Frame(rightFrame)
 	buttonFrame1.configure(background=bground)
 	buttonFrame1.grid(row=3, column=0, padx=10, pady=3)
@@ -2017,13 +2163,25 @@ def normal_screen():
 	B5.grid(row=2, column=1, padx=10, pady=3)
 	B6 = Button(buttonFrame1, text=buttons[5], bg=buttonb, fg=fground, width=15, command=callback14)
 	B6.grid(row=2, column=2, padx=10, pady=3)
+	B13 = Button(buttonFrame1, text=buttons[6], bg=buttonb, fg=fground, width=15, command=callback914)
+	B13.grid(row=3, column=0, padx=10, pady=3)
+	B14 = Button(buttonFrame1, text=buttons[7], bg=buttonb, fg=fground, width=15, command=callback915)
+	B14.grid(row=3, column=1, padx=10, pady=3)
+	B15 = Button(buttonFrame1, text=buttons[8], bg=buttonb, fg=fground, width=15, command=callback916)
+	B15.grid(row=3, column=2, padx=10, pady=3)
 	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg=buttonb, fg=fground, width=15, command=all_on)
-	B7.grid(row=3, column=0, padx=10, pady=3)
+	B7.grid(row=4, column=0, padx=10, pady=3)
 	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg=buttonb, fg=fground, width=15, command=all_off)
-	B8.grid(row=3, column=1, padx=10, pady=3)
+	B8.grid(row=4, column=1, padx=10, pady=3)
 	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
 		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg=buttona, fg=fground, width=15, command=callback33)
-		B9.grid(row=3, column=2, padx=10, pady=3)
+		B9.grid(row=4, column=2, padx=10, pady=3)
+	B10 = Button(buttonFrame1, text=(data[3].rstrip()), bg=buttonb, fg=fground, width=15, command=callback5)
+	B10.grid(row=5, column=0, padx=10, pady=3)
+	B11 = Button(buttonFrame1, text=(data[7].rstrip()), bg=buttonb, fg=fground, width=15, command=callback7)
+	B11.grid(row=5, column=1, padx=10, pady=3)
+	B12 = Button(buttonFrame1, text=(data[8].rstrip()), bg=buttonb, fg=fground, width=15, command=callback6)
+	B12.grid(row=5, column=2, padx=10, pady=3)
 
 	buttonFrame2 = Frame(rightFrame)
 	buttonFrame2.configure(background=bground)
@@ -2132,7 +2290,7 @@ def normal_screen():
 	infLabel6.grid(row=2, column=2, padx=10, pady=3)
 	oText6 = onoff_day
 	infLabel6 = Label(infFrame1, text=oText6)
-	infLabel6.configure(background='#000000', foreground='#eaa424')
+	infLabel6.configure(background=bground, foreground=fground)
 	infLabel6.grid(row=2, column=1, padx=10, pady=3)
 
 	root.mainloop()
@@ -2291,19 +2449,6 @@ def lcars_screen():
 
 	app=Window(rightFrame)
 
-	buttonFrame = Frame(rightFrame)
-	buttonFrame.configure(background='#000000')
-	buttonFrame.grid(row=2, column=0, padx=10, pady=3)
-	buttonLabel1 = Label(buttonFrame, text=(data[0].rstrip()))
-	buttonLabel1.configure(background='#000000', foreground='#eaa424')
-	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
-	B4 = Button(buttonFrame, text=(data[3].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback5)
-	B4.grid(row=3, column=0, padx=10, pady=3)
-	B7 = Button(buttonFrame, text=(data[7].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback7)
-	B7.grid(row=3, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame, text=(data[8].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback6)
-	B6.grid(row=3, column=2, padx=10, pady=3)
-
 	buttonFrame1 = Frame(rightFrame)
 	buttonFrame1.configure(background='#000000')
 	buttonFrame1.grid(row=3, column=0, padx=10, pady=3)
@@ -2323,13 +2468,25 @@ def lcars_screen():
 	B5.grid(row=2, column=1, padx=10, pady=3)
 	B6 = Button(buttonFrame1, text=buttons[5], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback14)
 	B6.grid(row=2, column=2, padx=10, pady=3)
+	B13 = Button(buttonFrame1, text=buttons[6], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback914)
+	B13.grid(row=3, column=0, padx=10, pady=3)
+	B14 = Button(buttonFrame1, text=buttons[7], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback915)
+	B14.grid(row=3, column=1, padx=10, pady=3)
+	B15 = Button(buttonFrame1, text=buttons[8], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback916)
+	B15.grid(row=3, column=2, padx=10, pady=3)
 	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=all_on)
-	B7.grid(row=3, column=0, padx=10, pady=3)
+	B7.grid(row=4, column=0, padx=10, pady=3)
 	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=all_off)
-	B8.grid(row=3, column=1, padx=10, pady=3)
+	B8.grid(row=4, column=1, padx=10, pady=3)
 	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
 		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback33)
-		B9.grid(row=3, column=2, padx=10, pady=3)
+		B9.grid(row=4, column=2, padx=10, pady=3)
+	B10 = Button(buttonFrame1, text=(data[3].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback5)
+	B10.grid(row=5, column=0, padx=10, pady=3)
+	B11 = Button(buttonFrame1, text=(data[7].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback7)
+	B11.grid(row=5, column=1, padx=10, pady=3)
+	B12 = Button(buttonFrame1, text=(data[8].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback6)
+	B12.grid(row=5, column=2, padx=10, pady=3)
 
 	buttonFrame2 = Frame(rightFrame)
 	buttonFrame2.configure(background='#000000')

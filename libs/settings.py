@@ -1,5 +1,8 @@
+#0x02 0x8e
 from tgnLIB import *
 import binascii
+
+# NEW BUTTON
 
 ROM_ADDRESS = 0x53
 NFC_ADDRESS = 0x24
@@ -85,6 +88,9 @@ def funk_settings():
 	b4 = input((data[81].rstrip()))
 	b5 = input((data[82].rstrip()))
 	b6 = input((data[83].rstrip()))
+	b7 = input((data[83].rstrip()))
+	b8 = input((data[83].rstrip()))
+	b9 = input((data[83].rstrip()))
 	esp2_button = input("ESP_2 Button - example = 5:")
 	print((data[103].rstrip()))
 	write_eeprom(1,ROM_ADDRESS,0x01,0x5b,esp2_button)
@@ -181,6 +187,48 @@ def funk_settings():
 		index = index + 1
 		start_add_H = start_add_H + 1
 	print((data[104].rstrip()))
+	start_add_AAA = 0x6d
+	index = 0
+	while index < 10:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAA,"X")
+		index = index + 1
+		start_add_AAA = start_add_AAA + 1
+	start_add_AAA = 0x6d
+	index = 0 
+	while index < len(b7):
+		letter = b7[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAA,letter) 
+		index = index + 1
+		start_add_AAA = start_add_AAA + 1
+		print("Write: "+str(start_add_AAA))
+	start_add_AAB = 0x78
+	index = 0
+	while index < 10:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAB,"X")
+		index = index + 1
+		start_add_AAB = start_add_AAB + 1
+	start_add_AAB = 0x78
+	index = 0 
+	while index < len(b8):
+		letter = b8[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAB,letter) 
+		index = index + 1
+		start_add_AAB = start_add_AAB + 1
+		print("Write: "+str(start_add_AAB))
+	start_add_AAC = 0x83
+	index = 0
+	while index < 10:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAC,"X")
+		index = index + 1
+		start_add_AAC = start_add_AAC + 1
+	start_add_AAC = 0x83
+	index = 0 
+	while index < len(b9):
+		letter = b9[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAC,letter) 
+		index = index + 1
+		start_add_AAC = start_add_AAC + 1
+		print("Write: "+str(start_add_AAC))
 	time.sleep(3)
 
 def cam_settings():
@@ -513,6 +561,60 @@ def prog_rom():
 	esp2_button = "5"
 	rssurl = "empty"
 	rsslang = "de"
+	b7 = "empty"
+	b8 = "empty"
+	b9 = "empty"
+	b7A = 0
+	b8A = 0
+	b9A = 0
+	write_eeprom(1,ROM_ADDRESS,0x02,0x6a,str(b7A))
+	write_eeprom(1,ROM_ADDRESS,0x02,0x6b,str(b8A))
+	write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9A))
+	start_add_AAA = 0x6d
+	index = 0
+	while index < 10:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAA,"X")
+		index = index + 1
+		start_add_AAA = start_add_AAA + 1
+		print("Write: "+str(start_add_AAA))
+	start_add_AAA = 0x6d
+	index = 0 
+	while index < len(b7):
+		letter = b7[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAA,letter) 
+		index = index + 1
+		start_add_AAA = start_add_AAA + 1
+		print("Write: "+str(start_add_AAA))
+	start_add_AAB = 0x78
+	index = 0
+	while index < 10:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAB,"X")
+		index = index + 1
+		start_add_AAB = start_add_AAB + 1
+		print("Write: "+str(start_add_AAB))
+	start_add_AAB = 0x78
+	index = 0 
+	while index < len(b8):
+		letter = b8[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAB,letter) 
+		index = index + 1
+		start_add_AAB = start_add_AAB + 1
+		print("Write: "+str(start_add_AAB))
+	start_add_AAC = 0x83
+	index = 0
+	while index < 10:
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAC,"X")
+		index = index + 1
+		start_add_AAC = start_add_AAC + 1
+		print("Write: "+str(start_add_AAC))
+	start_add_AAC = 0x83
+	index = 0 
+	while index < len(b9):
+		letter = b9[index]
+		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAC,letter) 
+		index = index + 1
+		start_add_AAC = start_add_AAC + 1
+		print("Write: "+str(start_add_AAC))
 	print((data[103].rstrip()))
 	write_eeprom(1,ROM_ADDRESS,0x01,0x2a,str(spr))
 	write_eeprom(1,ROM_ADDRESS,0x00,0xa6,str(su))
@@ -1140,6 +1242,9 @@ def show_nfc():
 	for line in lines:
 		print(line)
 
+def test():
+	print("nothing")
+
 if __name__ == "__main__":
 	#setRTC()
 	print("python3 settings.py command")
@@ -1179,3 +1284,5 @@ if command == "backup":
 	backup_rom(blocknum, phatrom)
 if command == "restore":
 	restore_rom(blocknum, phatrom)
+if command == "test":
+	test()
