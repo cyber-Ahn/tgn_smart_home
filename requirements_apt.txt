@@ -22,4 +22,4 @@ portaudio19-dev
 libwebsockets3
 libssl1.0.0
 mosquitto
-mosquitto mosquitto-clients
+mosquitto-clients
