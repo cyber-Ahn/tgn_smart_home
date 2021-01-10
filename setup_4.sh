@@ -110,7 +110,7 @@ sleep 5
 clear
 fi
 echo -e "\e[33m>> \e[31mMove backup files\e[32m"
-sudo mv /home/pi/tgn_smart_home/setup_files/tgnLIB.py /usr/local/lib/python3.7/dist-packages/
+sudo mv /home/pi/tgn_smart_home/setup_files/tgnLIB.py /usr/local/lib/python3.5/dist-packages/
 sudo mv /home/pi/tgn_smart_home/setup_files/haset1.bk /home/pi/habridge/data
 sudo cp /home/pi/tgn_smart_home/setup_files/adlists.list /etc/.pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/adlists.list /etc/pihole/
@@ -119,10 +119,12 @@ sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
+sudo mv /home/pi/tgn_smart_home/setup_files/start_sinric_bridge.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_broker.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/mosquitto.conf /etc/mosquitto/
 sudo chmod +x /home/pi/start_main_gui.sh
 sudo chmod +x /home/pi/start_mqtt_broker.sh
+sudo chmod +x /home/pi/start_sinric_bridge.sh
 sleep 3
 clear
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
