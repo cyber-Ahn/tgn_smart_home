@@ -24,3 +24,4 @@ pushbullet.py==0.11.0
 twython==3.7.0
 mcstatus==2.3.0
 numpy==1.12.1
+pysinric==0.1.1
