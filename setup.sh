@@ -119,10 +119,12 @@ sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
+sudo mv /home/pi/tgn_smart_home/setup_files/start_sinric_bridge.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_broker.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/mosquitto.conf /etc/mosquitto/
 sudo chmod +x /home/pi/start_main_gui.sh
 sudo chmod +x /home/pi/start_mqtt_broker.sh
+sudo chmod +x /home/pi/start_sinric_bridge.sh
 clear
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
 sleep 5
