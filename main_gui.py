@@ -36,7 +36,7 @@ spr = "en"
 spr_phat = ""
 textcpu = ""
 textswitch = ""
-su = 1
+su = 0
 Ts = 0
 pw = "0"
 buttons = ["1", "2", "3", "4", "5", "6"]
@@ -136,6 +136,7 @@ REMOTE_SERVER = "www.google.com"
 
 #functions
 def ini():
+	logging_tgn("check_files","tgn_smart_home.log")
 	os.system('clear')
 	global spr
 	Process(target=splash).start()
@@ -155,10 +156,12 @@ def ini():
 			mcp.config(i, 1)
 			mcp.pullup(i, 1)
 		print(">>MCP23017 configured")
-		Process(target=TextToSpeech, args=("MCP23017 configured",spr)).start()
+		if(su==1):
+			Process(target=TextToSpeech, args=("MCP23017 configured",spr)).start()
 	else:
 		print(">>MCP23017 not found")
-		Process(target=TextToSpeech, args=("MCP23017 not found",spr)).start()
+		if(su==1):
+			Process(target=TextToSpeech, args=("MCP23017 not found",spr)).start()
 	#LCD
 	time.sleep(2)
 	print(">>initialize LCD Display")
@@ -175,10 +178,12 @@ def ini():
 		mylcd.lcd_display_string("TGN Smart Home", 1, 1)
 		mylcd.lcd_display_string("Loading....", 2, 0)
 		print(">>LCD Display configured")
-		Process(target=TextToSpeech, args=("LCD Display configured",spr)).start()
+		if(su==1):
+			Process(target=TextToSpeech, args=("LCD Display configured",spr)).start()
 	else:
 		print(">>LCD Display not found")
-		Process(target=TextToSpeech, args=("LCD Display not found",spr)).start()
+		if(su==1):
+			Process(target=TextToSpeech, args=("LCD Display not found",spr)).start()
 	global ontime
 	global offtime
 	global s1
@@ -241,8 +246,10 @@ def ini():
 	print(">>initialize EEPROM")
 	time.sleep(3)
 	if ifI2C(ROM_ADDRESS) == "found device":
+		logging_tgn("Boot System - Read ROM","tgn_smart_home.log")
 		start_add_U = 0xcf
-		Process(target=TextToSpeech, args=("Read Rom",spr)).start()
+		if(su==1):
+			Process(target=TextToSpeech, args=("Read Rom",spr)).start()
 		index = 0
 		pushbulletkey = ""
 		while index < 34:
@@ -373,6 +380,15 @@ def ini():
 		buttons.append(b7A)
 		buttons.append(b8A)
 		buttons.append(b9A)
+		logging_tgn(b1A,"tgn_smart_home.log")
+		logging_tgn(b2A,"tgn_smart_home.log")
+		logging_tgn(b3A,"tgn_smart_home.log")
+		logging_tgn(b4A,"tgn_smart_home.log")
+		logging_tgn(b5A,"tgn_smart_home.log")
+		logging_tgn(b6A,"tgn_smart_home.log")
+		logging_tgn(b7A,"tgn_smart_home.log")
+		logging_tgn(b8A,"tgn_smart_home.log")
+		logging_tgn(b9A,"tgn_smart_home.log")
 		s1 = read_eeprom(1,ROM_ADDRESS,0x00,0x08)
 		s2 = read_eeprom(1,ROM_ADDRESS,0x00,0x09)
 		s3 = read_eeprom(1,ROM_ADDRESS,0x00,0x0a)
@@ -418,8 +434,10 @@ def ini():
 		esp_2_button = read_eeprom(1,ROM_ADDRESS,0x01,0x5b)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x07)
 		colorSet=int(dataX)
+		logging_tgn(str(colorSet),"tgn_smart_home.log")
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0x67)
 		screen=int(dataX)
+		logging_tgn(str(screen),"tgn_smart_home.log")
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0xf2)
 		speech=int(dataX)
 		dataX = read_eeprom(1,ROM_ADDRESS,0x00,0xf3)
@@ -444,6 +462,7 @@ def ini():
 			index = index + 1
 			start_add_I = start_add_I + 1
 		version = ver
+		logging_tgn(version,"tgn_smart_home.log")
 		start_add_V = 0x01
 		index = 0
 		channel_id = ""
@@ -508,6 +527,7 @@ def ini():
 			spr = "ja"
 		if xx == 6:
 			spr = "zh"
+		logging_tgn(spr,"tgn_smart_home.log")
 		start_add_AD = 0x5b
 		index = 0
 		com_typ = ""
@@ -548,9 +568,11 @@ def ini():
 				rssurl = rssurl + cach
 			index = index + 1
 			start_add_AG = start_add_AG + 1
+		logging_tgn(rssurl,"tgn_smart_home.log")
 	else:
 		print(">>EEPROM not found")
-		Process(target=TextToSpeech, args=("EEPROM not found",spr)).start()
+		if(su==1):
+			Process(target=TextToSpeech, args=("EEPROM not found",spr)).start()
 	if MCPpower == 1:
 		print(">>MCP23017 test Input and Output")
 		print("%d: %x" % (8, mcp.input(8) >> 8))
@@ -715,6 +737,7 @@ def on():
 		soff = 0
 		son = 1
 		pb_send_text(pushbulletkey,"Automatic on")
+		logging_tgn("AutomaticOn","tgn_smart_home.log")
 		if s1 == "1":
 			client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
 		if s2 == "1":
@@ -723,7 +746,8 @@ def on():
 			client.publish("tgn/buttons/status/3","1",qos=0,retain=True)
 		if s4 == "1":
 			client.publish("tgn/buttons/status/4","1",qos=0,retain=True)
-		Process(target=TextToSpeech, args=((data[23].rstrip()),spr)).start()
+		if(su==1):
+			Process(target=TextToSpeech, args=((data[23].rstrip()),spr)).start()
 		client.publish("tgn/system/automatic","1",qos=0,retain=True)
 def off():
 	global son
@@ -732,6 +756,7 @@ def off():
 		soff = 1
 		son = 0
 		pb_send_text(pushbulletkey,"Automatic Off")
+		logging_tgn("AutomaticOff","tgn_smart_home.log")
 		if s1 == "1":
 			client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
 		if s2 == "1":
@@ -740,7 +765,8 @@ def off():
 			client.publish("tgn/buttons/status/3","0",qos=0,retain=True)
 		if s4 == "1":
 			client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
-		Process(target=TextToSpeech, args=((data[24].rstrip()),spr)).start()
+		if(su==1):
+			Process(target=TextToSpeech, args=((data[24].rstrip()),spr)).start()
 		client.publish("tgn/system/automatic","0",qos=0,retain=True)
 def sound():
 	if su==1:
@@ -824,7 +850,8 @@ def About():
 def callback5():
 	setn = "python3 /home/pi/tgn_smart_home/libs/auto_cam.py preview 0"
 	Process(target=sound).start()
-	Process(target=TextToSpeech, args=((data[15].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[15].rstrip()),spr)).start()
 	os.system(setn)
 def callback6():
 	Process(target=sound).start()
@@ -832,9 +859,11 @@ def callback6():
 def callback7():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/digi-cam.py"
 	Process(target=sound).start()
-	Process(target=TextToSpeech, args=((data[17].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[17].rstrip()),spr)).start()
 	os.system(setn)
 def callback8():
+	logging_tgn("setRTC","tgn_smart_home.log")
 	Process(target=sound).start()
 	if MCPpower == 1:
 		mcp.output(3, 0)
@@ -990,32 +1019,39 @@ def callback916():
 		mcp.output(2, 0)
 def callback15():
 	Process(target=sound).start()
+	logging_tgn("Shutdown","tgn_smart_home.log")
 	if MCPpower == 1:
 		for i in range(int(MCP_num_gpios/2)):
 			mcp.output(i, 0)
 	if LCDpower == 1:
 		mylcd.lcd_clear()
 		mylcd.backlight(0)
-	Process(target=TextToSpeech, args=((data[18].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[18].rstrip()),spr)).start()
 	call(['shutdown', '-h', 'now'], shell=False)
 def callback16():
 	Process(target=sound).start()
+	logging_tgn("Reboot","tgn_smart_home.log")
 	if MCPpower == 1:
 		for i in range(int(MCP_num_gpios/2)):
 			mcp.output(i, 0)
 	if LCDpower == 1:
 		mylcd.lcd_clear()
 		mylcd.backlight(0)
-	Process(target=TextToSpeech, args=((data[19].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[19].rstrip()),spr)).start()
 	call(['reboot', '-h', 'now'], shell=False)
 def callback17():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py rtc"
+	logging_tgn("settingsRTC","tgn_smart_home.log")
 	os.system(setn)
 def callback18():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py funk"
+	logging_tgn("settingsFUNK","tgn_smart_home.log")
 	os.system(setn)
 def callback19():
 	Process(target=sound).start()
+	logging_tgn("switchScreen","tgn_smart_home.log")
 	global screen
 	if screen == 1:
 		screen = 0
@@ -1027,7 +1063,8 @@ def callback19():
 def callback20():
 	Process(target=sound).start()
 	global LCDpower
-	Process(target=TextToSpeech, args=((data[21].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[21].rstrip()),spr)).start()
 	if LCDpower == 1:
 		LCDpower = 0
 		mylcd.lcd_clear()
@@ -1040,7 +1077,8 @@ def callback20():
 def callback21():
 	Process(target=sound).start()
 	global backlight
-	Process(target=TextToSpeech, args=((data[22].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[22].rstrip()),spr)).start()
 	if backlight == 1:
 		backlight = 0
 		mylcd.backlight(0)
@@ -1049,6 +1087,7 @@ def callback21():
 		mylcd.backlight(1)
 def callback22():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py install_rom"
+	logging_tgn("installRom","tgn_smart_home.log")
 	Process(target=sound).start()
 	os.system(setn)
 def callback23():
@@ -1057,6 +1096,7 @@ def callback23():
 	os.system(setn)
 def callback24():
 	subprocess.call('xset dpms force on', shell=True)
+	logging_tgn("screensaver","tgn_smart_home.log")
 	Process(target=sound).start()
 def callback25():
 	global su
@@ -1092,7 +1132,8 @@ def exit():
 			data = []
 			for line in f:
 				data.append(line)
-			Process(target=TextToSpeech, args=((data[5].rstrip()),spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=((data[5].rstrip()),spr)).start()
 	if LCDpower == 1:
 		mylcd.backlight(0)
 		mylcd.lcd_clear()
@@ -1103,12 +1144,14 @@ def exit():
 	root.quit()
 def all_off():
 	Process(target=sound).start()
+	logging_tgn("allOff","tgn_smart_home.log")
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	subprocess.call('xset dpms force on', shell=True)
 	msg = "all off"
-	Process(target=TextToSpeech, args=((data[14].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[14].rstrip()),spr)).start()
 	pb_send_text(pushbulletkey,msg)
 	client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
 	time.sleep(6.0)
@@ -1132,12 +1175,14 @@ def all_off():
 		mcp.output(2, 0)
 def all_on():
 	Process(target=sound).start()
+	logging_tgn("allOn","tgn_smart_home.log")
 	if MCPpower == 1:
 		mcp.output(3, 0)
 		mcp.output(2, 1)
 	subprocess.call('xset dpms force on', shell=True)
 	msg = "all on"
-	Process(target=TextToSpeech, args=((data[13].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[13].rstrip()),spr)).start()
 	pb_send_text(pushbulletkey,msg)
 	client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
 	time.sleep(6.0)
@@ -1164,8 +1209,10 @@ def callback30():
 	if ifI2C(NFC_ADDRESS) == "found device":
 		pn532 = Pn532_i2c()
 		pn532.SAMconfigure()
-		TextToSpeech((data[20].rstrip()),spr)
-		Process(target=TextToSpeech, args=("MCP23017 configured",spr)).start()
+		if(su==1):
+			TextToSpeech((data[20].rstrip()),spr)
+		if(su==1):
+			Process(target=TextToSpeech, args=("MCP23017 configured",spr)).start()
 		card_data = pn532.read_mifare().get_data()
 		card_data = str(binascii.hexlify(card_data))
 		file = open("/home/pi/tgn_smart_home/config/logfile.log","r")
@@ -1241,6 +1288,7 @@ def callback33():
 			Process(target=TextToSpeech, args=(output3+tex,spr)).start()
 def callback32():
 	global speech
+	logging_tgn("switchLanguage","tgn_smart_home.log")
 	if speech == 0:
 		speech = 1
 	elif speech == 1:
@@ -1288,18 +1336,22 @@ def callback39():
 		start_add_AC = start_add_AC + 1
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def callback40():
-	Process(target=TextToSpeech, args=(we_cach,spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=(we_cach,spr)).start()
 def callback41():
 	Process(target=sound).start()
-	Process(target=TextToSpeech, args=((data[25].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[25].rstrip()),spr)).start()
 	os.execv(sys.executable, ['python3'] + sys.argv)
 def callback42():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/settings.py rss"
 	os.system(setn)
 def callback43():
-	Process(target=TextToSpeech, args=(rssfeed,spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=(rssfeed,spr)).start()
 def callback44():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/update.py"
+	logging_tgn("checkUpdate","tgn_smart_home.log")
 	Process(target=sound).start()
 	os.system(setn)
 	time.sleep(5)
@@ -1421,87 +1473,106 @@ def on_message(client, userdata, message):
 	if(message.topic=="tgn/buttons/status/9"):
 		if(int(message.payload.decode("utf-8")) != b9):
 			b9 = int(message.payload.decode("utf-8"))
-			if "sonoff" in buttons[8]:
+			logging_tgn("Button9:"+str(b9),"tgn_smart_home.log")
+			if "s_" in buttons[8]:
 				sonoff_set("9", str(b9))
 			else:
 				send(9,b9)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9))
-			Process(target=TextToSpeech, args=(buttons[8],spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=(buttons[8],spr)).start()
 	if(message.topic=="tgn/buttons/status/8"):
 		if(int(message.payload.decode("utf-8")) != b8):
 			b8 = int(message.payload.decode("utf-8"))
-			if "sonoff" in buttons[7]:
+			logging_tgn("Button8:"+str(b8),"tgn_smart_home.log")
+			if "s_" in buttons[7]:
 				sonoff_set("8", str(b8))
 			else:
 				send(8,b8)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6b,str(b8))
-			Process(target=TextToSpeech, args=(buttons[7],spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=(buttons[7],spr)).start()
 	if(message.topic=="tgn/buttons/status/7"):
 		if(int(message.payload.decode("utf-8")) != b7):
 			b7 = int(message.payload.decode("utf-8"))
-			if "sonoff" in buttons[6]:
+			logging_tgn("Button7:"+str(b7),"tgn_smart_home.log")
+			if "s_" in buttons[6]:
 				sonoff_set("7", str(b7))
 			else:
 				send(7,b7)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6a,str(b7))
-			Process(target=TextToSpeech, args=(buttons[6],spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=(buttons[6],spr)).start()
 	if(message.topic=="tgn/buttons/status/6"):
 		if(int(message.payload.decode("utf-8")) != b6):
 			b6 = int(message.payload.decode("utf-8"))
-			if "sonoff" in buttons[5]:
+			logging_tgn("Button6:"+str(b6),"tgn_smart_home.log")
+			if "s_" in buttons[5]:
 				sonoff_set("6", str(b6))
 			else:
 				send(6,b6)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
-			Process(target=TextToSpeech, args=(buttons[5],spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=(buttons[5],spr)).start()
 	if(message.topic=="tgn/buttons/status/5"):
 		if(int(message.payload.decode("utf-8")) != b5):
 			b5 = int(message.payload.decode("utf-8"))
-			if "sonoff" in buttons[4]:
+			logging_tgn("Button5:"+str(b5),"tgn_smart_home.log")
+			if "s_" in buttons[4]:
 				sonoff_set("5", str(b5))
 			else:
 				send(5,b5)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x05,str(b5))
-			Process(target=TextToSpeech, args=(buttons[4],spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=(buttons[4],spr)).start()
 	if(message.topic=="tgn/buttons/status/4"):
 		if(int(message.payload.decode("utf-8")) != b4):
 			b4 = int(message.payload.decode("utf-8"))
-			if "sonoff" in buttons[3]:
+			logging_tgn("Button4:"+str(b4),"tgn_smart_home.log")
+			if "s_" in buttons[3]:
 				sonoff_set("4", str(b4))
 			else:
 				send(4,b4)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x04,str(b4))
-			Process(target=TextToSpeech, args=(buttons[3],spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=(buttons[3],spr)).start()
 	if(message.topic=="tgn/buttons/status/3"):
 		if(int(message.payload.decode("utf-8")) != b3):
 			b3 = int(message.payload.decode("utf-8"))
-			if "sonoff" in buttons[2]:
+			logging_tgn("Button3:"+str(b3),"tgn_smart_home.log")
+			if "s_" in buttons[2]:
 				sonoff_set("3", str(b3))
 			else:
 				send(3,b3)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x03,str(b3))
-			Process(target=TextToSpeech, args=(buttons[2],spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=(buttons[2],spr)).start()
 	if(message.topic=="tgn/buttons/status/2"):
 		if(int(message.payload.decode("utf-8")) != b2):
 			b2 = int(message.payload.decode("utf-8"))
-			if "sonoff" in buttons[1]:
+			logging_tgn("Button2:"+str(b2),"tgn_smart_home.log")
+			if "s_" in buttons[1]:
 				sonoff_set("2", str(b2))
 			else:
 				send(2,b2)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x02,str(b2))
-			Process(target=TextToSpeech, args=(buttons[1],spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=(buttons[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/1"):
 		if(int(message.payload.decode("utf-8")) != b1):
 			b1 = int(message.payload.decode("utf-8"))
-			if "sonoff" in buttons[0]:
+			logging_tgn("Button1:"+str(b1),"tgn_smart_home.log")
+			if "s_" in buttons[0]:
 				sonoff_set("1", str(b1))
 			else:
 				send(1,b1)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x01,str(b1))
-			Process(target=TextToSpeech, args=(buttons[0],spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=(buttons[0],spr)).start()
 	if(message.topic=="tgn/system/shutdown"):
 		if(int(message.payload.decode("utf-8")) == 1):
-			Process(target=TextToSpeech, args=("Shutdown",spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=("Shutdown",spr)).start()
 			Process(target=sound).start()
 			if MCPpower == 1:
 				mcp.output(3, 0)
@@ -1511,7 +1582,8 @@ def on_message(client, userdata, message):
 			call(['shutdown', '-h', 'now'], shell=False)
 	if(message.topic=="tgn/system/reboot"):
 		if(int(message.payload.decode("utf-8")) == 1):
-			Process(target=TextToSpeech, args=("Reboot",spr)).start()
+			if(su==1):
+				Process(target=TextToSpeech, args=("Reboot",spr)).start()
 			Process(target=sound).start()
 			if MCPpower == 1:
 				mcp.output(3, 0)
@@ -1571,7 +1643,8 @@ class Window(Frame):
 					mcp.output(0, 0)
 				if mqtt_msg != mqtt_msg_cach:
 					mqtt_msg_cach = mqtt_msg
-					Process(target=TextToSpeech, args=(mqtt_msg,spr)).start()
+					if(su==1):
+						Process(target=TextToSpeech, args=(mqtt_msg,spr)).start()
 				if GPIO.input(radar_sw_pin) == 0:
 					if radar_sw_state == 1 and radar_on == 1:
 						radar_sw_state = 0
@@ -1888,26 +1961,32 @@ def callback100():
 def set_neo():
 	Process(target=sound).start()
 	client.publish("tgn/esp_3/neopixel/brightness",str(SL1.get()),qos=0,retain=True)
-	Process(target=TextToSpeech, args=((data[11].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[11].rstrip()),spr)).start()
 def red_neo():
 	client.publish("tgn/esp_3/neopixel/color","255.0.0.255",qos=0,retain=True)
 	Process(target=sound).start()
-	Process(target=TextToSpeech, args=((data[7].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[7].rstrip()),spr)).start()
 def green_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.255.0.255",qos=0,retain=True)
 	Process(target=sound).start()
-	Process(target=TextToSpeech, args=((data[8].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[8].rstrip()),spr)).start()
 def blue_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.0.255.255",qos=0,retain=True)
 	Process(target=sound).start()
-	Process(target=TextToSpeech, args=((data[9].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[9].rstrip()),spr)).start()
 def off_neo():
 	client.publish("tgn/esp_3/neopixel/color","0.0.0.255",qos=0,retain=True)
 	Process(target=sound).start()
-	Process(target=TextToSpeech, args=((data[10].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[10].rstrip()),spr)).start()
 def color_neo():
 	color = askcolor()
-	Process(target=TextToSpeech, args=((data[12].rstrip()),spr)).start()
+	if(su==1):
+		Process(target=TextToSpeech, args=((data[12].rstrip()),spr)).start()
 	cach1 = str(color).split('),')
 	cach2 = cach1[0].split('(', 2)
 	cach3 = cach2[2].split(', ')
@@ -1953,6 +2032,16 @@ def callback48():
 	elif radar_on == 0:
 		radar_on = 1
 	print(str(radar_on))
+def clearLOG():
+	print("Clear Logs")
+	setn = "rm -fr /home/pi/tgn_smart_home/log/ha_bridge.log"
+	os.system(setn)
+	setn = "rm -fr /home/pi/tgn_smart_home/log/sinric.log"
+	os.system(setn)
+	setn = "rm -fr /home/pi/tgn_smart_home/log/sonoff.log"
+	os.system(setn)
+	setn = "rm -fr /home/pi/tgn_smart_home/log/tgn_smart_home.log"
+	os.system(setn)
 def mc_check(ipadd, ipV6add):
 	server = MinecraftServer.lookup(ipadd)
 	try:
@@ -2127,6 +2216,7 @@ def normal_screen():
 	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
 	helpmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
 	menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
+	helpmenu.add_command(label="Clear LOG", command=clearLOG)
 	helpmenu.add_command(label="Update", command=callback44)
 	helpmenu.add_command(label=(data[68].rstrip()), command=About)
 
@@ -2432,6 +2522,7 @@ def lcars_screen():
 	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
 	helpmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
 	menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
+	helpmenu.add_command(label="Clear LOG", command=clearLOG)
 	helpmenu.add_command(label="Update", command=callback44)
 	helpmenu.add_command(label=(data[68].rstrip()), command=About)
 

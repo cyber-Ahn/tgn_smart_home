@@ -1,7 +1,9 @@
+import sys
 import paho.mqtt.client as mqtt
-from tgnLIB import *
+from tgnLIB import get_ip, logging_tgn
 from subprocess import call
 
+logging_tgn("check_files","ha_bridge.log")
 c1 = sys.argv[1]
 c2 = int(sys.argv[2])
 
@@ -17,3 +19,4 @@ elif c1 == "reboot":
 else:
 	modul = "tgn/buttons/status/"+c1
 	client.publish(modul,c2,qos=0,retain=True)
+logging_tgn("command/modul:"+c1+";status:"+str(c2),"ha_bridge.log")
