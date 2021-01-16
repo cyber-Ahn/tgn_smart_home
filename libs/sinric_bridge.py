@@ -60,17 +60,17 @@ def power_state(deviceId, state):
             client.publish("tgn/buttons/status/6","1",qos=0,retain=True)
             sleep(6.0)
         elif(stateNum == 0):
-            client.publish("tgn/buttons/status/6","1",qos=0,retain=True)
+            client.publish("tgn/buttons/status/6","0",qos=0,retain=True)
             sleep(6.0)
-            client.publish("tgn/buttons/status/5","1",qos=0,retain=True)
+            client.publish("tgn/buttons/status/5","0",qos=0,retain=True)
             sleep(6.0)
-            client.publish("tgn/buttons/status/4","1",qos=0,retain=True)
+            client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
             sleep(6.0)
-            client.publish("tgn/buttons/status/3","1",qos=0,retain=True)
+            client.publish("tgn/buttons/status/3","0",qos=0,retain=True)
             sleep(6.0)
-            client.publish("tgn/buttons/status/2","1",qos=0,retain=True)
+            client.publish("tgn/buttons/status/2","0",qos=0,retain=True)
             sleep(6.0)
-            client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
+            client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
             sleep(6.0)
 
 callbacks = {"setPowerState": power_state}
