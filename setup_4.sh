@@ -110,7 +110,9 @@ sleep 5
 clear
 fi
 echo -e "\e[33m>> \e[31mMove backup files\e[32m"
-sudo mv /home/pi/tgn_smart_home/setup_files/tgnLIB.py /usr/local/lib/python3.5/dist-packages/
+echo -e "\n\e[33m>> \e[31mEnter Your Python Version '3.5'?\e[32m"
+read ver
+sudo mv /home/pi/tgn_setup_lib/setup_files/tgnLIB.py /usr/local/lib/python"$ver"/dist-packages/
 sudo mv /home/pi/tgn_smart_home/setup_files/haset1.bk /home/pi/habridge/data
 sudo cp /home/pi/tgn_smart_home/setup_files/adlists.list /etc/.pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/adlists.list /etc/pihole/
