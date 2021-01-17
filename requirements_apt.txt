@@ -23,3 +23,4 @@ libwebsockets3
 libssl1.0.0
 mosquitto
 mosquitto-clients
+libespeak1
