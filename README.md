@@ -1,5 +1,6 @@
 # tgn_smart_home
-Project for a smarthome control with 433MHz transmitter, weather info, pi camera control, optional NodeMCU and Android App
+Project for a smarthome control with 433MHz transmitter, weather info, pi camera control, optional NodeMCU, Android App(sep. Project),
+ha-bridge with web Interface and sinric-bridge for Alexa.
 
 The setup installs all required libraries and programs.
 
@@ -45,22 +46,6 @@ Installation:
 * PI 4 sudo bash setup_4.sh
 
 GUI Start with /home/pi/start_main_gui.sh
-
-WEB Interface Start with /home/pi/web_interface.sh
-
-add to autostart:
-
-sudo nano /home/pi/.config/lxsession/LXDE-pi/autostart
-
-or
-
-sudo nano  /etc/xdg/lxsession/LXDE-pi/autostart
-
-after LXDE-pi add line:
-
-@lxterminal -e /home/pi/start_mqtt_broker.sh
-
-@lxterminal -e /home/pi/start_main_gui.sh
 
 Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
  * Pi Commands
