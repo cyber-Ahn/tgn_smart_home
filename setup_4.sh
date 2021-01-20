@@ -120,13 +120,8 @@ sudo mv /home/pi/tgn_smart_home/setup_files/black.list /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
-sudo mv /home/pi/tgn_smart_home/setup_files/web_interface.sh /home/pi
-sudo mv /home/pi/tgn_smart_home/setup_files/start_sinric_bridge.sh /home/pi
-sudo mv /home/pi/tgn_smart_home/setup_files/start_mqtt_broker.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/mosquitto.conf /etc/mosquitto/
 sudo chmod +x /home/pi/start_main_gui.sh
-sudo chmod +x /home/pi/start_mqtt_broker.sh
-sudo chmod +x /home/pi/start_sinric_bridge.sh
 sleep 3
 clear
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
@@ -140,6 +135,15 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py thinkspeak
 clear
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py rss
 clear
+sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /etc/xdg/lxsession/LXDE-pi/autostart
+sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /home/pi/.config/lxsession/LXDE-pi/autostart
+sudo mv /home/pi/tgn_smart_home/setup_files/tgnmqtt.service /etc/systemd/system/
+sudo mv /home/pi/tgn_smart_home/setup_files/sinric.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable tgnmqtt.service
+systemctl enable sinric.service
+systemctl start tgnmqtt
+systemctl start sinric
 echo -e "\e[33m>> \e[31mInstall Java (y/n)?\e[32m"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then
@@ -169,5 +173,9 @@ echo -e "\e[31m\e[7m>>\e[0m \e[33mReboot System in 10 sec \e[31m\e[7m<<\e[0m"
 sudo rm -fr /home/pi/tgn_smart_home/setup_files
 sudo rm -fr /home/pi/tgn_smart_home/setup.sh
 sudo rm -fr /home/pi/tgn_smart_home/setup_4.sh
+sudo rm -fr /home/pi/tgn_smart_home/remove.sh
+sudo rm -fr /home/pi/tgn_smart_home/update.py
+sudo rm -fr /home/pi/tgn_smart_home/requirements.txt
+sudo rm -fr /home/pi/tgn_smart_home/requirements_apt.txt
 sleep 10
 reboot
