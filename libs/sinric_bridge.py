@@ -18,7 +18,9 @@ device =    ["xxx",
             "5ffb5d48ab25b36ddb58135e",
             "5ffb60ecab25b36ddb581440",
             "5ffb6161ab25b36ddb581456",
-            "60008edeab25b36ddb58e373"]
+            "60008edeab25b36ddb58e373",
+            "6009dcc4e041b57c8de212c9",
+            "6009dd52e041b57c8de212ea"]
 sateOp = ["OFF","ON"]
 
 def power_state(deviceId, state):
@@ -72,6 +74,20 @@ def power_state(deviceId, state):
             sleep(6.0)
             client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
             sleep(6.0)
+    elif(deviceNum == 14):
+        if(stateNum == 1):
+            topic = "tgn/esp_4/color"
+            client.publish(topic,"0.0.0.255",qos=0,retain=True)
+        elif(stateNum == 0):
+            topic = "tgn/esp_4/color"
+            client.publish(topic,"0.0.0.1",qos=0,retain=True)
+    elif(deviceNum == 15):
+        if(stateNum == 1):
+            topic = "tgn/esp_4/color"
+            client.publish(topic,"248.1.255.1",qos=0,retain=True)
+        elif(stateNum == 0):
+            topic = "tgn/esp_4/color"
+            client.publish(topic,"0.0.0.255",qos=0,retain=True)
 
 callbacks = {"setPowerState": power_state}
 if __name__ == "__main__":
