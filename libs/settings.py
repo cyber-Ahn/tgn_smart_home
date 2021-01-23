@@ -1,4 +1,4 @@
-#0x02 0x8e
+#0x03 0x2a
 from tgnLIB import *
 import binascii
 
@@ -567,6 +567,22 @@ def prog_rom():
 	b7A = 0
 	b8A = 0
 	b9A = 0
+	keys = "210326d3-1f22-4ad7-a321-5d23bf"
+	start_add_AAD = 0x01
+	index = 0
+	while index < 40:
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,"X")
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+	start_add_AAD = 0x01
+	index = 0 
+	while index < len(keys):
+		letter = keys[index]
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,letter) 
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
 	write_eeprom(1,ROM_ADDRESS,0x02,0x6a,str(b7A))
 	write_eeprom(1,ROM_ADDRESS,0x02,0x6b,str(b8A))
 	write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9A))
@@ -1242,17 +1258,39 @@ def show_nfc():
 	for line in lines:
 		print(line)
 
+def sinric():
+	keys = input("ApiKey:")
+	print("add Devices in /config/system.comfig at line 13")
+	time.sleep(10)
+	start_add_AAD = 0x01
+	index = 0
+	while index < 40:
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,"X")
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+	start_add_AAD = 0x01
+	index = 0 
+	while index < len(keys):
+		letter = keys[index]
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,letter) 
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+
 def test():
 	print("nothing")
 
 if __name__ == "__main__":
 	#setRTC()
 	print("python3 settings.py command")
-	print("commands: rtc / funk / install_rom / cam / weather / pushb / save_nfc / remove_nfc / show_nfc / thinkspeak / alarm / rss / update / backup / restore")
+	print("commands: rtc / funk / install_rom / cam / weather / pushb / save_nfc / remove_nfc / show_nfc / thinkspeak / alarm / rss / update / backup / restore / sinric")
 
 command = sys.argv[1]
 if command == "rtc":
 	rtc_settings()
+if command == "sinric":
+    sinric()
 if command == "funk":
 	funk_settings()
 if command == "install_rom":

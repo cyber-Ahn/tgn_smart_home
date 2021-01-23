@@ -1,27 +1,13 @@
 from sinric import Sinric
-from tgnLIB import get_ip, logging_tgn
+from tgnLIB import get_ip, logging_tgn, read_eeprom
 from time import sleep
 from subprocess import call
 import paho.mqtt.client as mqtt
 
 apiKey = "xxxx"
-device =    ["xxx",
-            "5ffac866ab25b36ddb57fb48",
-            "5ffac873ab25b36ddb57fb4c",
-            "5ffac8a5ab25b36ddb57fb54",
-            "5ffac8c5ab25b36ddb57fb58",
-            "5ffac8eeab25b36ddb57fb5e",
-            "5ffac90aab25b36ddb57fb62",
-            "",
-            "",
-            "",
-            "5ffb5d48ab25b36ddb58135e",
-            "5ffb60ecab25b36ddb581440",
-            "5ffb6161ab25b36ddb581456",
-            "60008edeab25b36ddb58e373",
-            "6009dcc4e041b57c8de212c9",
-            "6009dd52e041b57c8de212ea"]
+device =    []
 sateOp = ["OFF","ON"]
+ROM_ADDRESS = 0x53
 
 def power_state(deviceId, state):
     logging_tgn("device:"+deviceId+";Power_State:"+state,"sinric.log")
@@ -95,13 +81,28 @@ if __name__ == "__main__":
         print(">>Load system.config")
         f_d = open("/home/pi/tgn_smart_home/config/system.config","r")
         count_d = 0
+        cach_a = ""
         for line in f_d:
             count_d = count_d + 1
             if count_d == 13:
-                global apiKey
-                apiKey = line.rstrip()
+                cach_a = line.rstrip()
+        device = cach_a.split(",")
     except IOError:
         print("cannot open system.config.... file not found")
+    start_add_S = 0x01
+    index = 0
+    global apiKey
+    apiKey = ""
+    while index < 40:
+        cach = read_eeprom(1,ROM_ADDRESS,0x03,start_add_S)
+        if cach != "X":
+            apiKey = apiKey + cach
+        index = index + 1
+        start_add_S = start_add_S + 1
+    print(apiKey)
+    print("------------------------------------------------------------------------------------")
+    print(device)
+    print("------------------------------------------------------------------------------------")
     logging_tgn("check_files","sinric.log")
     ob = Sinric(apiKey, callbacks)
     ob.handle()
