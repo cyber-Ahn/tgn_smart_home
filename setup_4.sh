@@ -168,6 +168,14 @@ sudo apt-get install code-oss=1.29.0-1539702286
 sudo apt-mark hold code-oss
 clear
 fi
+echo -e "\e[33m>> \e[31mSet Terminal File Menu (y/n)?\e[32m"
+read answer
+if [ "$answer" != "${answer#[Yy]}" ] ;then
+sudo mv /home/pi/tgn_smart_home/setup_files/boot_smh.sh /home/pi
+echo "bash boot_smh.sh" >> .bashrc
+sleep 5
+clear
+fi
 clear
 echo -e "\e[31m\e[7m>>\e[0m \e[33mReboot System in 10 sec \e[31m\e[7m<<\e[0m"
 sudo rm -fr /home/pi/tgn_smart_home/setup_files
