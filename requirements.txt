@@ -27,3 +27,4 @@ numpy==1.12.1
 pysinric==0.1.1
 pyttsx3==2.90
 PyCryptodome==3.9.9
+PyPDF2==1.26.0
