@@ -75,6 +75,8 @@ def power_state(deviceId, state):
             topic = "tgn/esp_4/color"
             client.publish(topic,"0.0.0.255",qos=0,retain=True)
     elif(deviceNum == 16):
+        topic = "MQTChroma/GameMode"
+        client.publish(topic,"1",qos=0,retain=True)
         topic = "tgn/buttons/status/4"
         client.publish(topic,"0",qos=0,retain=True)
         sleep(6.0)
@@ -84,6 +86,8 @@ def power_state(deviceId, state):
         topic = "tgn/esp_3/neopixel/color"
         client.publish(topic,"0.255.0.1",qos=0,retain=True)
     elif(deviceNum == 17):
+        topic = "MQTChroma/GameMode"
+        client.publish(topic,"0",qos=0,retain=True)
         topic = "tgn/buttons/status/4"
         client.publish(topic,"0",qos=0,retain=True)
         sleep(6.0)
@@ -93,6 +97,8 @@ def power_state(deviceId, state):
         topic = "tgn/esp_3/neopixel/color"
         client.publish(topic,"248.1.255.1",qos=0,retain=True)
     elif(deviceNum == 18):
+        topic = "MQTChroma/GameMode"
+        client.publish(topic,"0",qos=0,retain=True)
         topic = "tgn/esp_4/color"
         client.publish(topic,"0.0.0.1",qos=0,retain=True)
         sleep(6.0)
@@ -101,6 +107,7 @@ def power_state(deviceId, state):
         sleep(6.0)
         topic = "tgn/buttons/status/4"
         client.publish(topic,"1",qos=0,retain=True)
+
         
 
 callbacks = {"setPowerState": power_state}

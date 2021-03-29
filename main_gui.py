@@ -117,6 +117,9 @@ esp_switch_2_b = 120
 esp_ls_2 = 0
 esp_2_button = "5"
 esp2_cou = 0
+#ESP8622/3
+esp_3_color = "0.0.0.255"
+esp_3_game = "0"
 #RSS
 rssfeed = "no feed"
 rssurl = "empty"
@@ -130,7 +133,7 @@ radar_sw_pin = 25
 radar_sw_state = 1
 #minecraft server address
 mc_add_s = "192.168.0.90"
-mc_add_sV6 = "2a02:908:521:b820:6738:6f10:e91b:281d"
+mc_add_sV6 = "2a02:908:521:b820:2393:5e67:dba1:ebfb"
 #test server
 REMOTE_SERVER = "www.google.com"
 
@@ -1399,10 +1402,30 @@ def on_message(client, userdata, message):
 	global mqtt_msg
 	global radar_sen
 	global count_pos_b
+	global esp_3_color
+	global esp_3_game
 	if(message.topic=="tgn/system/radar"):
 		if(str(message.payload.decode("utf-8"))=="1"):
 			client.publish("tgn/system/radar","0",qos=0,retain=True)
 			radar_sen = 1
+	if(message.topic=="MQTChroma/GameMode"):
+		if(str(message.payload.decode("utf-8"))=="1"):
+			esp_3_game = "1"
+		else:
+			esp_3_game = "0"
+	if(message.topic=="tgn/esp_3/neopixel/color"):
+		if(esp_3_game == "0"):
+			if(str(message.payload.decode("utf-8"))=="0.0.0.255"):
+				esp_3_color = "255,0,0"
+			else:
+				cach4 = str(message.payload.decode("utf-8")).split(".")
+				esp_3_color = cach4[0] + "," + cach4[1] + "," + cach4[2]
+			client.publish("MQTChroma/RGB",esp_3_color,qos=0,retain=True)
+	if(message.topic=="MQTChroma/RGB"):
+		if(esp_3_game == "1"):
+			cach5 = str(message.payload.decode("utf-8")).split(",")
+			cach6 = cach5[0] + "." + cach5[1] + "." + cach5[2] + ".255"
+			client.publish("tgn/esp_3/neopixel/color",cach6,qos=0,retain=True)
 	if(message.topic=="tgn/bot/shutdown"):
 		if(str(message.payload.decode("utf-8"))=="1"):
 			Process(target=shutdown_other).start()
