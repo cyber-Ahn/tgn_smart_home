@@ -103,7 +103,7 @@ def power_state(deviceId, state):
         client.publish(topic,"0.0.0.1",qos=0,retain=True)
         sleep(6.0)
         topic = "tgn/esp_3/neopixel/color"
-        client.publish(topic,"0.0.0.1",qos=0,retain=True)
+        client.publish(topic,"0.0.0.255",qos=0,retain=True)
         sleep(6.0)
         topic = "tgn/buttons/status/4"
         client.publish(topic,"1",qos=0,retain=True)

@@ -694,6 +694,7 @@ def ini():
 	client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
 	client.publish("tgn/codeswitch/data","0",qos=0,retain=True)
 	client.publish("tgn/codeswitch/msg","empty",qos=0,retain=True)
+	client.publish("MQTChroma/GameMode","0",qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
@@ -1655,7 +1656,7 @@ class Window(Frame):
 		def change_value_the_time():
 			client.on_message=on_message
 			client.loop_start()
-			client.subscribe(main_topic)
+			client.subscribe([("MQTChroma/*",1),(main_topic,0)])
 			time.sleep(2)
 			client.loop_stop()
 			global the_time
