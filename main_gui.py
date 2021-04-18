@@ -681,6 +681,7 @@ def ini():
 	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
 	client.publish("tgn/esp_4/color","0.0.0.255",qos=0,retain=True)
 	client.publish("tgn/esp_4/color","0.0.0.255",qos=0,retain=True)
+	client.publish("tgn/esp_4/ip","192.168.0.16",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
 	client.publish("tgn/mqtt-msg","System Online",qos=0,retain=True)
