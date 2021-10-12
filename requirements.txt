@@ -19,7 +19,7 @@ SQLAlchemy==1.2.15
 joblib==0.11
 ChatterBot==0.8.7
 chatterbot-corpus==1.1.4
-opencv-python==3.4.4.19
+opencv-python==4.2.0.32
 pushbullet.py==0.11.0
 twython==3.7.0
 mcstatus==2.3.0
