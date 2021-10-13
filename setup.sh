@@ -115,7 +115,8 @@ read ver
 sudo mv /home/pi/tgn_smart_home/setup_files/tgnLIB.py /usr/local/lib/python"$ver"/dist-packages/
 sudo mv /home/pi/tgn_smart_home/setup_files/tgn_file_crypt.py /usr/local/lib/python"$ver"/dist-packages/
 sudo python3 /usr/local/lib/python"$ver"/dist-packages/tgn_file_crypt.py
-sudo mv /home/pi/tgn_smart_home/setup_files/haset1.bk /home/pi/habridge/data
+sudo mv /home/pi/tgn_setup_lib/setup_files/habridge.config /home/pi/habridge/data
+sudo mv /home/pi/tgn_setup_lib/setup_files/device.db /home/pi/habridge/data
 sudo cp /home/pi/tgn_smart_home/setup_files/adlists.list /etc/.pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/adlists.list /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/black.list /etc/pihole/
