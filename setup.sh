@@ -159,12 +159,14 @@ java -version
 sleep 3
 clear
 fi
-echo -e "\e[33m>> \e[31mInstall Code-OSSm PI3 (y/n)?\e[32m"
+echo -e "\e[33m>> \e[31mInstall Code-OSS PI3 (y/n)?\e[32m"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then
 sleep 2
-sudo apt-get update
-sudo apt-get install code-oss
+git clone https://github.com/cyber-Ahn/VSCode-Raspberry-Pi.git
+cd VSCode-Raspberry-Pi
+sudo sh install.sh
+rm -fr VSCode-Raspberry-Pi
 sleep 3
 clear
 fi

@@ -24,3 +24,5 @@ libssl1.0.0
 mosquitto
 mosquitto-clients
 libespeak1
+python3-pil
+python3-pil.imagetk

@@ -19,12 +19,12 @@ SQLAlchemy==1.2.15
 joblib==0.11
 ChatterBot==0.8.7
 chatterbot-corpus==1.1.4
-opencv-python==4.2.0.32
+opencv-python==4.4.0.42
 pushbullet.py==0.11.0
 twython==3.7.0
 mcstatus==2.3.0
 numpy==1.12.1
-pysinric==0.1.1
+sinricpro==2.4.1
 pyttsx3==2.90
 PyCryptodome==3.9.9
 PyPDF2==1.26.0
