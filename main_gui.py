@@ -142,6 +142,7 @@ def ini():
 	logging_tgn("check_files","tgn_smart_home.log")
 	os.system('clear')
 	global spr
+	global su
 	Process(target=splash).start()
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(radar_sw_pin, GPIO.IN)
@@ -212,7 +213,6 @@ def ini():
 	global buttonb
 	global screen
 	global version
-	global su
 	global buttons
 	global openweatherkey
 	global zipcode
@@ -644,6 +644,7 @@ def ini():
 	client.publish("tgn/system/reboot/esp1","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/esp2","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/esp3","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot/esp4","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/cam","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/sonoff","0",qos=0,retain=True)
 	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
@@ -680,8 +681,6 @@ def ini():
 	client.publish("tgn/esp_3/neopixel/color_cach","-65279",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
 	client.publish("tgn/esp_4/color","0.0.0.255",qos=0,retain=True)
-	client.publish("tgn/esp_4/color","0.0.0.255",qos=0,retain=True)
-	client.publish("tgn/esp_4/ip","192.168.0.16",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
 	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
 	client.publish("tgn/mqtt-msg","System Online",qos=0,retain=True)
@@ -691,7 +690,7 @@ def ini():
 	client.publish("tgn/esp_32_cam/record","0",qos=0,retain=True)
 	client.publish("tgn/gesture/touch","0",qos=0,retain=True)
 	client.publish("tgn/gesture/btn_ni_li","6",qos=0,retain=True)
-	client.publish("tgn/sonoff_1/connection/ip","---.---.---.---",qos=0,retain=True)
+	client.publish("tgn/sonoff/connection/ip","192.168.0.xxx",qos=0,retain=True)
 	client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
 	client.publish("tgn/codeswitch/data","0",qos=0,retain=True)
 	client.publish("tgn/codeswitch/msg","empty",qos=0,retain=True)
