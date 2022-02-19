@@ -1504,6 +1504,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button9:"+str(b9),"tgn_smart_home.log")
 			if "s_" in buttons[8]:
 				sonoff_set("9", str(b9))
+			elif "p_" in buttons[8]:
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b9)
 			else:
 				send(9,b9)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9))
@@ -1515,6 +1517,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button8:"+str(b8),"tgn_smart_home.log")
 			if "s_" in buttons[7]:
 				sonoff_set("8", str(b8))
+			elif "p_" in buttons[7]:
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b8)
 			else:
 				send(8,b8)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6b,str(b8))
@@ -1526,6 +1530,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button7:"+str(b7),"tgn_smart_home.log")
 			if "s_" in buttons[6]:
 				sonoff_set("7", str(b7))
+			elif "p_" in buttons[6]:
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b7)
 			else:
 				send(7,b7)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6a,str(b7))
@@ -1537,6 +1543,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button6:"+str(b6),"tgn_smart_home.log")
 			if "s_" in buttons[5]:
 				sonoff_set("6", str(b6))
+			elif "p_" in buttons[5]:
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b6)
 			else:
 				send(6,b6)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
@@ -1548,6 +1556,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button5:"+str(b5),"tgn_smart_home.log")
 			if "s_" in buttons[4]:
 				sonoff_set("5", str(b5))
+			elif "p_" in buttons[4]:
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b5)
 			else:
 				send(5,b5)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x05,str(b5))
@@ -1559,6 +1569,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button4:"+str(b4),"tgn_smart_home.log")
 			if "s_" in buttons[3]:
 				sonoff_set("4", str(b4))
+			elif "p_" in buttons[3]:
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b4)
 			else:
 				send(4,b4)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x04,str(b4))
@@ -1570,6 +1582,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button3:"+str(b3),"tgn_smart_home.log")
 			if "s_" in buttons[2]:
 				sonoff_set("3", str(b3))
+			elif "p_" in buttons[2]:
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b3)
 			else:
 				send(3,b3)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x03,str(b3))
@@ -1581,6 +1595,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button2:"+str(b2),"tgn_smart_home.log")
 			if "s_" in buttons[1]:
 				sonoff_set("2", str(b2))
+			elif "p_" in buttons[1]:
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b2)
 			else:
 				send(2,b2)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x02,str(b2))
@@ -1592,6 +1608,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button1:"+str(b1),"tgn_smart_home.log")
 			if "s_" in buttons[0]:
 				sonoff_set("1", str(b1))
+			elif "p_" in buttons[0]:
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b1)
 			else:
 				send(1,b1)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x01,str(b1))
