@@ -624,9 +624,9 @@ def ini():
 		mylcd.lcd_clear()
 	spr_phat="/home/pi/tgn_smart_home/language/"+spr+"/"
 	try:
-		f = open(spr_phat+"text.config","r")
+		f = open(spr_phat+"text.lang","r")
 	except IOError:
-    		print("cannot open text.config.... file not found")
+    		print("cannot open text.lang.... file not found")
 	else:
 		data = []
 		for line in f:
@@ -1132,10 +1132,10 @@ def callback31():
 def exit():
 	if su==1 and is_connected(REMOTE_SERVER)=="Online":
 		try:
-			print(">>Load voice.config")
-			f = open(spr_phat+"voice.config","r")
+			print(">>Load voice.lang")
+			f = open(spr_phat+"voice.lang","r")
 		except IOError:
-    			print("cannot open voice.config.... file not found")
+    			print("cannot open voice.lang.... file not found")
 		else:
 			data = []
 			for line in f:
@@ -1248,9 +1248,9 @@ def callback33():
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
 	Process(target=sound).start()
 	try:
-		f = open(spr_phat+"voice.config","r")
+		f = open(spr_phat+"voice.lang","r")
 	except IOError:
-    		print("cannot open voice.config.... file not found")
+    		print("cannot open voice.lang.... file not found")
 	else:
 		data = []
 		for line in f:
@@ -1826,9 +1826,9 @@ class WindowB(Frame):
 					PIHOLECSTATUS = "0"
 				temp_data = "Room Luxmeter:"
 				try:
-					f = open(spr_phat+"text.config","r")
+					f = open(spr_phat+"text.lang","r")
 				except IOError:
-    					print("cannot open text.config.... file not found")
+    					print("cannot open text.lang.... file not found")
 				else:
 					dataText = []
 					for line in f:
@@ -2114,9 +2114,9 @@ if MCPpower == 1:
 	mcp.output(3, 1)
 if su==1 and is_connected(REMOTE_SERVER)=="Online":
 	try:
-		f = open(spr_phat+"voice.config","r")
+		f = open(spr_phat+"voice.lang","r")
 	except IOError:
-    		print("cannot open voice.config.... file not found")
+    		print("cannot open voice.lang.... file not found")
 	else:
 		data = []
 		for line in f:
@@ -2133,9 +2133,9 @@ def normal_screen():
 	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
 
 	try:
-		f = open(spr_phat+"text.config","r")
+		f = open(spr_phat+"text.lang","r")
 	except IOError:
-			print("cannot open text.config.... file not found")
+			print("cannot open text.lang.... file not found")
 	else:
 		data = []
 		for line in f:
@@ -2439,9 +2439,9 @@ def lcars_screen():
 	root.geometry("%dx%d+%d+%d" % (WMWIDTH, WMHEIGHT, WMLEFT, WMTOP))
 
 	try:
-		f = open(spr_phat+"text.config","r")
+		f = open(spr_phat+"text.lang","r")
 	except IOError:
-			print("cannot open text.config.... file not found")
+			print("cannot open text.lang.... file not found")
 	else:
 		data = []
 		for line in f:
