@@ -143,7 +143,7 @@ def ini():
 	os.system('clear')
 	global spr
 	global su
-	Process(target=splash).start()
+	#Process(target=splash).start()
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(radar_sw_pin, GPIO.IN)
 	#MCP23017 I2C
@@ -714,7 +714,6 @@ def ini():
 	else:
 		client.publish("tgn/i2c/lcd","offline",qos=0,retain=True)
 	try:
-		print(">>Load system.config")
 		f_d = open("/home/pi/tgn_smart_home/config/system.config","r")
 		global onoff_day
 		onoff_day = []
@@ -1810,6 +1809,7 @@ class WindowB(Frame):
 			global the_timeb
 			newtime = time.time()
 			if newtime != the_timeb:
+				print("Load Pihole data")
 				try:
 					r = requests.get(api_url)
 					dataPIhole = json.loads(r.text)
@@ -1838,10 +1838,13 @@ class WindowB(Frame):
 					global esp_ls
 					global rssfeed
 					global ttiv
+					print("Check mc server")
 					mc_check(mc_add_s, mc_add_sV6)
 					if rssurl == "empty":
 						rssfeed = "Please set a Newsfeed"
 					else:
+						print("Read RSS")
+						print(rssurl)
 						rssfeed = rss(rssurl,10)
 					if int(esp_li)==50:
 						ttiv = 50000
@@ -1853,6 +1856,7 @@ class WindowB(Frame):
 					elif esp_ls == 1 and int(esp_li) > esp_switch_b:
 						esp_ls = 0
 						off()
+					print("Load Weather")
 					if allowed_key(openweatherkey) == "yes":
 						data = weather_info(zipcode,openweatherkey)
 						output = output+(dataText[24].rstrip())+data['city']+','+data['country']+'\n'
@@ -2496,7 +2500,6 @@ def lcars_screen():
 	colmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
 	stylemenu.add_cascade(label=(data[48].rstrip()), menu=colmenu)
 	try:
-		print(">>Load themes.config")
 		f = open("/home/pi/tgn_smart_home/config/themes.config","r")
 	except IOError:
 		print("cannot open themes.config.... file not found")

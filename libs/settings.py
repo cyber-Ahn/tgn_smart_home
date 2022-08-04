@@ -30,7 +30,7 @@ if ifI2C(ROM_ADDRESS) == "found device":
 spr_phat = "/home/pi/tgn_smart_home/language/"+spr+"/"
 print(spr_phat)
 try:
-	f = open(spr_phat+"text.config","r")
+	f = open(spr_phat+"text.lang","r")
 except IOError:
     	print("cannot open text.config.... file not found")
 else:
