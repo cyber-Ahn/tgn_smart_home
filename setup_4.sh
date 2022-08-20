@@ -78,7 +78,6 @@ cd ..
 sleep 3
 rm -fr Adafruit_Python_BMP/
 sudo mv /home/pi/tgn_smart_home/setup_files/habridge_install.sh /home/pi/tgn_smart_home
-sudo mv /home/pi/tgn_smart_home/setup_files/AlexaInstaller.sh /home/pi/tgn_smart_home
 clear
 echo -e "\e[33m>> \e[31mCopy tgn NeuralNetwork (y/n)?\e[32m"
 read answer
@@ -97,15 +96,6 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
 sudo bash habridge_install.sh
 sleep 1
 sudo rm -r habridge_install.sh
-sleep 5
-clear
-fi
-echo -e "\e[33m>> \e[31mInstall PiHole (y/n)?\e[32m"
-read answer
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-curl -sSL https://install.pi-hole.net | bash
-sleep 2
-pihole -a -p Kevin2711
 sleep 5
 clear
 fi
@@ -140,35 +130,14 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py rss
 clear
 sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /etc/xdg/lxsession/LXDE-pi/autostart
 sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /home/pi/.config/lxsession/LXDE-pi/autostart
-sudo mv /home/pi/tgn_smart_home/setup_files/tgnmqtt.service /etc/systemd/system/
-sudo mv /home/pi/tgn_smart_home/setup_files/sinric.service /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable tgnmqtt.service
-systemctl enable sinric.service
-systemctl start tgnmqtt
-systemctl start sinric
-echo -e "\e[33m>> \e[31mInstall Java (y/n)?\e[32m"
-read answer
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-sudo mkdir /usr/java
-cd /usr/java
-wget http://www.caworks-sl.de/data/download/jdk-8u162-linux-arm32-vfp-hflt.tar.gz
-sudo tar xf jdk-8u162-linux-arm32-vfp-hflt.tar.gz
-sudo update-alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_162/bin/java 1000
-sudo update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_162/bin/javac 1000
-java -version
-sleep 3
-clear
 fi
 echo -e "\e[33m>> \e[31mInstall Code-OSSm PI4 (y/n)?\e[32m"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then
-wget https://packagecloud.io/headmelted/codebuilds/gpgkey -O - | sudo apt-key add -
-curl -L https://code.headmelted.com/installers/apt.sh | sudo bash
+cd setup_files
+sudo apt install ./code-oss_arm64.deb
+cd ..
 sleep 3
-sudo apt-get purge code-oss
-sudo apt-get install code-oss=1.29.0-1539702286
-sudo apt-mark hold code-oss
 clear
 fi
 echo -e "\e[33m>> \e[31mSet Terminal File Menu (y/n)?\e[32m"
