@@ -14,17 +14,21 @@ from multiprocessing import Process
 from tgnLIB import *
 
 # var
+#i2c address list
 LCD_ADDRESS = 0x3f
 MCP_ADDRESS = 0x20
 NFC_ADDRESS = 0x24
-MCP_num_gpios = 16
-main_topic = "tgn/#"
+#thing speak
 channel_id = 43245
 write_key = "8WQB01T3F5JE0EZ"
 read_key = "PJGJDHMEUU1TAXQ"
+#pushbullet, openweather key 
 pushbulletkey = "o.luRM2iMEGKnns3pzkOUiEAGX3IxxVxZ"
 openweatherkey = "3aef357118b7ea5d700123785674b45"
 zipcode = 6947479
+#system var
+MCP_num_gpios = 16
+main_topic = "tgn/#"
 version = "V.1.8"
 counterLCD = 0
 backlight = 1
@@ -71,6 +75,9 @@ afground = "black"
 afbground = "black"
 buttona = "red"
 buttonb = "black"
+font_size_a = 14
+font_size_b = 16
+font_size_c = 20
 colorSet = 9
 s1 = "0"
 s2 = "0"
@@ -718,22 +725,32 @@ def ini():
 		global onoff_day
 		onoff_day = []
 		count_d = 0
+		line_cach = line.rstrip().split(":")
 		for line in f_d:
 			count_d = count_d + 1
 			if count_d <= 7:
-				onoff_day.append(line.rstrip())
+				onoff_day.append(line.rstrip().split(":")[1])
 			if count_d == 9:
 				global phat
-				phat = line.rstrip()
+				phat = line.rstrip().split(":")[1]
 			if count_d == 10:
 				global esp_switch
-				esp_switch = int(line.rstrip())
+				esp_switch = int(line.rstrip().split(":")[1])
 			if count_d == 11:
 				global esp_switch_b
-				esp_switch_b = int(line.rstrip())
+				esp_switch_b = int(line.rstrip().split(":")[1])
 			if count_d == 12:
 				global api_url
-				api_url = line.rstrip()
+				api_url = line.rstrip().split("*")[1]
+			if count_d == 15:
+				global font_size_a
+				font_size_a = int(line.rstrip().split(":")[1])
+			if count_d == 16:
+				global font_size_b
+				font_size_b = int(line.rstrip().split(":")[1])
+			if count_d == 17:
+				global font_size_c
+				font_size_c = int(line.rstrip().split(":")[1])
 		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")
@@ -1791,7 +1808,7 @@ class Window(Frame):
 				if colorSet == 9:
 					afbground = '#000000'
 					fground = '#003f7e'
-				self.display_time.config(text=the_time, font=('times', 14, 'bold'), bg=afbground, fg=fground)
+				self.display_time.config(text=the_time, font=('times', font_size_a, 'bold'), bg=afbground, fg=fground)
 			self.display_time.after(5000, change_value_the_time)
 		change_value_the_time()
 # updating window (Weather and PiHole)
@@ -1866,7 +1883,7 @@ class WindowB(Frame):
 						output = output+(dataText[28].rstrip())+str(data['humidity'])+'% \n'
 						output = output+(dataText[29].rstrip())+str(data['cloudiness'])+'% \n'
 						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
-						output = output+(dataText[31].rstrip())+str(data['sunrise'])+" "+(dataText[32].rstrip())+str(data['sunset'])+'\n'
+						output = output+(dataText[31].rstrip())+str(data['sunrise'])+"\n"+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(format_lux(int(esp_li)))+'LUX\n'
 						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(format_lux(int(esp_li_2)))+'LUX\n'
@@ -1920,7 +1937,7 @@ class WindowB(Frame):
 				if colorSet == 9:
 					afbground = '#000000'
 					fground = '#eaa424'
-				self.display_time.config(text=output, font=('times', 16, 'bold'), bg=afbground, fg=fground)
+				self.display_time.config(text=output, font=('times', font_size_b, 'bold'), bg=afbground, fg=fground)
 				if is_connected(REMOTE_SERVER)=="Online":
 					if allowed_key(openweatherkey) == "yes":
 						phatI = phat+get_icon_name(str(data['icon']))
@@ -1946,7 +1963,7 @@ class WindowC(Frame):
 		self.canvas.pack(expand=True)
 		xpos = 450
 		ypos = 20
-		self.canvas.create_text(xpos, ypos, anchor='w', text=rssfeed,font=('Helvetica 20 bold'), fill=fground, tags='text')
+		self.canvas.create_text(xpos, ypos, anchor='w', text=rssfeed, font=('Helvetica', font_size_c, 'bold'), fill=fground, tags='text')
 		text_begin = self.canvas.bbox('text')[0]
 		text_end = self.canvas.bbox('text')[2]
 		self.text_length = text_end - text_begin
