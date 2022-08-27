@@ -78,6 +78,10 @@ buttonb = "black"
 font_size_a = 14
 font_size_b = 16
 font_size_c = 20
+feed_size_width = 453
+feed_size_height = 40
+feed_pos_x = 450
+feed_pos_y = 20
 colorSet = 9
 s1 = "0"
 s2 = "0"
@@ -751,6 +755,18 @@ def ini():
 			if count_d == 17:
 				global font_size_c
 				font_size_c = int(line.rstrip().split(":")[1])
+			if count_d == 18:
+				global feed_size_width
+				feed_size_width = int(line.rstrip().split(":")[1])
+			if count_d == 19:
+				global feed_size_height
+				feed_size_height = int(line.rstrip().split(":")[1])
+			if count_d == 20:
+				global feed_pos_x
+				feed_pos_x = int(line.rstrip().split(":")[1])
+			if count_d == 21:
+				global feed_pos_y
+				feed_pos_y = int(line.rstrip().split(":")[1])
 		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")
@@ -1959,10 +1975,10 @@ class WindowC(Frame):
 			fground = '#eaa424'
 		Frame.__init__(self, master)
 		self.grid()
-		self.canvas = Canvas(self, bg=afbground, highlightthickness=0, width=453, height=40)
+		self.canvas = Canvas(self, bg=afbground, highlightthickness=0, width=feed_size_width, height=feed_size_height)
 		self.canvas.pack(expand=True)
-		xpos = 450
-		ypos = 20
+		xpos = feed_pos_x
+		ypos = feed_pos_y
 		self.canvas.create_text(xpos, ypos, anchor='w', text=rssfeed, font=('Helvetica', font_size_c, 'bold'), fill=fground, tags='text')
 		text_begin = self.canvas.bbox('text')[0]
 		text_end = self.canvas.bbox('text')[2]
