@@ -82,6 +82,9 @@ feed_size_width = 453
 feed_size_height = 40
 feed_pos_x = 450
 feed_pos_y = 20
+button_width_a = 13
+button_width_b = 9
+slider_length = 480
 colorSet = 9
 s1 = "0"
 s2 = "0"
@@ -767,6 +770,15 @@ def ini():
 			if count_d == 21:
 				global feed_pos_y
 				feed_pos_y = int(line.rstrip().split(":")[1])
+			if count_d == 22:
+				global button_width_a
+				button_width_a = int(line.rstrip().split(":")[1])
+			if count_d == 23:
+				global button_width_b
+				button_width_b = int(line.rstrip().split(":")[1])
+			if count_d == 24:
+				global slider_length
+				slider_length = int(line.rstrip().split(":")[1])
 		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")
@@ -2303,7 +2315,7 @@ def normal_screen():
 	helpmenu.add_command(label="Update", command=callback44)
 	helpmenu.add_command(label=(data[68].rstrip()), command=About)
 
-	leftFrame = Frame(root, width=400, height = 400)
+	leftFrame = Frame(root, width=WMWIDTH/2, height = WMHEIGHT)
 	leftFrame.configure(background=bground)
 	leftFrame.grid(row=0, column=0, padx=10, pady=3)
 
@@ -2311,7 +2323,7 @@ def normal_screen():
 	infFrame1.configure(background=bground)
 	infFrame1.grid(row=0, column=0, padx=10, pady=3)
 
-	rightFrame = Frame(root, width=400, height = 400)
+	rightFrame = Frame(root, width=WMWIDTH/2, height = WMHEIGHT)
 	rightFrame.configure(background=bground)
 	rightFrame.grid(row=0, column=1, padx=10, pady=3)
 
@@ -2324,36 +2336,36 @@ def normal_screen():
 	buttonLabel1.configure(background=bground, foreground=fground)
 	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame1, text=buttons[0], bg=buttonb, fg=fground, width=15, command=callback9)
+	B1 = Button(buttonFrame1, text=buttons[0], bg=buttonb, fg=fground, width=button_width_a, command=callback9)
 	B1.grid(row=1, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame1, text=buttons[1], bg=buttonb, fg=fground, width=15, command=callback10)
+	B2 = Button(buttonFrame1, text=buttons[1], bg=buttonb, fg=fground, width=button_width_a, command=callback10)
 	B2.grid(row=1, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame1, text=buttons[2], bg=buttonb, fg=fground, width=15, command=callback11)
+	B3 = Button(buttonFrame1, text=buttons[2], bg=buttonb, fg=fground, width=button_width_a, command=callback11)
 	B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame1, text=buttons[3], bg=buttonb, fg=fground, width=15, command=callback12)
+	B4 = Button(buttonFrame1, text=buttons[3], bg=buttonb, fg=fground, width=button_width_a, command=callback12)
 	B4.grid(row=2, column=0, padx=10, pady=3)
-	B5 = Button(buttonFrame1, text=buttons[4], bg=buttonb, fg=fground, width=15, command=callback13)
+	B5 = Button(buttonFrame1, text=buttons[4], bg=buttonb, fg=fground, width=button_width_a, command=callback13)
 	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame1, text=buttons[5], bg=buttonb, fg=fground, width=15, command=callback14)
+	B6 = Button(buttonFrame1, text=buttons[5], bg=buttonb, fg=fground, width=button_width_a, command=callback14)
 	B6.grid(row=2, column=2, padx=10, pady=3)
-	B13 = Button(buttonFrame1, text=buttons[6], bg=buttonb, fg=fground, width=15, command=callback914)
+	B13 = Button(buttonFrame1, text=buttons[6], bg=buttonb, fg=fground, width=button_width_a, command=callback914)
 	B13.grid(row=3, column=0, padx=10, pady=3)
-	B14 = Button(buttonFrame1, text=buttons[7], bg=buttonb, fg=fground, width=15, command=callback915)
+	B14 = Button(buttonFrame1, text=buttons[7], bg=buttonb, fg=fground, width=button_width_a, command=callback915)
 	B14.grid(row=3, column=1, padx=10, pady=3)
-	B15 = Button(buttonFrame1, text=buttons[8], bg=buttonb, fg=fground, width=15, command=callback916)
+	B15 = Button(buttonFrame1, text=buttons[8], bg=buttonb, fg=fground, width=button_width_a, command=callback916)
 	B15.grid(row=3, column=2, padx=10, pady=3)
-	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg=buttonb, fg=fground, width=15, command=all_on)
+	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=all_on)
 	B7.grid(row=4, column=0, padx=10, pady=3)
-	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg=buttonb, fg=fground, width=15, command=all_off)
+	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=all_off)
 	B8.grid(row=4, column=1, padx=10, pady=3)
 	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
-		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg=buttona, fg=fground, width=15, command=callback33)
+		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg=buttona, fg=fground, width=button_width_a, command=callback33)
 		B9.grid(row=4, column=2, padx=10, pady=3)
-	B10 = Button(buttonFrame1, text=(data[3].rstrip()), bg=buttonb, fg=fground, width=15, command=callback5)
+	B10 = Button(buttonFrame1, text=(data[3].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=callback5)
 	B10.grid(row=5, column=0, padx=10, pady=3)
-	B11 = Button(buttonFrame1, text=(data[7].rstrip()), bg=buttonb, fg=fground, width=15, command=callback7)
+	B11 = Button(buttonFrame1, text=(data[7].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=callback7)
 	B11.grid(row=5, column=1, padx=10, pady=3)
-	B12 = Button(buttonFrame1, text=(data[8].rstrip()), bg=buttonb, fg=fground, width=15, command=callback6)
+	B12 = Button(buttonFrame1, text=(data[8].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=callback6)
 	B12.grid(row=5, column=2, padx=10, pady=3)
 
 	buttonFrame2 = Frame(rightFrame)
@@ -2363,30 +2375,30 @@ def normal_screen():
 	buttonLabel2.configure(background=bground, foreground=fground)
 	buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg=buttonb, fg=fground, width=9, command=callback15)
+	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg=buttonb, fg=fground, width=button_width_b, command=callback15)
 	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg=buttonb, fg=fground, width=9, command=callback16)
+	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg=buttonb, fg=fground, width=button_width_b, command=callback16)
 	B2.grid(row=1, column=1, padx=10, pady=3)
 	if ifI2C(NFC_ADDRESS) == "found device":
-		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg=buttona, fg=fground, width=9, command=callback30)
+		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg=buttona, fg=fground, width=button_width_b, command=callback30)
 		B3.grid(row=1, column=2, padx=10, pady=3)
 	else:
-		B3 = Button(buttonFrame2, text=("xxx"), bg=buttona, fg=fground, width=9, command=callback100)
+		B3 = Button(buttonFrame2, text=("xxx"), bg=buttona, fg=fground, width=button_width_b, command=callback100)
 		B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame2, text="WebPlayer", bg=buttonb, fg=fground, width=9, command=callback110)
+	B4 = Button(buttonFrame2, text="WebPlayer", bg=buttonb, fg=fground, width=button_width_b, command=callback110)
 	B4.grid(row=1, column=3, padx=10, pady=3)
 
 	buttonFrame3 = Frame(rightFrame)
 	buttonFrame3.configure(background=bground)
 	buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
 
-	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=9, command=callback20)
+	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg=buttonb, fg=fground, width=button_width_b, command=callback20)
 	B1.grid(row=0, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=9, command=callback21)
+	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg=buttonb, fg=fground, width=button_width_b, command=callback21)
 	B2.grid(row=0, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=9, command=callback40)
+	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg=buttonb, fg=fground, width=button_width_b, command=callback40)
 	B3.grid(row=0, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg=buttonb, fg=fground, width=9, command=callback43)
+	B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg=buttonb, fg=fground, width=button_width_b, command=callback43)
 	B4.grid(row=0, column=3, padx=10, pady=3)
 
 	buttonFrame4 = Frame(rightFrame)
@@ -2396,24 +2408,24 @@ def normal_screen():
 	buttonLabel4.configure(background=bground, foreground=fground)
 	buttonLabel4.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame4, text=(data[124].rstrip()), bg=buttonb, fg=fground, width=15, command=red_neo)
+	B1 = Button(buttonFrame4, text=(data[124].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=red_neo)
 	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame4, text=(data[125].rstrip()), bg=buttonb, fg=fground, width=15, command=green_neo)
+	B2 = Button(buttonFrame4, text=(data[125].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=green_neo)
 	B2.grid(row=1, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame4, text=(data[126].rstrip()), bg=buttonb, fg=fground, width=15, command=blue_neo)
+	B3 = Button(buttonFrame4, text=(data[126].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=blue_neo)
 	B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame4, text=(data[127].rstrip()), bg=buttonb, fg=fground, width=15, command=off_neo)
+	B4 = Button(buttonFrame4, text=(data[127].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=off_neo)
 	B4.grid(row=2, column=0, padx=10, pady=3)
-	B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg=buttonb, fg=fground, width=15, command=set_neo)
+	B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=set_neo)
 	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame4, text=("ColorPicker"), bg=buttonb, fg=fground, width=15, command=color_neo)
+	B6 = Button(buttonFrame4, text=("ColorPicker"), bg=buttonb, fg=fground, width=button_width_a, command=color_neo)
 	B6.grid(row=2, column=2, padx=10, pady=3)
 
 	buttonFrame5 = Frame(rightFrame)
 	buttonFrame5.configure(background=bground)
 	buttonFrame5.grid(row=7, column=0, padx=10, pady=3)
 
-	SL1 = Scale(buttonFrame5, from_=0, to=255,  length=480, bg=buttonb, fg=fground, tickinterval=20, label=(data[129].rstrip()), orient=HORIZONTAL)
+	SL1 = Scale(buttonFrame5, from_=0, to=255,  length=slider_length, bg=buttonb, fg=fground, tickinterval=20, label=(data[129].rstrip()), orient=HORIZONTAL)
 	SL1.grid(row=0, column=1, padx=10, pady=3)
 	SL1.set(10)
 
@@ -2608,7 +2620,7 @@ def lcars_screen():
 	helpmenu.add_command(label="Update", command=callback44)
 	helpmenu.add_command(label=(data[68].rstrip()), command=About)
 
-	leftFrame = Frame(root, width=400, height = 400)
+	leftFrame = Frame(root, width=WMWIDTH/2, height = WMHEIGHT)
 	leftFrame.configure(background=bground)
 	leftFrame.grid(row=0, column=0, padx=10, pady=3)
 
@@ -2616,7 +2628,7 @@ def lcars_screen():
 	infFrame1.configure(background=bground)
 	infFrame1.grid(row=0, column=0, padx=10, pady=3)
 
-	rightFrame = Frame(root, width=400, height = 400)
+	rightFrame = Frame(root, width=WMWIDTH/2, height = WMHEIGHT)
 	rightFrame.configure(background=bground)
 	rightFrame.grid(row=0, column=1, padx=10, pady=3)
 
@@ -2629,36 +2641,36 @@ def lcars_screen():
 	buttonLabel1.configure(background='#000000', foreground='#eaa424')
 	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame1, text=buttons[0], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback9)
+	B1 = Button(buttonFrame1, text=buttons[0], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback9)
 	B1.grid(row=1, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame1, text=buttons[1], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback10)
+	B2 = Button(buttonFrame1, text=buttons[1], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback10)
 	B2.grid(row=1, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame1, text=buttons[2], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback11)
+	B3 = Button(buttonFrame1, text=buttons[2], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback11)
 	B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame1, text=buttons[3], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback12)
+	B4 = Button(buttonFrame1, text=buttons[3], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback12)
 	B4.grid(row=2, column=0, padx=10, pady=3)
-	B5 = Button(buttonFrame1, text=buttons[4], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback13)
+	B5 = Button(buttonFrame1, text=buttons[4], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback13)
 	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame1, text=buttons[5], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback14)
+	B6 = Button(buttonFrame1, text=buttons[5], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback14)
 	B6.grid(row=2, column=2, padx=10, pady=3)
-	B13 = Button(buttonFrame1, text=buttons[6], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback914)
+	B13 = Button(buttonFrame1, text=buttons[6], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback914)
 	B13.grid(row=3, column=0, padx=10, pady=3)
-	B14 = Button(buttonFrame1, text=buttons[7], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback915)
+	B14 = Button(buttonFrame1, text=buttons[7], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback915)
 	B14.grid(row=3, column=1, padx=10, pady=3)
-	B15 = Button(buttonFrame1, text=buttons[8], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback916)
+	B15 = Button(buttonFrame1, text=buttons[8], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback916)
 	B15.grid(row=3, column=2, padx=10, pady=3)
-	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=all_on)
+	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=all_on)
 	B7.grid(row=4, column=0, padx=10, pady=3)
-	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=all_off)
+	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=all_off)
 	B8.grid(row=4, column=1, padx=10, pady=3)
 	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
-		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback33)
+		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback33)
 		B9.grid(row=4, column=2, padx=10, pady=3)
-	B10 = Button(buttonFrame1, text=(data[3].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback5)
+	B10 = Button(buttonFrame1, text=(data[3].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback5)
 	B10.grid(row=5, column=0, padx=10, pady=3)
-	B11 = Button(buttonFrame1, text=(data[7].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback7)
+	B11 = Button(buttonFrame1, text=(data[7].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback7)
 	B11.grid(row=5, column=1, padx=10, pady=3)
-	B12 = Button(buttonFrame1, text=(data[8].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=callback6)
+	B12 = Button(buttonFrame1, text=(data[8].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback6)
 	B12.grid(row=5, column=2, padx=10, pady=3)
 
 	buttonFrame2 = Frame(rightFrame)
@@ -2668,30 +2680,30 @@ def lcars_screen():
 	buttonLabel2.configure(background='#000000', foreground='#eaa424')
 	buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback15)
+	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback15)
 	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback16)
+	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback16)
 	B2.grid(row=1, column=1, padx=10, pady=3)
 	if ifI2C(NFC_ADDRESS) == "found device":
-		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback30)
+		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback30)
 		B3.grid(row=1, column=2, padx=10, pady=3)
 	else:
-		B3 = Button(buttonFrame2, text=("xxx"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback100)
+		B3 = Button(buttonFrame2, text=("xxx"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback100)
 		B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame2, text="WebPlayer", bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback110)
+	B4 = Button(buttonFrame2, text="WebPlayer", bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback110)
 	B4.grid(row=1, column=3, padx=10, pady=3)
 
 	buttonFrame3 = Frame(rightFrame)
 	buttonFrame3.configure(background=bground)
 	buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
 
-	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback20)
+	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback20)
 	B1.grid(row=0, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback21)
+	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback21)
 	B2.grid(row=0, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback40)
+	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback40)
 	B3.grid(row=0, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=9, command=callback43)
+	B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback43)
 	B4.grid(row=0, column=3, padx=10, pady=3)
 
 	buttonFrame4 = Frame(rightFrame)
@@ -2701,24 +2713,24 @@ def lcars_screen():
 	buttonLabel4.configure(background='#000000', foreground='#eaa424')
 	buttonLabel4.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame4, text=(data[124].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=red_neo)
+	B1 = Button(buttonFrame4, text=(data[124].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=red_neo)
 	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame4, text=(data[125].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=green_neo)
+	B2 = Button(buttonFrame4, text=(data[125].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=green_neo)
 	B2.grid(row=1, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame4, text=(data[126].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=blue_neo)
+	B3 = Button(buttonFrame4, text=(data[126].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=blue_neo)
 	B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame4, text=(data[127].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=off_neo)
+	B4 = Button(buttonFrame4, text=(data[127].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=off_neo)
 	B4.grid(row=2, column=0, padx=10, pady=3)
-	B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=set_neo)
+	B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=set_neo)
 	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame4, text=("ColorPicker"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=15, command=color_neo)
+	B6 = Button(buttonFrame4, text=("ColorPicker"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=color_neo)
 	B6.grid(row=2, column=2, padx=10, pady=3)
 
 	buttonFrame5 = Frame(rightFrame)
 	buttonFrame5.configure(background='#000000')
 	buttonFrame5.grid(row=7, column=0, padx=10, pady=3)
 
-	SL1 = Scale(buttonFrame5, from_=0, to=255,  length=480, bg='#003f7e', fg='#000000', tickinterval=20, label=(data[129].rstrip()), orient=HORIZONTAL)
+	SL1 = Scale(buttonFrame5, from_=0, to=255,  length=slider_length, bg='#003f7e', fg='#000000', tickinterval=20, label=(data[129].rstrip()), orient=HORIZONTAL)
 	SL1.grid(row=0, column=1, padx=10, pady=3)
 	SL1.set(10)
 
