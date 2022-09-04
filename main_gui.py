@@ -1,4 +1,3 @@
-
 # load Libs
 import binascii
 import json
@@ -154,6 +153,7 @@ REMOTE_SERVER = "www.google.com"
 #functions
 def ini():
 	logging_tgn("check_files","tgn_smart_home.log")
+	subprocess.call('python3 libs/sys_info.py', shell=True)
 	os.system('clear')
 	global spr
 	global su
