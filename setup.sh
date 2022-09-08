@@ -88,7 +88,6 @@ clear
 fi
 echo -e "\e[33m>> \e[31mset authority\e[32m"
 chmod +x start_gui.sh
-chmod +x start_mqtt_broker.sh
 chmod +x habridge_install.sh
 sleep 5
 echo -e "\e[33m>> \e[31mInstall habridge (y/n)?\e[32m"
@@ -139,7 +138,6 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py rss
 clear
 sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /etc/xdg/lxsession/LXDE-pi/autostart
 sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /home/pi/.config/lxsession/LXDE-pi/autostart
-sudo mv /home/pi/tgn_smart_home/setup_files/tgnmqtt.service /etc/systemd/system/
 sudo mv /home/pi/tgn_smart_home/setup_files/sinric.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable tgnmqtt.service
@@ -183,8 +181,6 @@ echo -e "\e[31m\e[7m>>\e[0m \e[33mReboot System in 10 sec \e[31m\e[7m<<\e[0m"
 sudo rm -fr /home/pi/tgn_smart_home/setup_files
 sudo rm -fr /home/pi/tgn_smart_home/setup.sh
 sudo rm -fr /home/pi/tgn_smart_home/setup_4.sh
-sudo rm -fr /home/pi/tgn_smart_home/remove.sh
-sudo rm -fr /home/pi/tgn_smart_home/update_4.py
 sudo rm -fr /home/pi/tgn_smart_home/requirements.txt
 sudo rm -fr /home/pi/tgn_smart_home/requirements_apt.txt
 sleep 10
