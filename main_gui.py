@@ -387,24 +387,6 @@ def ini():
 				b9A = b9A + cach
 			index = index + 1
 			start_add_AAC = start_add_AAC+ 1
-		if "s_" in b1A or "p_" in b1A :
-			b1A = b1A.split("_")[1]
-		if "s_" in b2A or "p_" in b2A :
-			b2A = b2A.split("_")[1]
-		if "s_" in b3A or "p_" in b3A :
-			b3A = b3A.split("_")[1]
-		if "s_" in b4A or "p_" in b4A :
-			b4A = b4A.split("_")[1]
-		if "s_" in b5A or "p_" in b5A :
-			b5A = b5A.split("_")[1]
-		if "s_" in b6A or "p_" in b6A :
-			b6A = b6A.split("_")[1]
-		if "s_" in b7A or "p_" in b7A :
-			b7A = b7A.split("_")[1]
-		if "s_" in b8A or "p_" in b8A :
-			b8A = b8A.split("_")[1]
-		if "s_" in b9A or "p_" in b9A :
-			b9A = b9A.split("_")[1]
 		buttons = []
 		buttons.append(b1A)
 		buttons.append(b2A)
@@ -2189,6 +2171,11 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 			print("Start Voice Modul")
 			Process(target=TextToSpeech, args=((data[4].rstrip()),spr)).start()
 
+def remove_var(name_b_c):
+	if "s_" in name_b_c or "p_" in name_b_c :
+		name_b_c = name_b_c.split("_")[1]
+	return name_b_c
+
 def normal_screen():
 	root = Tk()
 	#fullscreen mode
@@ -2350,23 +2337,23 @@ def normal_screen():
 	buttonLabel1.configure(background=bground, foreground=fground)
 	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame1, text=buttons[0], bg=buttonb, fg=fground, width=button_width_a, command=callback9)
+	B1 = Button(buttonFrame1, text=remove_var(buttons[0]), bg=buttonb, fg=fground, width=button_width_a, command=callback9)
 	B1.grid(row=1, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame1, text=buttons[1], bg=buttonb, fg=fground, width=button_width_a, command=callback10)
+	B2 = Button(buttonFrame1, text=remove_var(buttons[1]), bg=buttonb, fg=fground, width=button_width_a, command=callback10)
 	B2.grid(row=1, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame1, text=buttons[2], bg=buttonb, fg=fground, width=button_width_a, command=callback11)
+	B3 = Button(buttonFrame1, text=remove_var(buttons[2]), bg=buttonb, fg=fground, width=button_width_a, command=callback11)
 	B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame1, text=buttons[3], bg=buttonb, fg=fground, width=button_width_a, command=callback12)
+	B4 = Button(buttonFrame1, text=remove_var(buttons[3]), bg=buttonb, fg=fground, width=button_width_a, command=callback12)
 	B4.grid(row=2, column=0, padx=10, pady=3)
-	B5 = Button(buttonFrame1, text=buttons[4], bg=buttonb, fg=fground, width=button_width_a, command=callback13)
+	B5 = Button(buttonFrame1, text=remove_var(buttons[4]), bg=buttonb, fg=fground, width=button_width_a, command=callback13)
 	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame1, text=buttons[5], bg=buttonb, fg=fground, width=button_width_a, command=callback14)
+	B6 = Button(buttonFrame1, text=remove_var(buttons[5]), bg=buttonb, fg=fground, width=button_width_a, command=callback14)
 	B6.grid(row=2, column=2, padx=10, pady=3)
-	B13 = Button(buttonFrame1, text=buttons[6], bg=buttonb, fg=fground, width=button_width_a, command=callback914)
+	B13 = Button(buttonFrame1, text=remove_var(buttons[6]), bg=buttonb, fg=fground, width=button_width_a, command=callback914)
 	B13.grid(row=3, column=0, padx=10, pady=3)
-	B14 = Button(buttonFrame1, text=buttons[7], bg=buttonb, fg=fground, width=button_width_a, command=callback915)
+	B14 = Button(buttonFrame1, text=remove_var(buttons[7]), bg=buttonb, fg=fground, width=button_width_a, command=callback915)
 	B14.grid(row=3, column=1, padx=10, pady=3)
-	B15 = Button(buttonFrame1, text=buttons[8], bg=buttonb, fg=fground, width=button_width_a, command=callback916)
+	B15 = Button(buttonFrame1, text=remove_var(buttons[8]), bg=buttonb, fg=fground, width=button_width_a, command=callback916)
 	B15.grid(row=3, column=2, padx=10, pady=3)
 	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=all_on)
 	B7.grid(row=4, column=0, padx=10, pady=3)
@@ -2654,23 +2641,23 @@ def lcars_screen():
 	buttonLabel1.configure(background='#000000', foreground='#eaa424')
 	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
 
-	B1 = Button(buttonFrame1, text=buttons[0], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback9)
+	B1 = Button(buttonFrame1, text=remove_var(buttons[0]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback9)
 	B1.grid(row=1, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame1, text=buttons[1], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback10)
+	B2 = Button(buttonFrame1, text=remove_var(buttons[1]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback10)
 	B2.grid(row=1, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame1, text=buttons[2], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback11)
+	B3 = Button(buttonFrame1, text=remove_var(buttons[2]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback11)
 	B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame1, text=buttons[3], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback12)
+	B4 = Button(buttonFrame1, text=remove_var(buttons[3]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback12)
 	B4.grid(row=2, column=0, padx=10, pady=3)
-	B5 = Button(buttonFrame1, text=buttons[4], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback13)
+	B5 = Button(buttonFrame1, text=remove_var(buttons[4]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback13)
 	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame1, text=buttons[5], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback14)
+	B6 = Button(buttonFrame1, text=remove_var(buttons[5]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback14)
 	B6.grid(row=2, column=2, padx=10, pady=3)
-	B13 = Button(buttonFrame1, text=buttons[6], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback914)
+	B13 = Button(buttonFrame1, text=remove_var(buttons[6]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback914)
 	B13.grid(row=3, column=0, padx=10, pady=3)
-	B14 = Button(buttonFrame1, text=buttons[7], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback915)
+	B14 = Button(buttonFrame1, text=remove_var(buttons[7]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback915)
 	B14.grid(row=3, column=1, padx=10, pady=3)
-	B15 = Button(buttonFrame1, text=buttons[8], bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback916)
+	B15 = Button(buttonFrame1, text=remove_var(buttons[8]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback916)
 	B15.grid(row=3, column=2, padx=10, pady=3)
 	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=all_on)
 	B7.grid(row=4, column=0, padx=10, pady=3)
