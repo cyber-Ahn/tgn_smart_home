@@ -42,7 +42,7 @@ textswitch = ""
 su = 0
 Ts = 0
 pw = "0"
-buttons = ["1", "2", "3", "4", "5", "6"]
+buttons = ["1", "2", "3", "4", "5", "6","7","8","9"]
 b1 = 0
 b2 = 0
 b3 = 0
@@ -387,6 +387,24 @@ def ini():
 				b9A = b9A + cach
 			index = index + 1
 			start_add_AAC = start_add_AAC+ 1
+		if "s_" in b1A or "p_" in b1A :
+			b1A = b1A.split("_")[1]
+		if "s_" in b2A or "p_" in b2A :
+			b2A = b2A.split("_")[1]
+		if "s_" in b3A or "p_" in b3A :
+			b3A = b3A.split("_")[1]
+		if "s_" in b4A or "p_" in b4A :
+			b4A = b4A.split("_")[1]
+		if "s_" in b5A or "p_" in b5A :
+			b5A = b5A.split("_")[1]
+		if "s_" in b6A or "p_" in b6A :
+			b6A = b6A.split("_")[1]
+		if "s_" in b7A or "p_" in b7A :
+			b7A = b7A.split("_")[1]
+		if "s_" in b8A or "p_" in b8A :
+			b8A = b8A.split("_")[1]
+		if "s_" in b9A or "p_" in b9A :
+			b9A = b9A.split("_")[1]
 		buttons = []
 		buttons.append(b1A)
 		buttons.append(b2A)
@@ -899,21 +917,9 @@ def auto_clock():
 def About():
 	print("TGN Smart Home "+version)
 	Process(target=sound).start()
-def callback5():
-	setn = "python3 /home/pi/tgn_smart_home/libs/auto_cam.py preview 0"
-	Process(target=sound).start()
-	if(su==1):
-		Process(target=TextToSpeech, args=((data[15].rstrip()),spr)).start()
-	os.system(setn)
 def callback6():
 	Process(target=sound).start()
 	stream()
-def callback7():
-	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/digi-cam.py"
-	Process(target=sound).start()
-	if(su==1):
-		Process(target=TextToSpeech, args=((data[17].rstrip()),spr)).start()
-	os.system(setn)
 def callback8():
 	logging_tgn("setRTC","tgn_smart_home.log")
 	Process(target=sound).start()
@@ -1550,6 +1556,7 @@ def on_message(client, userdata, message):
 				sonoff_set("9", str(b9))
 			elif "p_" in buttons[8]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b9)
+				os.system(setn)
 			else:
 				send(9,b9)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9))
@@ -1562,7 +1569,8 @@ def on_message(client, userdata, message):
 			if "s_" in buttons[7]:
 				sonoff_set("8", str(b8))
 			elif "p_" in buttons[7]:
-				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b8)
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 8 " + str(b8)
+				os.system(setn)
 			else:
 				send(8,b8)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6b,str(b8))
@@ -1575,7 +1583,8 @@ def on_message(client, userdata, message):
 			if "s_" in buttons[6]:
 				sonoff_set("7", str(b7))
 			elif "p_" in buttons[6]:
-				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b7)
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 7 " + str(b7)
+				os.system(setn)
 			else:
 				send(7,b7)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6a,str(b7))
@@ -1588,7 +1597,8 @@ def on_message(client, userdata, message):
 			if "s_" in buttons[5]:
 				sonoff_set("6", str(b6))
 			elif "p_" in buttons[5]:
-				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b6)
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 6 " + str(b6)
+				os.system(setn)
 			else:
 				send(6,b6)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
@@ -1601,7 +1611,8 @@ def on_message(client, userdata, message):
 			if "s_" in buttons[4]:
 				sonoff_set("5", str(b5))
 			elif "p_" in buttons[4]:
-				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b5)
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 5 " + str(b5)
+				os.system(setn)
 			else:
 				send(5,b5)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x05,str(b5))
@@ -1614,7 +1625,8 @@ def on_message(client, userdata, message):
 			if "s_" in buttons[3]:
 				sonoff_set("4", str(b4))
 			elif "p_" in buttons[3]:
-				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b4)
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 4 " + str(b4)
+				os.system(setn)
 			else:
 				send(4,b4)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x04,str(b4))
@@ -1627,7 +1639,8 @@ def on_message(client, userdata, message):
 			if "s_" in buttons[2]:
 				sonoff_set("3", str(b3))
 			elif "p_" in buttons[2]:
-				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b3)
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 3 " + str(b3)
+				os.system(setn)
 			else:
 				send(3,b3)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x03,str(b3))
@@ -1640,7 +1653,8 @@ def on_message(client, userdata, message):
 			if "s_" in buttons[1]:
 				sonoff_set("2", str(b2))
 			elif "p_" in buttons[1]:
-				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b2)
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 2 " + str(b2)
+				os.system(setn)
 			else:
 				send(2,b2)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x02,str(b2))
@@ -1653,7 +1667,8 @@ def on_message(client, userdata, message):
 			if "s_" in buttons[0]:
 				sonoff_set("1", str(b1))
 			elif "p_" in buttons[0]:
-				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b1)
+				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 1 " + str(b1)
+				os.system(setn)
 			else:
 				send(1,b1)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x01,str(b1))
@@ -1745,8 +1760,6 @@ class Window(Frame):
 						print("Take a Picture and send to Pushbullet.....")
 						Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/",pushbulletkey)).start()
 				if MCPpower == 1:
-					if mcp.input(8) >> 8 == 1:
-						callback7() #digi-cam
 					if mcp.input(9) >> 9 == 1:
 						callback12() #light(button[3])
 					if mcp.input(10) >> 10 == 1:
@@ -1916,7 +1929,7 @@ class WindowB(Frame):
 						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(format_lux(int(esp_li)))+'LUX\n'
 						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(format_lux(int(esp_li_2)))+'LUX\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+temp_data+" / "+str(readLight())+'LUX\n'
+						output = output+temp_data+" / "+str(format_lux(int(esp_li)))+'LUX\n'
 						global weather_t
 						global weather_c
 						global weather_w
@@ -2137,6 +2150,8 @@ def clearLOG():
 	os.system(setn)
 	setn = "rm -fr /home/pi/tgn_smart_home/log/tgn_smart_home.log"
 	os.system(setn)
+	setn = "rm -fr /home/pi/tgn_smart_home/log/kasa.log"
+	os.system(setn)
 def mc_check(ipadd, ipV6add):
 	server = MinecraftServer.lookup(ipadd)
 	try:
@@ -2198,7 +2213,6 @@ def normal_screen():
 	filemenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
 	menu.add_cascade(label=(data[37].rstrip()), menu=filemenu)
 	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
-	filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 	filemenu.add_separator()
 	filemenu.add_command(label=(data[132].rstrip()), command=callback41)
 	filemenu.add_command(label=(data[133].rstrip()), command=callback47)
@@ -2311,8 +2325,8 @@ def normal_screen():
 	menubar = Menu(root, background=bground, foreground=fground,activebackground=abground, activeforeground=afground)
 	helpmenu = Menu(menubar, tearoff=0, background=bground,foreground=fground,activebackground=abground, activeforeground='white')
 	menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
-	helpmenu.add_command(label="Clear LOG", command=clearLOG)
-	helpmenu.add_command(label="Update", command=callback44)
+	helpmenu.add_command(label=(data[139].rstrip()), command=clearLOG)
+	helpmenu.add_command(label=(data[140].rstrip()), command=callback44)
 	helpmenu.add_command(label=(data[68].rstrip()), command=About)
 
 	leftFrame = Frame(root, width=WMWIDTH/2, height = WMHEIGHT)
@@ -2361,9 +2375,9 @@ def normal_screen():
 	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
 		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg=buttona, fg=fground, width=button_width_a, command=callback33)
 		B9.grid(row=4, column=2, padx=10, pady=3)
-	B10 = Button(buttonFrame1, text=(data[3].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=callback5)
+	B10 = Button(buttonFrame1, text=(data[139].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=clearLOG)
 	B10.grid(row=5, column=0, padx=10, pady=3)
-	B11 = Button(buttonFrame1, text=(data[7].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=callback7)
+	B11 = Button(buttonFrame1, text=(data[38].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=callback8)
 	B11.grid(row=5, column=1, padx=10, pady=3)
 	B12 = Button(buttonFrame1, text=(data[8].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=callback6)
 	B12.grid(row=5, column=2, padx=10, pady=3)
@@ -2383,9 +2397,9 @@ def normal_screen():
 		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg=buttona, fg=fground, width=button_width_b, command=callback30)
 		B3.grid(row=1, column=2, padx=10, pady=3)
 	else:
-		B3 = Button(buttonFrame2, text=("xxx"), bg=buttona, fg=fground, width=button_width_b, command=callback100)
+		B3 = Button(buttonFrame2, text=(data[141].rstrip()), bg=buttona, fg=fground, width=button_width_b, command=callback100)
 		B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame2, text="WebPlayer", bg=buttonb, fg=fground, width=button_width_b, command=callback110)
+	B4 = Button(buttonFrame2, text=(data[142].rstrip()), bg=buttonb, fg=fground, width=button_width_b, command=callback110)
 	B4.grid(row=1, column=3, padx=10, pady=3)
 
 	buttonFrame3 = Frame(rightFrame)
@@ -2418,7 +2432,7 @@ def normal_screen():
 	B4.grid(row=2, column=0, padx=10, pady=3)
 	B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=set_neo)
 	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame4, text=("ColorPicker"), bg=buttonb, fg=fground, width=button_width_a, command=color_neo)
+	B6 = Button(buttonFrame4, text=(data[143].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=color_neo)
 	B6.grid(row=2, column=2, padx=10, pady=3)
 
 	buttonFrame5 = Frame(rightFrame)
@@ -2504,7 +2518,6 @@ def lcars_screen():
 	filemenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
 	menu.add_cascade(label=(data[37].rstrip()), menu=filemenu)
 	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
-	filemenu.add_command(label=(data[39].rstrip()), command=callback7)
 	filemenu.add_separator()
 	filemenu.add_command(label=(data[132].rstrip()), command=callback41)
 	filemenu.add_command(label=(data[133].rstrip()), command=callback47)
@@ -2616,8 +2629,8 @@ def lcars_screen():
 	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
 	helpmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
 	menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
-	helpmenu.add_command(label="Clear LOG", command=clearLOG)
-	helpmenu.add_command(label="Update", command=callback44)
+	helpmenu.add_command(label=(data[139].rstrip()), command=clearLOG)
+	helpmenu.add_command(label=(data[140].rstrip()), command=callback44)
 	helpmenu.add_command(label=(data[68].rstrip()), command=About)
 
 	leftFrame = Frame(root, width=WMWIDTH/2, height = WMHEIGHT)
@@ -2666,9 +2679,9 @@ def lcars_screen():
 	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
 		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback33)
 		B9.grid(row=4, column=2, padx=10, pady=3)
-	B10 = Button(buttonFrame1, text=(data[3].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback5)
+	B10 = Button(buttonFrame1, text=(data[139].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=clearLOG)
 	B10.grid(row=5, column=0, padx=10, pady=3)
-	B11 = Button(buttonFrame1, text=(data[7].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback7)
+	B11 = Button(buttonFrame1, text=(data[38].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback8)
 	B11.grid(row=5, column=1, padx=10, pady=3)
 	B12 = Button(buttonFrame1, text=(data[8].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback6)
 	B12.grid(row=5, column=2, padx=10, pady=3)
@@ -2688,9 +2701,9 @@ def lcars_screen():
 		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback30)
 		B3.grid(row=1, column=2, padx=10, pady=3)
 	else:
-		B3 = Button(buttonFrame2, text=("xxx"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback100)
+		B3 = Button(buttonFrame2, text=(data[141].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback100)
 		B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame2, text="WebPlayer", bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback110)
+	B4 = Button(buttonFrame2, text=(data[142].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback110)
 	B4.grid(row=1, column=3, padx=10, pady=3)
 
 	buttonFrame3 = Frame(rightFrame)
@@ -2723,7 +2736,7 @@ def lcars_screen():
 	B4.grid(row=2, column=0, padx=10, pady=3)
 	B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=set_neo)
 	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame4, text=("ColorPicker"), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=color_neo)
+	B6 = Button(buttonFrame4, text=(data[143].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=color_neo)
 	B6.grid(row=2, column=2, padx=10, pady=3)
 
 	buttonFrame5 = Frame(rightFrame)

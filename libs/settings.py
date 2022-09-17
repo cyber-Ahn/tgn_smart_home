@@ -88,10 +88,10 @@ def funk_settings():
 	b4 = input((data[81].rstrip()))
 	b5 = input((data[82].rstrip()))
 	b6 = input((data[83].rstrip()))
-	b7 = input((data[83].rstrip()))
-	b8 = input((data[83].rstrip()))
-	b9 = input((data[83].rstrip()))
-	esp2_button = input("ESP_2 Button - example = 5:")
+	b7 = input((data[136].rstrip()))
+	b8 = input((data[137].rstrip()))
+	b9 = input((data[138].rstrip()))
+	esp2_button = input((data[144].rstrip()))
 	print((data[103].rstrip()))
 	write_eeprom(1,ROM_ADDRESS,0x01,0x5b,esp2_button)
 	start_add_A = 0x23
@@ -186,7 +186,6 @@ def funk_settings():
 		write_eeprom(1,ROM_ADDRESS,0x00,start_add_H,letter) 
 		index = index + 1
 		start_add_H = start_add_H + 1
-	print((data[104].rstrip()))
 	start_add_AAA = 0x6d
 	index = 0
 	while index < 10:
@@ -200,7 +199,6 @@ def funk_settings():
 		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAA,letter) 
 		index = index + 1
 		start_add_AAA = start_add_AAA + 1
-		print("Write: "+str(start_add_AAA))
 	start_add_AAB = 0x78
 	index = 0
 	while index < 10:
@@ -214,7 +212,6 @@ def funk_settings():
 		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAB,letter) 
 		index = index + 1
 		start_add_AAB = start_add_AAB + 1
-		print("Write: "+str(start_add_AAB))
 	start_add_AAC = 0x83
 	index = 0
 	while index < 10:
@@ -228,7 +225,7 @@ def funk_settings():
 		write_eeprom(1,ROM_ADDRESS,0x02,start_add_AAC,letter) 
 		index = index + 1
 		start_add_AAC = start_add_AAC + 1
-		print("Write: "+str(start_add_AAC))
+	print((data[104].rstrip()))
 	time.sleep(3)
 
 def cam_settings():
