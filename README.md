@@ -47,6 +47,12 @@ Installation:
 
 GUI Start with /home/pi/start_main_gui.sh
 
+Button Name Configuration for set System
+ * buttonname   = 423MHZ
+ * s_buttonname = Sonoff
+ * p_buttonname = Kasa HS100
+ * y_buttonname = Shelly
+
 Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
  * Pi Commands
  

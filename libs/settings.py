@@ -1278,10 +1278,18 @@ def sinric():
 def test():
 	print("nothing")
 
+def clear_mqtt():
+	os.system('sudo systemctl stop mosquitto.service')
+	os.system('sudo rm /var/lib/mosquitto/mosquitto.db')
+	os.system('sudo systemctl start mosquitto.service')
+	os.system('sudo systemctl status mosquitto.service')
+	time.sleep(10)
+	os.system('sudo reboot')
+
 if __name__ == "__main__":
 	#setRTC()
 	print("python3 settings.py command")
-	print("commands: rtc / funk / install_rom / cam / weather / pushb / save_nfc / remove_nfc / show_nfc / thinkspeak / alarm / rss / update / backup / restore / sinric")
+	print("commands: rtc / funk / install_rom / cam / weather / pushb / save_nfc / remove_nfc / show_nfc / thinkspeak / alarm / rss / update / backup / restore / sinric / clear_mqtt")
 
 command = sys.argv[1]
 if command == "rtc":
@@ -1321,3 +1329,5 @@ if command == "restore":
 	restore_rom(blocknum, phatrom)
 if command == "test":
 	test()
+if command == "clear_mqtt":
+	clear_mqtt()

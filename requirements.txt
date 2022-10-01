@@ -34,3 +34,4 @@ pyqrcode==1.2.1
 pypng==0.0.20
 bs4==0.0.1
 pyHS100==0.3.5.2
+ShellyPy==0.2.0
