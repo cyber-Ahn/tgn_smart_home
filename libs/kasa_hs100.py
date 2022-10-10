@@ -2,6 +2,7 @@ import sys
 from pyHS100 import Discover
 from pyHS100 import SmartPlug
 from tgnLIB import logging_tgn
+from pprint import pformat as pf
 
 modul_num = int(sys.argv[1])
 modul_status = sys.argv[2]
@@ -38,7 +39,9 @@ def set_socket():
     logging_tgn("modul:"+str(modul_num)+";IP:"+socket_ip+";status:"+modul_status,"kasa.log")
 
     plug = SmartPlug(socket_ip)
-    if modul_status == "1":
+    if modul_status == "info":
+        print("Hardware: %s" % pf(plug.hw_info))
+    elif modul_status == "1":
         print("Turn on")
         plug.turn_on()
     else:

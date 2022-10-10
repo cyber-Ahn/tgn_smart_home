@@ -13,7 +13,9 @@ or
 * 7" HDMI Display
 * IR Reciver -- GPIO 18 (optional)
 * IR Transmitter -- GPIO 22 (optional)
-* 433Mhz RF Wireless Transmitter-Empfänger-Modul Link-Kit für ARM / MCU -- Transmitter on GPIO 17 /Reciver on GPIO 26
+* 433Mhz RF Socket / Wireless Transmitter-Reciver-Modul Link-Kit für ARM / MCU -- Transmitter on GPIO 17 /Reciver on GPIO 26
+  or
+  Wlan-Socket Kasa HS100 / Shelly (V. 1 / 2 / 2.5 / 4 / plug / bulb ) 
 * PIR motion detector -- GPIO 24 (optional)
 + ON I2C Bus:     (all optional)
   * MCP23017 GPA0 - GPA3 = LED / GPA4 - GPA7 = button -- add: 0x20
