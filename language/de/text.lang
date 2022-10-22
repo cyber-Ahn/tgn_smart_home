@@ -70,10 +70,10 @@ Hilfe
 #Einstellungen
 ein zeiten Beispiel 17:10|4:31-
 aus zeiten Beispiel 17:10|4:31-
-Schalter 1 für Off-0 oder On-1:
-Schalter 2 für Off-0 oder On-1:
-Schalter 3 für Off-0 oder On-1:
-Schalter 4 für Off-0 oder On-1:
+Speicherplatz 1 für autmatische Schaltung (Knopfnummer 1 bis 9 / 0 = leer):
+Speicherplatz 2 für autmatische Schaltung (Knopfnummer 1 bis 9 / 0 = leer):
+Speicherplatz 3 für autmatische Schaltung (Knopfnummer 1 bis 9 / 0 = leer):
+Speicherplatz 4 für autmatische Schaltung (Knopfnummer 1 bis 9 / 0 = leer):
 Key example: 10101:
 Gpio 26:
 Knopfname 1:

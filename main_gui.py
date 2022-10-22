@@ -785,14 +785,14 @@ def on():
 		son = 1
 		pb_send_text(pushbulletkey,"Automatic on")
 		logging_tgn("AutomaticOn","tgn_smart_home.log")
-		if s1 == "1":
-			client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
-		if s2 == "1":
-			client.publish("tgn/buttons/status/2","1",qos=0,retain=True)
-		if s3 == "1":
-			client.publish("tgn/buttons/status/3","1",qos=0,retain=True)
-		if s4 == "1":
-			client.publish("tgn/buttons/status/4","1",qos=0,retain=True)
+		if s1 != "0":
+			client.publish("tgn/buttons/status/"+s1,"1",qos=0,retain=True)
+		if s2 != "0":
+			client.publish("tgn/buttons/status/"+s2,"1",qos=0,retain=True)
+		if s3 != "0":
+			client.publish("tgn/buttons/status/"+s3,"1",qos=0,retain=True)
+		if s4 != "0":
+			client.publish("tgn/buttons/status/"+s4,"1",qos=0,retain=True)
 		if(su==1):
 			Process(target=TextToSpeech, args=((data[23].rstrip()),spr)).start()
 		client.publish("tgn/system/automatic","1",qos=0,retain=True)
@@ -804,14 +804,14 @@ def off():
 		son = 0
 		pb_send_text(pushbulletkey,"Automatic Off")
 		logging_tgn("AutomaticOff","tgn_smart_home.log")
-		if s1 == "1":
-			client.publish("tgn/buttons/status/1","0",qos=0,retain=True)
-		if s2 == "1":
-			client.publish("tgn/buttons/status/2","0",qos=0,retain=True)
-		if s3 == "1":
-			client.publish("tgn/buttons/status/3","0",qos=0,retain=True)
-		if s4 == "1":
-			client.publish("tgn/buttons/status/4","0",qos=0,retain=True)
+		if s1 != "0":
+			client.publish("tgn/buttons/status/"+s1,"0",qos=0,retain=True)
+		if s2 != "0":
+			client.publish("tgn/buttons/status/"+s2,"0",qos=0,retain=True)
+		if s3 != "0":
+			client.publish("tgn/buttons/status/"+s3,"0",qos=0,retain=True)
+		if s4 != "0":
+			client.publish("tgn/buttons/status/"+s4,"0",qos=0,retain=True)
 		if(su==1):
 			Process(target=TextToSpeech, args=((data[24].rstrip()),spr)).start()
 		client.publish("tgn/system/automatic","0",qos=0,retain=True)
@@ -2806,7 +2806,6 @@ def lcars_screen():
 	infLabel6.grid(row=2, column=1, padx=10, pady=3)
 
 	root.mainloop()
-
 if colorSet <= 8:
 	normal_screen()
 else:

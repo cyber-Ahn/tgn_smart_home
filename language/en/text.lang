@@ -70,10 +70,10 @@ About....
 #settings
 ontime example 17:10|4:31-
 offtime example 17:10|4:31-
-Switch 1 for off set 0 or on set 1:
-Switch 2 for off set 0 or on set 1:
-Switch 3 for off set 0 or on set 1:
-Switch 4 for off set 0 or on set 1:
+Memory location 1 for automatic switching (button number 1 to 9 / 0 = empty):
+Memory location 2 for automatic switching (button number 1 to 9 / 0 = empty):
+Memory location 3 for automatic switching (button number 1 to 9 / 0 = empty):
+Memory location 4 for automatic switching (button number 1 to 9 / 0 = empty):
 Key example 10101:
 Gpio 26:
 Button name 1:

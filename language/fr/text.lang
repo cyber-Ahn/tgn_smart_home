@@ -70,10 +70,10 @@ Sur....
 #paramètres
 exemple ontime 17:10|4:31-
 heure de repos exemple 17:10|4:31-
-Commutateur 1 pour l'arrêt 0 ou l'ensemble 1:
-Commutateur 2 pour l'arrêt 0 ou l'ensemble 1:
-Commutateur 3 pour l'arrêt 0 ou l'ensemble 1:
-Commutateur 4 pour l'arrêt 0 ou l'ensemble 1:
+Emplacement mémoire 1 pour la commutation automatique (numéro de bouton 1 à 9 / 0 = vide):
+Emplacement mémoire 2 pour la commutation automatique (numéro de bouton 1 à 9 / 0 = vide):
+Emplacement mémoire 3 pour la commutation automatique (numéro de bouton 1 à 9 / 0 = vide):
+Emplacement mémoire 4 pour la commutation automatique (numéro de bouton 1 à 9 / 0 = vide):
 Exemple clé 10101:
 Gpio 26:
 Nom du bouton 1:
