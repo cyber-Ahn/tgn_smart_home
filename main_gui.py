@@ -1902,6 +1902,8 @@ class WindowB(Frame):
 					global ttiv
 					print("Check mc server")
 					mc_check(mc_add_s, mc_add_sV6)
+					setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 10 emeter"
+					os.system(setn)
 					if rssurl == "empty":
 						rssfeed = "Please set a Newsfeed"
 					else:
@@ -2155,6 +2157,8 @@ def clearLOG():
 	setn = "rm -fr /home/pi/tgn_smart_home/log/tgn_smart_home.log"
 	os.system(setn)
 	setn = "rm -fr /home/pi/tgn_smart_home/log/kasa.log"
+	os.system(setn)
+	setn = "rm -fr /home/pi/tgn_smart_home/log/shelly.log"
 	os.system(setn)
 def mc_check(ipadd, ipV6add):
 	server = MinecraftServer.lookup(ipadd)

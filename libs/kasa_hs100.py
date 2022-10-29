@@ -1,8 +1,10 @@
 import sys
 from pyHS100 import Discover
 from pyHS100 import SmartPlug
-from tgnLIB import logging_tgn
+from time import sleep
+from tgnLIB import logging_tgn, get_ip
 from pprint import pformat as pf
+import paho.mqtt.client as mqtt
 
 modul_num = int(sys.argv[1])
 modul_status = sys.argv[2]
@@ -20,7 +22,6 @@ def ini():
         for line in f:
             data_ip.append(line)
     set_socket()
-
 
 def scann():
     for plug in Discover.discover().values():
@@ -41,6 +42,26 @@ def set_socket():
     plug = SmartPlug(socket_ip)
     if modul_status == "info":
         print("Hardware: %s" % pf(plug.hw_info))
+    elif modul_status == "fullinfo":
+        print("Full sysinfo: %s" % pf(plug.get_sysinfo()))
+    elif modul_status == "emeter":
+        if plug.has_emeter:
+            power = str(round(float(plug.current_consumption()), 2))+" W"
+            voltage = str(round(float(str(plug.get_emeter_realtime()).split("'voltage_mv': ")[1].split(",")[0])/1000, 2))+" V"
+            total = str(round(float(str(plug.get_emeter_daily()).split("28: ")[1].split(",")[0]), 2))+" kWh"
+            print(str(socket_ip))
+            print(power)
+            print(voltage)
+            print(total)
+            client = mqtt.Client("kasa_bridge")
+            client.connect(get_ip())
+            client.publish("tgn/hs100/"+str(socket_ip)+"/power",power,qos=0,retain=True)
+            sleep(0.5)
+            client.publish("tgn/hs100/"+str(socket_ip)+"/voltage",voltage,qos=0,retain=True)
+            sleep(0.5)
+            client.publish("tgn/hs100/"+str(socket_ip)+"/total",total,qos=0,retain=True)
+        else:
+            print("No Emeter")
     elif modul_status == "1":
         print("Turn on")
         plug.turn_on()
