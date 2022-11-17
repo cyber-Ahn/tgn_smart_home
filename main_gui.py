@@ -706,6 +706,7 @@ def ini():
 	out_size=format_byte_size(get_dir_size(r"/home/pi/tgn_smart_home/log"))
 	client.publish("tgn/system/log",out_size,qos=0,retain=True)
 	client.publish("MQTChroma/GameMode","0",qos=0,retain=True)
+	client.publish("tgn/android/pmsg","V1.9",qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:

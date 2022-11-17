@@ -36,6 +36,8 @@ def scann():
 def set_socket():
     print("Set socket " + str(modul_num) + " to " + modul_status)
     socket_ip = data_ip[(modul_num-1)].rstrip()
+    client = mqtt.Client("kasa_bridge")
+    client.connect(get_ip())
 
     logging_tgn("modul:"+str(modul_num)+";IP:"+socket_ip+";status:"+modul_status,"kasa.log")
 
@@ -53,8 +55,6 @@ def set_socket():
             print(power)
             print(voltage)
             print(total)
-            client = mqtt.Client("kasa_bridge")
-            client.connect(get_ip())
             client.publish("tgn/hs100/"+str(socket_ip)+"/power",power,qos=0,retain=True)
             sleep(0.5)
             client.publish("tgn/hs100/"+str(socket_ip)+"/voltage",voltage,qos=0,retain=True)
@@ -63,10 +63,17 @@ def set_socket():
         else:
             print("No Emeter")
     elif modul_status == "1":
-        print("Turn on")
-        plug.turn_on()
+        try:
+            print("Turn on")
+            plug.turn_on()
+            client.publish("tgn/android/pmsg","Kasa "+str(modul_num)+" On",qos=0,retain=True)
+        except:
+            client.publish("tgn/android/pmsg","Kasa "+str(modul_num)+" not Online",qos=0,retain=True)
     else:
-        print("Turn off")
-        plug.turn_off()
-
+        try:
+            print("Turn off")
+            plug.turn_off()
+            client.publish("tgn/android/pmsg","Kasa "+str(modul_num)+" Off",qos=0,retain=True)
+        except:
+            client.publish("tgn/android/pmsg","Kasa "+str(modul_num)+" not Online",qos=0,retain=True)
 ini()
