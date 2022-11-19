@@ -1,6 +1,6 @@
 # tgn_smart_home
 
-|Build Status| |Code Health| |Python versions|
+|Build Status| |Python versions|
 
 Project for a smarthome control with 433MHz transmitter, weather info, pi camera control, optional NodeMCU, Android App(sep. Project),
 ha-bridge with web Interface and sinric-bridge for Alexa.
@@ -86,7 +86,5 @@ Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
 
 .. |Build Status| image:: https://img.shields.io/travis/marcogazzola/shelly-python/master.svg
    :target: https://travis-ci.org/marcogazzola/shelly-python
-.. |Code Health| image:: https://landscape.io/github/marcogazzola/shelly-python/landscape.svg?style=flat
-   :target: https://landscape.io/github/marcogazzola/shelly-python/master
 .. |Python versions| image:: https://img.shields.io/pypi/pyversions/shellypython.svg
    :target: https://pypi.python.org/pypi/shellypython/
