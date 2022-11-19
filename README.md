@@ -1,4 +1,7 @@
 # tgn_smart_home
+
+|Build Status|
+
 Project for a smarthome control with 433MHz transmitter, weather info, pi camera control, optional NodeMCU, Android App(sep. Project),
 ha-bridge with web Interface and sinric-bridge for Alexa.
 
