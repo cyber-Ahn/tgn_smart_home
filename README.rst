@@ -31,7 +31,6 @@ Plug / Socket / Modul Options:
 ON I2C Bus:
   * 24LC256 EEPROM for saving settings -- add: 0x53 (recommended)
   -- Optional --
-  
   * MCP23017 GPA0 - GPA3 = LED / GPA4 - GPA7 = button -- add: 0x20
   * LCD 2x16 with PCF8574 -- add: 0x3f
   * PN532 NFC
