@@ -29,6 +29,7 @@ Plug / Socket / Modul Options:
  * Shelly (V. 1 / 2 / 2.5 / 4 / plug / bulb )
 
 ON I2C Bus: (all Optional)
+ 
  * 24LC256 EEPROM for saving settings -- add: 0x53 (recommended) 
  * MCP23017 GPA0 - GPA3 = LED / GPA4 - GPA7 = button -- add: 0x20
  * LCD 2x16 with PCF8574 -- add: 0x3f
@@ -38,12 +39,14 @@ ON I2C Bus: (all Optional)
  * 5 x 4 Bit Digital Tube LED Display Modul I2C
   
 Sensors optional:
+   
    * NodeMcu with DHT22, Fotoresitor and Small Display
    * Android Phone for Smart Home App
    * NodeMcu with DHT22, Fotoresistor and PIR Sensor
    * NodeMcu with NeoPixel Light (ws2812b)
    
 Installation:
+
 * open Terminal
 * sudo su
 * apt-get update
