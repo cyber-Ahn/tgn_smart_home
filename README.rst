@@ -85,6 +85,6 @@ Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
 .. ..
 
 .. |Build Status| image:: https://caworks-sl.de/Smart_Home_Images/build.jpg
-   :target: https://travis-ci.org/marcogazzola/shelly-python
+   :target: https://caworks-sl.de
 .. |Python versions| image:: https://caworks-sl.de/Smart_Home_Images/python.jpg
-   :target: https://pypi.python.org/pypi/shellypython/
+   :target: https://caworks-sl.de
