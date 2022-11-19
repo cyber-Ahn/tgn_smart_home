@@ -72,19 +72,19 @@ Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
    - example:
     - sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py 4 1
     
-<img src="http://caworks-sl.de/Smart_Home_Images/IMG_20181101_174128.jpg" alt="1" style="width:600px;height:500px;">
+<img src="https://caworks-sl.de/Smart_Home_Images/IMG_20181101_174128.jpg" alt="1" style="width:600px;height:500px;">
 
-<img src="http://caworks-sl.de/Smart_Home_Images/IMG_20180602_215043.jpg" alt="1" style="width:600px;height:500px;">
+<img src="https://caworks-sl.de/Smart_Home_Images/IMG_20180602_215043.jpg" alt="1" style="width:600px;height:500px;">
 
-<img src="http://caworks-sl.de/Smart_Home_Images/Smart Home Comunications.jpg" alt="1" style="width:600px;height:500px;">
+<img src="https://caworks-sl.de/Smart_Home_Images/Smart Home Comunications.jpg" alt="1" style="width:600px;height:500px;">
 
-<img src="http://caworks-sl.de/Smart_Home_Images/IMG_20180602_214845.jpg" alt="1" style="width:600px;height:500px;">
+<img src="https://caworks-sl.de/Smart_Home_Images/IMG_20180602_214845.jpg" alt="1" style="width:600px;height:500px;">
 
-<img src="http://caworks-sl.de/Smart_Home_Images/IMG_20180602_214958.jpg" alt="1" style="width:600px;height:500px;">
+<img src="https://caworks-sl.de/Smart_Home_Images/IMG_20180602_214958.jpg" alt="1" style="width:600px;height:500px;">
 
 .. ..
 
-.. |Build Status| image:: http://caworks-sl.de/Smart_Home_Images/build.jpg
+.. |Build Status| image:: https://caworks-sl.de/Smart_Home_Images/build.jpg
    :target: https://travis-ci.org/marcogazzola/shelly-python
-.. |Python versions| image:: http://caworks-sl.de/Smart_Home_Images/python.jpg
+.. |Python versions| image:: https://caworks-sl.de/Smart_Home_Images/python.jpg
    :target: https://pypi.python.org/pypi/shellypython/
