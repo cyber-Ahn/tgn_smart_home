@@ -14,8 +14,7 @@ Required min Hardware:
  
  * Raspberry Pi 4 with min. 16GB SD-Card installed '2019-09-26-raspbian-buster' and Python 3.7
  * 7" HDMI Display 
- 
- 
+ -- Optional --
  * IR Reciver -- GPIO 18 (optional)
  * IR Transmitter -- GPIO 22 (optional)
  * Speacker 3,5mm (optional)
