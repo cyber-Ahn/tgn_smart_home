@@ -28,10 +28,8 @@ Plug / Socket / Modul Options:
  * Wlan-Socket Kasa HS100
  * Shelly (V. 1 / 2 / 2.5 / 4 / plug / bulb )
 
-ON I2C Bus:
- * 24LC256 EEPROM for saving settings -- add: 0x53 (recommended)
- -- Optional --
- 
+ON I2C Bus: (all Optional)
+ * 24LC256 EEPROM for saving settings -- add: 0x53 (recommended) 
  * MCP23017 GPA0 - GPA3 = LED / GPA4 - GPA7 = button -- add: 0x20
  * LCD 2x16 with PCF8574 -- add: 0x3f
  * PN532 NFC
