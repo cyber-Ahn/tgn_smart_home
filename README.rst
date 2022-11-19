@@ -7,9 +7,12 @@ ha-bridge with web Interface and sinric-bridge for Alexa.
 
 The setup installs all required libraries and programs.
 
-Required hardware:
+Required min Hardware:
+
 * Raspberry Pi 3 with min. 16GB SD-Card installed 'Debian Stretch Raspbian 2017.09' and Python 3.5
+
 or
+
 * Raspberry Pi 4 with min. 16GB SD-Card installed '2019-09-26-raspbian-buster' and Python 3.7
 * Speacker 3,5mm
 * Pi Camera
