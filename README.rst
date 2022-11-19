@@ -1,6 +1,6 @@
 # tgn_smart_home
 
-|Build Status| |Python versions|
+|Build Status|  |Python versions|
 
 Project for a smarthome control with 433MHz transmitter, weather info, pi camera control, optional NodeMCU, Android App(sep. Project),
 ha-bridge with web Interface and sinric-bridge for Alexa.
@@ -72,15 +72,15 @@ Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
    - example:
     - sudo python3 /home/pi/tgn_smart_home/libs/ha_bridge_com.py 4 1
     
-<img src="https://caworks-sl.de/Smart_Home_Images/IMG_20181101_174128.jpg" alt="1" style="width:600px;height:500px;">
+|Bild_1|
 
-<img src="https://caworks-sl.de/Smart_Home_Images/IMG_20180602_215043.jpg" alt="1" style="width:600px;height:500px;">
+|Bild_2|
 
-<img src="https://caworks-sl.de/Smart_Home_Images/Smart Home Comunications.jpg" alt="1" style="width:600px;height:500px;">
+|Bild_3|
 
-<img src="https://caworks-sl.de/Smart_Home_Images/IMG_20180602_214845.jpg" alt="1" style="width:600px;height:500px;">
+|Bild_4|
 
-<img src="https://caworks-sl.de/Smart_Home_Images/IMG_20180602_214958.jpg" alt="1" style="width:600px;height:500px;">
+|Bild_5|
 
 .. ..
 
@@ -88,3 +88,14 @@ Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
    :target: https://caworks-sl.de
 .. |Python versions| image:: https://caworks-sl.de/images/python.png
    :target: https://caworks-sl.de
+
+.. |Bild_1| image:: https://caworks-sl.de/Smart_Home_Images/IMG_20181101_174128.jpg
+   :target: https://github.com/cyber-Ahn/tgn_smart_home
+.. |Bild_2| image:: https://caworks-sl.de/Smart_Home_Images/IMG_20180602_215043.jpg
+   :target: https://github.com/cyber-Ahn/tgn_smart_home
+.. |Bild_3| image:: https://caworks-sl.de/Smart_Home_Images/Smart Home Comunications.jpg
+   :target: https://github.com/cyber-Ahn/tgn_smart_home
+.. |Bild_4| image:: https://caworks-sl.de/Smart_Home_Images/IMG_20180602_214845.jpg
+   :target: https://github.com/cyber-Ahn/tgn_smart_home
+.. |Bild_5| image:: https://caworks-sl.de/Smart_Home_Images/IMG_20180602_214958.jpg
+   :target: https://github.com/cyber-Ahn/tgn_smart_home
