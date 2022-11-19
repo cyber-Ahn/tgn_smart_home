@@ -9,23 +9,22 @@ The setup installs all required libraries and programs.
 
 Required min Hardware:
 
-* Raspberry Pi 3 with min. 16GB SD-Card installed 'Debian Stretch Raspbian 2017.09' and Python 3.5
-
+ * Raspberry Pi 3 with min. 16GB SD-Card installed 'Debian Stretch Raspbian 2017.09' and Python 3.5
 or
+ * Raspberry Pi 4 with min. 16GB SD-Card installed '2019-09-26-raspbian-buster' and Python 3.7
+ * 7" HDMI Display 
 
-* Raspberry Pi 4 with min. 16GB SD-Card installed '2019-09-26-raspbian-buster' and Python 3.7
-* 7" HDMI Display 
-
-* IR Reciver -- GPIO 18 (optional)
-* IR Transmitter -- GPIO 22 (optional)
-* Speacker 3,5mm (optional)
-* Pi Camera (optional)
-* PIR motion detector -- GPIO 24 (optional)
+ * IR Reciver -- GPIO 18 (optional)
+ * IR Transmitter -- GPIO 22 (optional)
+ * Speacker 3,5mm (optional)
+ * Pi Camera (optional)
+ * PIR motion detector -- GPIO 24 (optional)
 
 Plug / Socket / Modul Options:
-* 433Mhz RF Socket / Wireless Transmitter-Reciver-Modul Link-Kit für ARM / MCU -- Transmitter on GPIO 17 /Reciver on GPIO 26
-* Wlan-Socket Kasa HS100
-* Shelly (V. 1 / 2 / 2.5 / 4 / plug / bulb )
+
+ * 433Mhz RF Socket / Wireless Transmitter-Reciver-Modul Link-Kit für ARM / MCU -- Transmitter on GPIO 17 /Reciver on GPIO 26
+ * Wlan-Socket Kasa HS100
+ * Shelly (V. 1 / 2 / 2.5 / 4 / plug / bulb )
 
 + ON I2C Bus:     (all optional)
   * MCP23017 GPA0 - GPA3 = LED / GPA4 - GPA7 = button -- add: 0x20
