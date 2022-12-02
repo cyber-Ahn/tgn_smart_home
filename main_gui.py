@@ -26,6 +26,7 @@ pushbulletkey = "o.luRM2iMEGKnns3pzkOUiEAGX3IxxVxZ"
 openweatherkey = "3aef357118b7ea5d700123785674b45"
 zipcode = 6947479
 #system var
+menu_on = 0
 MCP_num_gpios = 16
 main_topic = "tgn/#"
 version = "V.1.8"
@@ -258,6 +259,7 @@ def ini():
 	global b7A
 	global b8A
 	global b9A
+	global menu_on
 	if ifI2C(address) == "found device":
 		RTCpower = 1
 	print(">>initialize EEPROM")
@@ -586,6 +588,8 @@ def ini():
 			index = index + 1
 			start_add_AG = start_add_AG + 1
 		logging_tgn(rssurl,"tgn_smart_home.log")
+		menu_on = int(read_eeprom(1,ROM_ADDRESS,0x03,0x2b))
+		print("Menu:"+str(menu_on))
 	else:
 		print(">>EEPROM not found")
 		if(su==1):
@@ -1933,8 +1937,8 @@ class WindowB(Frame):
 						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+"\n"+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(format_lux(int(esp_li)))+'LUX\n'
-						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(format_lux(int(esp_li_2)))+'LUX\n'
+						output = output+'ESP:'+esp_temp+'�C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(format_lux(int(esp_li)))+'LUX\n'
+						output = output+'ESP2:'+esp_temp_2+'�C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(format_lux(int(esp_li_2)))+'LUX\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+temp_data+" / "+str(format_lux(int(esp_li)))+'LUX\n'
 						global weather_t
@@ -2508,7 +2512,324 @@ def normal_screen():
 
 	root.mainloop()
 
-def lcars_screen():
+#------------------------NEW LCARS-----------------------------------------------------------
+# updating window (Clock and Temps)
+the_time=''
+TIME = newtime = time.time()
+class Window_1_lcars(Frame):
+	def __init__(self,master):
+		Frame.__init__(self, master)
+		self.grid()
+		self.create_widgets()
+	def create_widgets(self):
+		self.display_time=Label(self, text=the_time)
+		self.display_time.grid(row=0, column=1)
+		def change_value_the_time():
+			client.on_message=on_message
+			client.loop_start()
+			client.subscribe([("MQTChroma/*",1),(main_topic,0)])
+			time.sleep(2)
+			client.loop_stop()
+			global the_time
+			global counterLCD
+			global mqtt_msg_cach
+			global radar_sw_state
+			newtime = time.time()
+			if newtime != the_time:
+				if MCPpower == 1:
+					mcp.output(0, 0)
+				if mqtt_msg != mqtt_msg_cach:
+					mqtt_msg_cach = mqtt_msg
+					if(su==1):
+						Process(target=TextToSpeech, args=(mqtt_msg,spr)).start()
+				if GPIO.input(radar_sw_pin) == 0:
+					if radar_sw_state == 1 and radar_on == 1:
+						radar_sw_state = 0
+						print("Picture Off")
+				else:
+					if radar_sw_state == 0 and radar_on == 1:
+						radar_sw_state = 1
+						print("Take a Picture and send to Pushbullet.....")
+						Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/",pushbulletkey)).start()
+				if MCPpower == 1:
+					if mcp.input(9) >> 9 == 1:
+						callback12() #light(button[3])
+					if mcp.input(10) >> 10 == 1:
+						callback24() #xste dpms
+					if mcp.input(11) >> 11 == 1:
+						all_off()    #all off
+					if mcp.input(12) >> 12 == 1:
+						all_on()     #all on
+					if mcp.input(15) >> 15 == 1:
+						callback15()     #shutdown
+					if float(esp_temp) >= float(esp_temp_2):
+						mcp.output(0, 1)
+				stats = ""
+				try:
+					client.publish("tgn/cpu/temp",str(round(getCpuTemperature(),1)),qos=0,retain=True)
+				except:
+					client.connect(get_ip())
+					client.loop_start()
+				if b1 == 0:
+					stats=stats+'OFF|'
+				if b1 == 1:
+					stats=stats+'On|'
+				if b2 == 0:
+					stats=stats+'OFF|'
+				if b2 == 1:
+					stats=stats+'On|'
+				if b3 == 0:
+					stats=stats+'OFF|'
+				if b3 == 1:
+					stats=stats+'On|'
+				if b4 == 0:
+					stats=stats+'OFF|'
+				if b4 == 1:
+					stats=stats+'On|'
+				if b5 == 0:
+					stats=stats+'OFF|'
+				if b5 == 1:
+					stats=stats+'On|'
+				if b6 == 0:
+					stats=stats+'OFF|'
+				if b6 == 1:
+					stats=stats+'On|'
+				if b7 == 0:
+					stats=stats+'OFF|'
+				if b7 == 1:
+					stats=stats+'On|'
+				if b8 == 0:
+					stats=stats+'OFF|'
+				if b8 == 1:
+					stats=stats+'On|'
+				if b9 == 0:
+					stats=stats+'OFF'
+				if b9 == 1:
+					stats=stats+'On'
+				if LCDpower == 1:
+					counterLCD = counterLCD + 1
+				if counterLCD == 30 and LCDpower == 1:
+					mylcd.lcd_clear()
+					mylcd.lcd_display_string("TGN Smart Home", 1, 1)
+					mylcd.lcd_display_string("IP:"+get_ip(), 2, 0)
+				if counterLCD == 60 and LCDpower == 1:
+					mylcd.lcd_clear()
+					try:
+						r = requests.get(api_url)
+						dataPIhole = json.loads(r.text)
+						DNSQUERIES = dataPIhole['dns_queries_today']
+						ADSBLOCKED = dataPIhole['ads_blocked_today']
+					except:
+						DNSQUERIES = "XXX"
+						ADSBLOCKED = "XXX"
+					mylcd.lcd_display_string("Ad Blocked:"+str(ADSBLOCKED), 1, 0)
+					mylcd.lcd_display_string("Queries:"+str(DNSQUERIES), 2, 0)
+					counterLCD = 0
+				if backlight == 0 and LCDpower == 1:
+					mylcd.backlight(0)
+				if(radar_sen==1 and radar_on == 1):
+					client.publish("tgn/esp_32_cam/capture","1",qos=0,retain=True)
+				trigger = pcf8563ReadTimeB()
+				rca = ""
+				if radar_on == 1:
+					rca = "R.Cam on"
+				cach_time = pcf8563ReadTime()
+				the_time= format_time(cach_time)+"\nAutomatic: "+ond+"\n"+stats
+				client.publish("tgn/system/time",format_time(cach_time),qos=0,retain=True)
+				global afbground
+				global fground
+				if colorSet == 9:
+					afbground = '#000000'
+					fground = '#003f7e'
+				self.display_time.config(text=the_time, font=('times', (font_size_a-1), 'bold'), bg=afbground, fg='#fdaa30')
+			self.display_time.after(5000, change_value_the_time)
+		change_value_the_time()
+
+# updating window (Weather and PiHole)
+the_timeb=''
+class Window_2_lcars(Frame):
+	def __init__(self,master):
+		Frame.__init__(self, master)
+		self.grid()
+		self.create_widgets()
+	def create_widgets(self):
+		self.display_time=Label(self, text=the_timeb)
+		self.display_time.grid(row=0, column=1)
+		def change_value_the_timeb():
+			subprocess.call('xset dpms force on', shell=True)
+			global the_timeb
+			newtime = time.time()
+			if newtime != the_timeb:
+				print("Load Pihole data")
+				try:
+					r = requests.get(api_url)
+					dataPIhole = json.loads(r.text)
+					DNSQUERIES = dataPIhole['dns_queries_today']
+					ADSBLOCKED = dataPIhole['ads_blocked_today']
+					CLIENTS = dataPIhole['unique_clients']
+					DNSONLIST = dataPIhole['domains_being_blocked']
+					PIHOLECSTATUS = dataPIhole['status']
+				except:
+					DNSQUERIES = "XXX"
+					ADSBLOCKED = "XXX"
+					CLIENTS = "XXX"
+					DNSONLIST = "0"
+					PIHOLECSTATUS = "0"
+				temp_data = "Room Luxmeter:"
+				try:
+					f = open(spr_phat+"text.lang","r")
+				except IOError:
+    					print("cannot open text.lang.... file not found")
+				else:
+					dataText = []
+					for line in f:
+						dataText.append(line)
+				output = ''
+				if is_connected(REMOTE_SERVER)=="Online":
+					global esp_ls
+					global rssfeed
+					global ttiv
+					print("Check mc server")
+					mc_check(mc_add_s, mc_add_sV6)
+					setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 10 emeter"
+					os.system(setn)
+					if rssurl == "empty":
+						rssfeed = "Please set a Newsfeed"
+					else:
+						print("Read RSS")
+						print(rssurl)
+						rssfeed = rss(rssurl,10)
+					if int(esp_li)==50:
+						ttiv = 50000
+					else:
+						ttiv = 1200000
+					if esp_ls == 0 and int(esp_li) < esp_switch:
+						esp_ls = 1
+						on()
+					elif esp_ls == 1 and int(esp_li) > esp_switch_b:
+						esp_ls = 0
+						off()
+					print("Load Weather")
+					if allowed_key(openweatherkey) == "yes":
+						data = weather_info(zipcode,openweatherkey)
+						output = output+(dataText[24].rstrip())+data['city']+','+data['country']+'\n'
+						output = output+str(data['temp'])+'°C  '+data['sky']+' '
+						output = output+(dataText[25].rstrip())+str(data['temp_max'])+'°C, '+(dataText[26].rstrip())+str(data['temp_min'])+'°C\n'
+						output = output+(dataText[27].rstrip())+str(data['wind'])+'km/h \n'
+						output = output+(dataText[28].rstrip())+str(data['humidity'])+'% \n'
+						output = output+(dataText[29].rstrip())+str(data['cloudiness'])+'% \n'
+						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
+						output = output+(dataText[31].rstrip())+str(data['sunrise'])+"\n"+(dataText[32].rstrip())+str(data['sunset'])+'\n'
+						output = output+'---------------------------------------------------------\n'
+						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(format_lux(int(esp_li)))+'LUX\n'
+						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(format_lux(int(esp_li_2)))+'LUX\n'
+						output = output+'---------------------------------------------------------\n'
+						output = output+temp_data+" / "+str(format_lux(int(esp_li)))+'LUX\n'
+						global weather_t
+						global weather_c
+						global weather_w
+						global weather_h
+						weather_t = float(data['temp'])
+						weather_c = int(data['cloudiness'])
+						weather_w = float(data['wind'])
+						weather_h = int(data['humidity'])
+						client.publish("tgn/weather/temp",weather_t,qos=0,retain=True)
+						client.publish("tgn/weather/clouds",weather_c,qos=0,retain=True)
+						client.publish("tgn/weather/wind",weather_w,qos=0,retain=True)
+						client.publish("tgn/weather/humidity",weather_h,qos=0,retain=True)
+						client.publish("tgn/pihole/adBlock",ADSBLOCKED,qos=0,retain=True)
+						client.publish("tgn/pihole/queries",DNSQUERIES,qos=0,retain=True)
+						client.publish("tgn/pihole/clients",CLIENTS,qos=0,retain=True)
+						client.publish("tgn/pihole/dnslist",DNSONLIST,qos=0,retain=True)
+						client.publish("tgn/pihole/status",PIHOLECSTATUS,qos=0,retain=True)
+						client.publish("tgn/room/temp",temp_data,qos=0,retain=True)
+						client.publish("tgn/room/light",readLight(),qos=0,retain=True)
+						client.publish("tgn/weather/icon",str(data['icon']),qos=0,retain=True)
+						global we_cach
+						if data['sky'] == "Rain":
+							sonoff_set("6", "1")
+							client.publish("tgn/weather/rain","Rain",qos=0,retain=True)
+						elif data['sky'] == "Thunderstorm":
+							sonoff_set("6", "1")
+							client.publish("tgn/weather/rain","Rain",qos=0,retain=True)
+						else:
+							sonoff_set("6", "0")
+							client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
+						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" °C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
+					else:
+						output = output+(dataText[35].rstrip())+'\n'
+					output = output+'---------------------------------------------------------\n'
+				output = output+'Ad Blocked:'+str(ADSBLOCKED)+' Client:'+str(CLIENTS)+' DNS Queries:'+str(DNSQUERIES)
+				channel = thingspeak.Channel(id=channel_id, write_key=write_key, api_key=read_key)
+				global cpu_t
+				cpu_t = getCpuTemperature()
+				if Ts == 1:
+					timespl = format_time(pcf8563ReadTime()).split(" ")
+					print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
+					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
+					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
+				global afbground
+				global fground
+				if colorSet == 9:
+					afbground = '#000000'
+					fground = '#eaa424'
+				self.display_time.config(text=output, font=('times', font_size_b, 'bold'), bg=afbground, fg=fground)
+				if is_connected(REMOTE_SERVER)=="Online":
+					if allowed_key(openweatherkey) == "yes":
+						phatI = phat+get_icon_name(str(data['icon']))
+						load = Image.open(phatI)
+						render = ImageTk.PhotoImage(load)
+						img = Label(self, image=render)
+						img.image = render
+						img.config(bg=afbground)
+						img.place(x=0, y=60)
+			self.display_time.after(ttiv, change_value_the_timeb)
+		change_value_the_timeb()
+
+#window (RSS Feed)
+class Window_3_lcars(Frame):
+	def __init__(self,master):
+		global afbground
+		global fground
+		if colorSet == 9:
+			afbground = '#cf0209'
+			fground = '#ffffff'
+		Frame.__init__(self, master)
+		self.grid()
+		self.canvas = Canvas(self, bg=afbground, highlightthickness=0, width=(feed_size_width+320), height=(feed_size_height-12))
+		self.canvas.pack(expand=True)
+		xpos = feed_pos_x
+		ypos = feed_pos_y
+		self.canvas.create_text(xpos, (ypos-5), anchor='w', text=rssfeed, font=('Helvetica', font_size_b, 'bold'), fill=fground, tags='text')
+		text_begin = self.canvas.bbox('text')[0]
+		text_end = self.canvas.bbox('text')[2]
+		self.text_length = text_end - text_begin
+		self.scroll_text()
+	def scroll_text(self):
+		self.canvas.move('text', -3, 0)
+		text_end = self.canvas.bbox('text')[2]
+		if text_end < 0:
+			self.canvas.itemconfig('text',text=rssfeed)
+			text_begin = self.canvas.bbox('text')[0]
+			text_end = self.canvas.bbox('text')[2]
+			self.text_length = text_end - text_begin
+			self.canvas.move('text', 450 + self.text_length, 0)
+		self.canvas.after(50, self.scroll_text)
+	
+def menu_toggle():
+	global menu_on
+	if menu_on == 0:
+		menu_on = 1
+		print("menu on")
+		write_eeprom(1,ROM_ADDRESS,0x03,0x2b,str(menu_on))
+		callback41()
+	elif menu_on == 1:
+		menu_on = 0
+		print("menu off")
+		write_eeprom(1,ROM_ADDRESS,0x03,0x2b,str(menu_on))
+		callback41()
+
+def lcars_screen_20():
 	root = Tk()
 	#fullscreen mode
 	WMWIDTH, WMHEIGHT, WMLEFT, WMTOP = root.winfo_screenwidth(), root.winfo_screenheight(), 0, 0
@@ -2524,294 +2845,240 @@ def lcars_screen():
 		for line in f:
 			data.append(line)
 	root.wm_title("TGN Smart Home "+version+" ("+spr+")")
-	menu = Menu(root)
-	root.config(background = bground, menu=menu)
+	root.config(background = '#000000')
+	if menu_on == 1:
+		menu = Menu(root)
+		root.config(menu=menu)
 
-	filemenu = Menu(menu)
-	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	filemenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	menu.add_cascade(label=(data[37].rstrip()), menu=filemenu)
-	filemenu.add_command(label=(data[38].rstrip()), command=callback8)
-	filemenu.add_separator()
-	filemenu.add_command(label=(data[132].rstrip()), command=callback41)
-	filemenu.add_command(label=(data[133].rstrip()), command=callback47)
-	filemenu.add_command(label=(data[134].rstrip()), command=callback45)
-	filemenu.add_command(label=(data[135].rstrip()), command=callback46)
-	filemenu.add_command(label=(data[40].rstrip()), command=callback30)
+		filemenu = Menu(menu)
+		menubar = Menu(root, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		filemenu = Menu(menubar, tearoff=0, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		menu.add_cascade(label=(data[37].rstrip()), menu=filemenu)
+		filemenu.add_command(label=(data[38].rstrip()), command=callback8)
+		filemenu.add_separator()
+		filemenu.add_command(label=(data[132].rstrip()), command=callback41)
+		filemenu.add_command(label=(data[133].rstrip()), command=callback47)
+		filemenu.add_command(label=(data[134].rstrip()), command=callback45)
+		filemenu.add_command(label=(data[135].rstrip()), command=callback46)
+		filemenu.add_command(label=(data[40].rstrip()), command=callback30)
 
-	setmenu = Menu(menu)
-	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	setmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	menu.add_cascade(label=(data[41].rstrip()), menu=setmenu)
-	setmenu.add_command(label=(data[115].rstrip()), command=callback39)
-	setmenu.add_command(label=(data[42].rstrip()), command=callback25)
-	setmenu.add_command(label=(data[43].rstrip()), command=callback32)
-	setmenu.add_command(label=(data[44].rstrip()), command=callback34)
-	setmenu.add_command(label=(data[130].rstrip()), command=callback48)
-	setmenu.add_command(label=(data[131].rstrip()), command=auto_clock)
+		setmenu = Menu(menu)
+		menubar = Menu(root, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		setmenu = Menu(menubar, tearoff=0, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		menu.add_cascade(label=(data[41].rstrip()), menu=setmenu)
+		setmenu.add_command(label=(data[115].rstrip()), command=callback39)
+		setmenu.add_command(label=(data[42].rstrip()), command=callback25)
+		setmenu.add_command(label=(data[43].rstrip()), command=callback32)
+		setmenu.add_command(label=(data[44].rstrip()), command=callback34)
+		setmenu.add_command(label=(data[130].rstrip()), command=callback48)
+		setmenu.add_command(label=(data[131].rstrip()), command=auto_clock)
 
-	langmenu = Menu(menu)
-	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	langmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	setmenu.add_cascade(label=(data[45].rstrip()), menu=langmenu)
-	langmenu.add_command(label="de", command=spt1)
-	langmenu.add_command(label="en", command=spt2)
-	langmenu.add_command(label="fr", command=spt3)
-	langmenu.add_command(label="ru", command=spt4)
-	langmenu.add_command(label="jp", command=spt5)
-	langmenu.add_command(label="zh", command=spt6)
+		langmenu = Menu(menu)
+		menubar = Menu(root, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		langmenu = Menu(menubar, tearoff=0, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		setmenu.add_cascade(label=(data[45].rstrip()), menu=langmenu)
+		langmenu.add_command(label="de", command=spt1)
+		langmenu.add_command(label="en", command=spt2)
+		langmenu.add_command(label="fr", command=spt3)
+		langmenu.add_command(label="ru", command=spt4)
+		langmenu.add_command(label="jp", command=spt5)
+		langmenu.add_command(label="zh", command=spt6)
 
-	stylemenu = Menu(menu)
-	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	stylemenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	setmenu.add_cascade(label=(data[46].rstrip()), menu=stylemenu)
-	stylemenu.add_command(label=(data[47].rstrip()), command=callback19)
+		stylemenu = Menu(menu)
+		menubar = Menu(root, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		stylemenu = Menu(menubar, tearoff=0, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		setmenu.add_cascade(label=(data[46].rstrip()), menu=stylemenu)
+		stylemenu.add_command(label=(data[47].rstrip()), command=callback19)
 
-	colmenu = Menu(menu)
-	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	colmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	stylemenu.add_cascade(label=(data[48].rstrip()), menu=colmenu)
-	try:
-		f = open("/home/pi/tgn_smart_home/config/themes.config","r")
-	except IOError:
-		print("cannot open themes.config.... file not found")
-	else:
-		data_ca = []
-		color_button = [] 
-		for line in f:
-			data_ca.append(line)
-		cou = 0
-		for x in data_ca:
-			index = data_ca[cou].find("#")
-			if index == 0:
-				bu_cach = data_ca[cou].rstrip()
-				bu_cach = bu_cach[1:]
-				color_button.append(bu_cach) 
-			cou = cou + 1
-		color_button.append("LCARS")
-	index_bu = len(color_button)
-	if index_bu >= 1:    
-		colmenu.add_command(label=color_button[0], command=lambda: key(1,color_button[0]))
-	if index_bu >= 2:    
-		colmenu.add_command(label=color_button[1], command=lambda: key(2,color_button[1]))
-	if index_bu >= 3:    
-		colmenu.add_command(label=color_button[2], command=lambda: key(3,color_button[2]))
-	if index_bu >= 4:    
-		colmenu.add_command(label=color_button[3], command=lambda: key(4,color_button[3]))
-	if index_bu >= 5:    
-		colmenu.add_command(label=color_button[4], command=lambda: key(5,color_button[4]))
-	if index_bu >= 6:    
-		colmenu.add_command(label=color_button[5], command=lambda: key(6,color_button[5]))
-	if index_bu >= 7:    
-		colmenu.add_command(label=color_button[6], command=lambda: key(7,color_button[6]))
-	if index_bu >= 8:    
-		colmenu.add_command(label=color_button[7], command=lambda: key(8,color_button[7]))
-	if index_bu >= 9:    
-		colmenu.add_command(label=color_button[8], command=lambda: key(9,color_button[8]))
-	def key(method,but_name):
-		global colorSet
-		colorSet = method
-		if but_name == "LCARS":
-			color_set = 9
-		write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
-		time.sleep(1)
-		os.execv(sys.executable, ['python3'] + sys.argv)
+		colmenu = Menu(menu)
+		menubar = Menu(root, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		colmenu = Menu(menubar, tearoff=0, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		stylemenu.add_cascade(label=(data[48].rstrip()), menu=colmenu)
+		try:
+			f = open("/home/pi/tgn_smart_home/config/themes.config","r")
+		except IOError:
+			print("cannot open themes.config.... file not found")
+		else:
+			data_ca = []
+			color_button = [] 
+			for line in f:
+				data_ca.append(line)
+			cou = 0
+			for x in data_ca:
+				index = data_ca[cou].find("#")
+				if index == 0:
+					bu_cach = data_ca[cou].rstrip()
+					bu_cach = bu_cach[1:]
+					color_button.append(bu_cach) 
+				cou = cou + 1
+			color_button.append("LCARS")
+		index_bu = len(color_button)
+		if index_bu >= 1:    
+			colmenu.add_command(label=color_button[0], command=lambda: key(1,color_button[0]))
+		if index_bu >= 2:    
+			colmenu.add_command(label=color_button[1], command=lambda: key(2,color_button[1]))
+		if index_bu >= 3:    
+			colmenu.add_command(label=color_button[2], command=lambda: key(3,color_button[2]))
+		if index_bu >= 4:    
+			colmenu.add_command(label=color_button[3], command=lambda: key(4,color_button[3]))
+		if index_bu >= 5:    
+			colmenu.add_command(label=color_button[4], command=lambda: key(5,color_button[4]))
+		if index_bu >= 6:    
+			colmenu.add_command(label=color_button[5], command=lambda: key(6,color_button[5]))
+		if index_bu >= 7:    
+			colmenu.add_command(label=color_button[6], command=lambda: key(7,color_button[6]))
+		if index_bu >= 8:    
+			colmenu.add_command(label=color_button[7], command=lambda: key(8,color_button[7]))
+		if index_bu >= 9:    
+			colmenu.add_command(label=color_button[8], command=lambda: key(9,color_button[8]))
+		def key(method,but_name):
+			global colorSet
+			colorSet = method
+			if but_name == "LCARS":
+				colorSet = 9
+			write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
+			time.sleep(1)
+			os.execv(sys.executable, ['python3'] + sys.argv)
 
-	rommenu = Menu(menu)
-	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	rommenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	setmenu.add_cascade(label=(data[55].rstrip()), menu=rommenu)
-	rommenu.add_command(label=(data[56].rstrip()), command=callback17)
-	rommenu.add_command(label=(data[57].rstrip()), command=callback18)
-	rommenu.add_command(label=(data[58].rstrip()), command=callback23)
-	rommenu.add_command(label=(data[59].rstrip()), command=callback26)
-	rommenu.add_command(label=(data[60].rstrip()), command=callback27)
-	rommenu.add_command(label=(data[61].rstrip()), command=callback35)
-	rommenu.add_command(label=(data[113].rstrip()), command=callback38)
-	rommenu.add_command(label=(data[119].rstrip()), command=callback42)
-	rommenu.add_command(label=(data[62].rstrip()), command=callback22)
+		rommenu = Menu(menu)
+		menubar = Menu(root, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		rommenu = Menu(menubar, tearoff=0, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		setmenu.add_cascade(label=(data[55].rstrip()), menu=rommenu)
+		rommenu.add_command(label=(data[56].rstrip()), command=callback17)
+		rommenu.add_command(label=(data[57].rstrip()), command=callback18)
+		rommenu.add_command(label=(data[58].rstrip()), command=callback23)
+		rommenu.add_command(label=(data[59].rstrip()), command=callback26)
+		rommenu.add_command(label=(data[60].rstrip()), command=callback27)
+		rommenu.add_command(label=(data[61].rstrip()), command=callback35)
+		rommenu.add_command(label=(data[113].rstrip()), command=callback38)
+		rommenu.add_command(label=(data[119].rstrip()), command=callback42)
+		rommenu.add_command(label=(data[62].rstrip()), command=callback22)
 
-	nfcmenu = Menu(menu)
-	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	nfcmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	setmenu.add_cascade(label=(data[63].rstrip()), menu=nfcmenu)
-	nfcmenu.add_command(label=(data[64].rstrip()), command=callback28)
-	nfcmenu.add_command(label=(data[65].rstrip()), command=callback29)
-	nfcmenu.add_command(label=(data[66].rstrip()), command=callback31)
+		nfcmenu = Menu(menu)
+		menubar = Menu(root, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		nfcmenu = Menu(menubar, tearoff=0, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		setmenu.add_cascade(label=(data[63].rstrip()), menu=nfcmenu)
+		nfcmenu.add_command(label=(data[64].rstrip()), command=callback28)
+		nfcmenu.add_command(label=(data[65].rstrip()), command=callback29)
+		nfcmenu.add_command(label=(data[66].rstrip()), command=callback31)
 
-	helpmenu = Menu(menu)
-	menubar = Menu(root, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	helpmenu = Menu(menubar, tearoff=0, background='#668ff8', foreground='#000000',activebackground='#2a66fc', activeforeground='#000000')
-	menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
-	helpmenu.add_command(label=(data[139].rstrip()), command=clearLOG)
-	helpmenu.add_command(label=(data[140].rstrip()), command=callback44)
-	helpmenu.add_command(label=(data[68].rstrip()), command=About)
+		helpmenu = Menu(menu)
+		menubar = Menu(root, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		helpmenu = Menu(menubar, tearoff=0, background='#4b87ff', foreground='#000000',activebackground='#fdaa30', activeforeground='#000000')
+		menu.add_cascade(label=(data[67].rstrip()), menu=helpmenu)
+		helpmenu.add_command(label=(data[139].rstrip()), command=clearLOG)
+		helpmenu.add_command(label=(data[140].rstrip()), command=callback44)
+		helpmenu.add_command(label=(data[68].rstrip()), command=About)
 
-	leftFrame = Frame(root, width=WMWIDTH/2, height = WMHEIGHT)
-	leftFrame.configure(background=bground)
-	leftFrame.grid(row=0, column=0, padx=10, pady=3)
+	image1 = ImageTk.PhotoImage(Image.open('/home/pi/tgn_smart_home/icons/a_lcars.jpg'))
+	label1 = Label(root, image=image1)
+	label1.place(x = 0,y = 0)
 
-	infFrame1 = Frame(leftFrame)
-	infFrame1.configure(background=bground)
-	infFrame1.grid(row=0, column=0, padx=10, pady=3)
+	app1=Window_1_lcars(root)
+	app1.place(x = 735,y = 6)
 
-	rightFrame = Frame(root, width=WMWIDTH/2, height = WMHEIGHT)
-	rightFrame.configure(background=bground)
-	rightFrame.grid(row=0, column=1, padx=10, pady=3)
+	app2=Window_2_lcars(root)
+	app2.place(x = 210,y = 115)
 
-	app=Window(rightFrame)
+	app3=Window_3_lcars(root)
+	app3.place(x = 342,y = 80)
 
-	buttonFrame1 = Frame(rightFrame)
-	buttonFrame1.configure(background='#000000')
-	buttonFrame1.grid(row=3, column=0, padx=10, pady=3)
-	buttonLabel1 = Label(buttonFrame1, text=(data[9].rstrip()))
-	buttonLabel1.configure(background='#000000', foreground='#eaa424')
-	buttonLabel1.grid(row=0, column=1, padx=10, pady=3)
+	infLabel1 = Label(root, text=(data[11].rstrip()))
+	infLabel1.configure(bg = '#000000',fg ='#4b87ff')
+	infLabel1.place(x = 360,y = 450)
+	oText1 = (data[12].rstrip())+ontime
+	infLabel2 = Label(root, text=oText1)
+	infLabel2.configure(bg = '#000000',fg ='#4b87ff')
+	infLabel2.place(x = 210,y = 470)
+	oText1 = (data[13].rstrip())+offtime
+	infLabel3 = Label(root, text=oText1)
+	infLabel3.configure(bg = '#000000',fg ='#4b87ff')
+	infLabel3.place(x = 360,y = 470)
+	oText1 = (data[14].rstrip())+s1+s2+s3+s4
+	infLabel3 = Label(root, text=oText1)
+	infLabel3.configure(bg = '#000000',fg ='#4b87ff')
+	infLabel3.place(x = 480,y = 470)
+	oText1 = (data[110].rstrip()) + alarm_s
+	infLabel4 = Label(root, text=oText1)
+	infLabel4.configure(bg = '#000000',fg ='#4b87ff')
+	infLabel4.place(x = 480,y = 490)
+	oText1 = (data[111].rstrip()) + alarm_t
+	infLabel4 = Label(root, text=oText1)
+	infLabel4.configure(bg = '#000000',fg ='#4b87ff')
+	infLabel4.place(x = 360,y = 490)
+	infLabel4 = Label(root, text=onoff_day)
+	infLabel4.configure(bg = '#000000',fg ='#4b87ff')
+	infLabel4.place(x = 210,y = 490)
 
-	B1 = Button(buttonFrame1, text=remove_var(buttons[0]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback9)
-	B1.grid(row=1, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame1, text=remove_var(buttons[1]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback10)
-	B2.grid(row=1, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame1, text=remove_var(buttons[2]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback11)
-	B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame1, text=remove_var(buttons[3]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback12)
-	B4.grid(row=2, column=0, padx=10, pady=3)
-	B5 = Button(buttonFrame1, text=remove_var(buttons[4]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback13)
-	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame1, text=remove_var(buttons[5]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback14)
-	B6.grid(row=2, column=2, padx=10, pady=3)
-	B13 = Button(buttonFrame1, text=remove_var(buttons[6]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback914)
-	B13.grid(row=3, column=0, padx=10, pady=3)
-	B14 = Button(buttonFrame1, text=remove_var(buttons[7]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback915)
-	B14.grid(row=3, column=1, padx=10, pady=3)
-	B15 = Button(buttonFrame1, text=remove_var(buttons[8]), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback916)
-	B15.grid(row=3, column=2, padx=10, pady=3)
-	B7 = Button(buttonFrame1, text=(data[108].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=all_on)
-	B7.grid(row=4, column=0, padx=10, pady=3)
-	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=all_off)
-	B8.grid(row=4, column=1, padx=10, pady=3)
+	B1 = Button(root, text=remove_var(buttons[0]), highlightbackground = "#e47fe5", highlightthickness = 2, borderwidth=0, bg='#e47fe5', fg='#000000',activebackground='#e47fe5', activeforeground='#000000', width=(button_width_a-2), command=callback9)
+	B1.place(x = 60,y = 125)
+	B2 = Button(root, text=remove_var(buttons[1]), highlightbackground = "#4b87ff", highlightthickness = 2, borderwidth=0, bg='#4b87ff', fg='#000000',activebackground='#4b87ff', activeforeground='#000000', width=(button_width_a-2), command=callback10)
+	B2.place(x = 60,y = 165)
+	B3 = Button(root, text=remove_var(buttons[2]), highlightbackground = "#e47fe5", highlightthickness = 2, borderwidth=0, bg='#e47fe5', fg='#000000',activebackground='#e47fe5', activeforeground='#000000', width=(button_width_a-2), command=callback11)
+	B3.place(x = 60,y = 210)
+	B4 = Button(root, text=remove_var(buttons[3]), highlightbackground = "#e47fe5", highlightthickness = 2, borderwidth=0, bg='#e47fe5', fg='#000000',activebackground='#e47fe5', activeforeground='#000000', width=(button_width_a-2), command=callback12)
+	B4.place(x = 60,y = 250)
+	B5 = Button(root, text=remove_var(buttons[4]), highlightbackground = "#e47fe5", highlightthickness = 2, borderwidth=0, bg='#e47fe5', fg='#000000',activebackground='#e47fe5', activeforeground='#000000', width=(button_width_a-2), command=callback13)
+	B5.place(x = 60,y = 295)
+	B6 = Button(root, text=remove_var(buttons[5]), highlightbackground = "#e47fe5", highlightthickness = 2, borderwidth=0, bg='#e47fe5', fg='#000000',activebackground='#e47fe5', activeforeground='#000000', width=(button_width_a-2), command=callback14)
+	B6.place(x = 60,y = 335)
+	B13 = Button(root, text=remove_var(buttons[6]), highlightbackground = "#e47fe5", highlightthickness = 2, borderwidth=0, bg='#e47fe5', fg='#000000',activebackground='#e47fe5', activeforeground='#000000', width=(button_width_a-2), command=callback914)
+	B13.place(x = 60,y = 380)
+	B14 = Button(root, text=remove_var(buttons[7]), highlightbackground = "#e47fe5", highlightthickness = 2, borderwidth=0, bg='#e47fe5', fg='#000000',activebackground='#e47fe5', activeforeground='#000000', width=(button_width_a-2), command=callback915)
+	B14.place(x = 60,y = 420)
+	B15 = Button(root, text=remove_var(buttons[8]), highlightbackground = "#e47fe5", highlightthickness = 2, borderwidth=0, bg='#e47fe5', fg='#000000',activebackground='#e47fe5', activeforeground='#000000', width=(button_width_a-2), command=callback916)
+	B15.place(x = 60,y = 465)
+
+	B7 = Button(root, text=(data[108].rstrip()), highlightbackground = "#fbd05f", highlightthickness = 2, borderwidth=0, bg='#fbd05f', fg='#000000',activebackground='#fbd05f', activeforeground='#000000', width=(button_width_b-2), command=all_on)
+	B7.place(x = 680,y = 134)
+	B8 = Button(root, text=(data[109].rstrip()), highlightbackground = "#fbd05f", highlightthickness = 2, borderwidth=0, bg='#fbd05f', fg='#000000',activebackground='#fbd05f', activeforeground='#000000', width=(button_width_b-3), command=all_off)
+	B8.place(x = 807,y = 134)
 	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
-		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback33)
-		B9.grid(row=4, column=2, padx=10, pady=3)
-	B10 = Button(buttonFrame1, text=(data[139].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=clearLOG)
-	B10.grid(row=5, column=0, padx=10, pady=3)
-	B11 = Button(buttonFrame1, text=(data[38].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback8)
-	B11.grid(row=5, column=1, padx=10, pady=3)
-	B12 = Button(buttonFrame1, text=(data[8].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=callback6)
-	B12.grid(row=5, column=2, padx=10, pady=3)
+		B9 = Button(root, text=(data[10].rstrip()), highlightbackground = "#fbd05f", highlightthickness = 2, borderwidth=0, bg='#fbd05f', fg='#000000',activebackground='#fbd05f', activeforeground='#000000', width=(button_width_b-3), command=callback33)
+		B9.place(x = 924,y = 134)
+	B10 = Button(root, text=(data[139].rstrip()), highlightbackground = "#fbd05f", highlightthickness = 2, borderwidth=0, bg='#fbd05f', fg='#000000',activebackground='#fbd05f', activeforeground='#000000', width=(button_width_b-3), command=clearLOG)
+	B10.place(x = 807,y = 176)
+	B11 = Button(root, text=(data[38].rstrip()), highlightbackground = "#ffff9f", highlightthickness = 2, borderwidth=0, bg='#ffff9f', fg='#000000',activebackground='#ffff9f', activeforeground='#000000', width=(button_width_b-2), command=callback8)
+	B11.place(x = 680,y = 176)
+	B12 = Button(root, text=(data[8].rstrip()), highlightbackground = "#8588e9", highlightthickness = 2, borderwidth=0, bg='#8588e9', fg='#000000',activebackground='#8588e9', activeforeground='#000000', width=(button_width_b-3), command=callback6)
+	B12.place(x = 924,y = 176)
+	B13 = Button(root, text=(data[17].rstrip()), highlightbackground = "#ffff9f", highlightthickness = 2, borderwidth=0, bg='#ffff9f', fg='#000000',activebackground='#ffff9f', activeforeground='#000000', width=(button_width_b-2), command=callback15)
+	B13.place(x = 680,y = 218)
+	B14 = Button(root, text=(data[16].rstrip()), highlightbackground = "#ffff9f", highlightthickness = 2, borderwidth=0, bg='#ffff9f', fg='#000000',activebackground='#ffff9f', activeforeground='#000000', width=(button_width_b-3), command=callback16)
+	B14.place(x = 807,y = 218)
+	B15 = Button(root, text=(data[122].rstrip()), highlightbackground = "#ffff9f", highlightthickness = 2, borderwidth=0, bg='#ffff9f', fg='#000000',activebackground='#ffff9f', activeforeground='#000000', width=(button_width_b-3), command=callback43)
+	B15.place(x = 924,y = 218)
 
-	buttonFrame2 = Frame(rightFrame)
-	buttonFrame2.configure(background='#000000')
-	buttonFrame2.grid(row=4, column=0, padx=10, pady=3)
-	buttonLabel2 = Label(buttonFrame2, text=(data[15].rstrip()))
-	buttonLabel2.configure(background='#000000', foreground='#eaa424')
-	buttonLabel2.grid(row=0, column=1, padx=10, pady=3)
+	rgbLabel1 = Label(root, text=(data[123].rstrip()))
+	rgbLabel1.configure(bg = '#000000',fg ='#4b87ff')
+	rgbLabel1.place(x = 805,y = 320)
+	B16 = Button(root, text=(data[124].rstrip()), highlightbackground = "#ffff9f", highlightthickness = 2, borderwidth=0, bg='#ffff9f', fg='#000000',activebackground='#ffff9f', activeforeground='#000000', width=(button_width_b-2), command=red_neo)
+	B16.place(x = 681,y = 345)
+	B17 = Button(root, text=(data[125].rstrip()), highlightbackground = "#ffcf60", highlightthickness = 2, borderwidth=0, bg='#ffcf60', fg='#000000',activebackground='#ffcf60', activeforeground='#000000', width=(button_width_b-3), command=green_neo)
+	B17.place(x = 808,y = 345)
+	B18 = Button(root, text=(data[126].rstrip()), highlightbackground = "#8588e9", highlightthickness = 2, borderwidth=0, bg='#8588e9', fg='#000000',activebackground='#8588e9', activeforeground='#000000', width=(button_width_b-3), command=blue_neo)
+	B18.place(x = 925,y = 345)
+	B19 = Button(root, text=(data[127].rstrip()), highlightbackground = "#ffff9f", highlightthickness = 2, borderwidth=0, bg='#ffff9f', fg='#000000',activebackground='#ffff9f', activeforeground='#000000', width=(button_width_b-2), command=off_neo)
+	B19.place(x = 681,y = 387)
+	B20 = Button(root, text=(data[128].rstrip()), highlightbackground = "#ffff9f", highlightthickness = 2, borderwidth=0, bg='#ffff9f', fg='#000000',activebackground='#ffff9f', activeforeground='#000000', width=(button_width_b-3), command=set_neo)
+	B20.place(x = 808,y = 387)
+	B21 = Button(root, text=(data[143].rstrip()), highlightbackground = "#ffff9f", highlightthickness = 2, borderwidth=0, bg='#ffff9f', fg='#000000',activebackground='#ffff9f', activeforeground='#000000', width=(button_width_b-3), command=color_neo)
+	B21.place(x = 925,y = 387)
 
-	B1 = Button(buttonFrame2, text=(data[17].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback15)
-	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame2, text=(data[16].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback16)
-	B2.grid(row=1, column=1, padx=10, pady=3)
-	if ifI2C(NFC_ADDRESS) == "found device":
-		B3 = Button(buttonFrame2, text=(data[18].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback30)
-		B3.grid(row=1, column=2, padx=10, pady=3)
-	else:
-		B3 = Button(buttonFrame2, text=(data[141].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback100)
-		B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame2, text=(data[142].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback110)
-	B4.grid(row=1, column=3, padx=10, pady=3)
-
-	buttonFrame3 = Frame(rightFrame)
-	buttonFrame3.configure(background=bground)
-	buttonFrame3.grid(row=5, column=0, padx=10, pady=3)
-
-	B1 = Button(buttonFrame3, text=(data[22].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback20)
-	B1.grid(row=0, column=0, padx=10, pady=3) 
-	B2 = Button(buttonFrame3, text=(data[23].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback21)
-	B2.grid(row=0, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame3, text=(data[118].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback40)
-	B3.grid(row=0, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame3, text=(data[122].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_b, command=callback43)
-	B4.grid(row=0, column=3, padx=10, pady=3)
-
-	buttonFrame4 = Frame(rightFrame)
-	buttonFrame4.configure(background='#000000')
-	buttonFrame4.grid(row=6, column=0, padx=10, pady=3)
-	buttonLabel4 = Label(buttonFrame4, text=(data[123].rstrip()))
-	buttonLabel4.configure(background='#000000', foreground='#eaa424')
-	buttonLabel4.grid(row=0, column=1, padx=10, pady=3)
-
-	B1 = Button(buttonFrame4, text=(data[124].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=red_neo)
-	B1.grid(row=1, column=0, padx=10, pady=3)
-	B2 = Button(buttonFrame4, text=(data[125].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=green_neo)
-	B2.grid(row=1, column=1, padx=10, pady=3)
-	B3 = Button(buttonFrame4, text=(data[126].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=blue_neo)
-	B3.grid(row=1, column=2, padx=10, pady=3)
-	B4 = Button(buttonFrame4, text=(data[127].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=off_neo)
-	B4.grid(row=2, column=0, padx=10, pady=3)
-	B5 = Button(buttonFrame4, text=(data[128].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=set_neo)
-	B5.grid(row=2, column=1, padx=10, pady=3)
-	B6 = Button(buttonFrame4, text=(data[143].rstrip()), bg='#668ff8', fg='#000000',activebackground='#2a66fc', activeforeground='#000000', width=button_width_a, command=color_neo)
-	B6.grid(row=2, column=2, padx=10, pady=3)
-
-	buttonFrame5 = Frame(rightFrame)
-	buttonFrame5.configure(background='#000000')
-	buttonFrame5.grid(row=7, column=0, padx=10, pady=3)
-
-	SL1 = Scale(buttonFrame5, from_=0, to=255,  length=slider_length, bg='#003f7e', fg='#000000', tickinterval=20, label=(data[129].rstrip()), orient=HORIZONTAL)
-	SL1.grid(row=0, column=1, padx=10, pady=3)
+	brLabel1 = Label(root, text=(data[129].rstrip()))
+	brLabel1.configure(bg = '#000000',fg ='#4b87ff')
+	brLabel1.place(x = 805,y = 430)
+	SL1 = Scale(root, from_=0, to=255,  length=(slider_length-70), troughcolor="#ffcf60", highlightbackground = "#000000", bd=0, bg='#000000', fg='#4b87ff', tickinterval=20, label="", orient=HORIZONTAL)
+	SL1.place(x = 630,y = 450)
 	SL1.set(10)
 
-	app=WindowB(leftFrame)
-
-	seperatorFrame4 = Frame(leftFrame)
-	seperatorFrame4.configure(background='#000000')
-	seperatorFrame4.grid(row=2, column=0, padx=5, pady=3)
-	seperatorLabel1 = Label(seperatorFrame4, text="")
-	seperatorLabel1.configure(background='#000000')
-	seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
-
-	app=WindowC(leftFrame)
-
-	seperatorFrame3 = Frame(leftFrame)
-	seperatorFrame3.configure(background='#000000')
-	seperatorFrame3.grid(row=4, column=0, padx=5, pady=3)
-	seperatorLabel1 = Label(seperatorFrame3, text="")
-	seperatorLabel1.configure(background='#000000')
-	seperatorLabel1.grid(row=0, column=0, padx=10, pady=3)
-
-	infFrame1 = Frame(leftFrame)
-	infFrame1.configure(background='#000000')
-	infFrame1.grid(row=4, column=0, padx=10, pady=3)
-	infLabel1 = Label(infFrame1, text=(data[11].rstrip()))
-	infLabel1.configure(background='#000000', foreground='#eaa424')
-	infLabel1.grid(row=0, column=1, padx=10, pady=3)
-	oText1 = (data[12].rstrip())+ontime
-	infLabel2 = Label(infFrame1, text=oText1)
-	infLabel2.configure(background='#000000', foreground='#eaa424')
-	infLabel2.grid(row=1, column=0, padx=10, pady=3)
-	oText2 = (data[13].rstrip())+offtime
-	infLabel3 = Label(infFrame1, text=oText2)
-	infLabel3.configure(background='#000000', foreground='#eaa424')
-	infLabel3.grid(row=1, column=2, padx=10, pady=3)
-	oText3 = (data[14].rstrip())+s1+s2+s3+s4
-	infLabel4 = Label(infFrame1, text=oText3)
-	infLabel4.configure(background='#000000', foreground='#eaa424')
-	infLabel4.grid(row=1, column=1, padx=10, pady=3)
-	oText4 = (data[110].rstrip()) + alarm_s
-	infLabel5 = Label(infFrame1, text=oText4)
-	infLabel5.configure(background='#000000', foreground='#eaa424')
-	infLabel5.grid(row=2, column=0, padx=10, pady=3)
-	oText5 = (data[111].rstrip()) + alarm_t
-	infLabel6 = Label(infFrame1, text=oText5)
-	infLabel6.configure(background='#000000', foreground='#eaa424')
-	infLabel6.grid(row=2, column=2, padx=10, pady=3)
-	oText6 = onoff_day
-	infLabel6 = Label(infFrame1, text=oText6)
-	infLabel6.configure(background='#000000', foreground='#eaa424')
-	infLabel6.grid(row=2, column=1, padx=10, pady=3)
-
+	B22 = Button(root, text="Menu", highlightbackground = "#8588e9", highlightthickness = 2, borderwidth=0, bg='#8588e9', fg='#000000',activebackground='#8588e9', activeforeground='#000000', width=(button_width_b-3), command=menu_toggle)
+	B22.place(x = 810,y = 284)
+	
 	root.mainloop()
+
+
 if colorSet <= 8:
 	normal_screen()
-else:
-    lcars_screen()
+if colorSet == 9:
+    lcars_screen_20()

@@ -1,4 +1,4 @@
-#0x03 0x2a
+#0x03 0x2c
 from tgnLIB import *
 import binascii
 
@@ -565,6 +565,7 @@ def prog_rom():
 	b8A = 0
 	b9A = 0
 	keys = "210326d3-1f22-4ad7-a321-5d23bf"
+	menu_on = "0"
 	start_add_AAD = 0x01
 	index = 0
 	while index < 40:
@@ -1143,6 +1144,7 @@ def prog_rom():
 		index = index + 1
 		start_add_AE = start_add_AE + 1
 		print("Write: "+str(start_add_AE))
+	write_eeprom(1,ROM_ADDRESS,0x03,0x2b,str(menu_on))
 
 	print((data[104].rstrip()))
 	time.sleep(3)
