@@ -152,9 +152,13 @@ mc_add_sV6 = "2a02:908:521:b820:2393:5e67:dba1:ebfb"
 REMOTE_SERVER = "www.google.com"
 
 #functions
+def gps():
+	subprocess.call('python3 libs/gps_i2c_PA1010D.py', shell=True)
+
 def ini():
 	logging_tgn("check_files","tgn_smart_home.log")
 	subprocess.call('python3 libs/sys_info.py', shell=True)
+	Process(target=gps).start()
 	os.system('clear')
 	global spr
 	global su

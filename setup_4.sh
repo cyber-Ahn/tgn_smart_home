@@ -115,6 +115,8 @@ sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/mosquitto.conf /etc/mosquitto/
+sudo mv /home/pi/tgn_smart_home/setup_files/start_sinric.sh /home/pi
+sudo chmod +x /home/pi/start_sinric.sh
 sudo chmod +x /home/pi/start_main_gui.sh
 sleep 3
 clear
@@ -131,6 +133,8 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py rss
 clear
 sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /etc/xdg/lxsession/LXDE-pi/autostart
 sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /home/pi/.config/lxsession/LXDE-pi/autostart
+sudo echo "@lxterminal -e /home/pi/start_sinric.sh" >>  /etc/xdg/lxsession/LXDE-pi/autostart
+sudo echo "@lxterminal -e /home/pi/start_sinric.sh" >>  /home/pi/.config/lxsession/LXDE-pi/autostart
 fi
 echo -e "\e[33m>> \e[31mInstall Code-OSSm PI4 (y/n)?\e[32m"
 read answer

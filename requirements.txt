@@ -14,9 +14,9 @@ selenium==3.141.0
 paho-mqtt==1.4.0
 pexpect==4.7.0
 py-enigma==0.1
-discord.py==0.16.12
+discord.py==2.1.0
 SQLAlchemy==1.2.15
-joblib==1.2.0
+joblib==0.11
 ChatterBot==0.8.7
 chatterbot-corpus==1.1.4
 opencv-python==4.6.0.66
@@ -24,7 +24,7 @@ pushbullet.py==0.11.0
 twython==3.7.0
 mcstatus==2.3.0
 numpy==1.22.4
-sinricpro==2.4.1
+sinricpro==2.6.3
 pyttsx3==2.90
 PyCryptodome==3.9.9
 PyPDF2==1.27.5
@@ -35,3 +35,5 @@ pypng==0.0.20
 bs4==0.0.1
 pyHS100==0.3.5.2
 ShellyPy==0.2.0
+Adafruit-Blinka==8.9.0
+adafruit-circuitpython-gps==3.10.7
