@@ -153,7 +153,7 @@ REMOTE_SERVER = "www.google.com"
 
 #functions
 def gps():
-	subprocess.call('python3 libs/gps_i2c_PA1010D.py', shell=True)
+	subprocess.call('python3 /home/pi/tgn_smart_home/libs/gps_i2c_PA1010D.py', shell=True)
 
 def ini():
 	logging_tgn("check_files","tgn_smart_home.log")
