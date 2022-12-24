@@ -1,4 +1,4 @@
-#0x03 0x2c
+#0x03 0x81
 from tgnLIB import *
 import binascii
 
@@ -564,8 +564,40 @@ def prog_rom():
 	b7A = 0
 	b8A = 0
 	b9A = 0
-	keys = "210326d3-1f22-4ad7-a321-5d23bf"
+	keys = "210326d3-1gt2-tzd7-a321-5d288f"
 	menu_on = "0"
+	temp_key = "J6jxLVkL-Rh90ng-Ab1e3z5zWWr5guz"
+	temp_url = "https://test_url.de"
+	start_add_AAD = 0x2d
+	index = 0 
+	while index < 32:
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,"X")
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+	start_add_AAD = 0x2d
+	index = 0
+	while index < len(temp_key):
+		letter = temp_key[index]
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,letter) 
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+	start_add_AAD = 0x4e
+	index = 0 
+	while index < 50:
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,"X")
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+	start_add_AAD = 0x4e
+	index = 0
+	while index < len(temp_url):
+		letter = temp_url[index]
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,letter) 
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
 	start_add_AAD = 0x01
 	index = 0
 	while index < 40:

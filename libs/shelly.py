@@ -14,7 +14,7 @@ def ini():
         print(">>Load ip_socket_list.config")
         f = open("/home/pi/tgn_smart_home/config/ip_socket_list.config","r")
     except IOError:
-        print("cannot open themes.config.... file not found")
+        print("cannot open ip_socket_list.config.... file not found")
     else:
         global data_ip
         for line in f:

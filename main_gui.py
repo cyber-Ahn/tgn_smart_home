@@ -1549,6 +1549,7 @@ def on_message(client, userdata, message):
 			else:
 				send(9,b9)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9))
+			web_interface("9", str(b9))
 			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[8],spr)).start()
 	if(message.topic=="tgn/buttons/status/8"):
@@ -1566,6 +1567,7 @@ def on_message(client, userdata, message):
 			else:
 				send(8,b8)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6b,str(b8))
+			web_interface("8", str(b8))
 			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[7],spr)).start()
 	if(message.topic=="tgn/buttons/status/7"):
@@ -1583,6 +1585,7 @@ def on_message(client, userdata, message):
 			else:
 				send(7,b7)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6a,str(b7))
+			web_interface("7", str(b7))
 			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[6],spr)).start()
 	if(message.topic=="tgn/buttons/status/6"):
@@ -1600,6 +1603,7 @@ def on_message(client, userdata, message):
 			else:
 				send(6,b6)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
+			web_interface("6", str(b6))
 			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[5],spr)).start()
 	if(message.topic=="tgn/buttons/status/5"):
@@ -1617,6 +1621,7 @@ def on_message(client, userdata, message):
 			else:
 				send(5,b5)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x05,str(b5))
+			web_interface("5", str(b5))
 			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[4],spr)).start()
 	if(message.topic=="tgn/buttons/status/4"):
@@ -1634,6 +1639,7 @@ def on_message(client, userdata, message):
 			else:
 				send(4,b4)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x04,str(b4))
+			web_interface("4", str(b4))
 			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[3],spr)).start()
 	if(message.topic=="tgn/buttons/status/3"):
@@ -1651,6 +1657,7 @@ def on_message(client, userdata, message):
 			else:
 				send(3,b3)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x03,str(b3))
+			web_interface("3", str(b3))
 			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[2],spr)).start()
 	if(message.topic=="tgn/buttons/status/2"):
@@ -1668,6 +1675,7 @@ def on_message(client, userdata, message):
 			else:
 				send(2,b2)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x02,str(b2))
+			web_interface("2", str(b2))
 			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/1"):
@@ -1685,6 +1693,7 @@ def on_message(client, userdata, message):
 			else:
 				send(1,b1)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x01,str(b1))
+			web_interface("1", str(b1))
 			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[0],spr)).start()
 	if(message.topic=="tgn/system/shutdown"):
@@ -2569,6 +2578,7 @@ class Window_1_lcars(Frame):
 					if float(esp_temp) >= float(esp_temp_2):
 						mcp.output(0, 1)
 				stats = ""
+				web_interface_read()
 				try:
 					client.publish("tgn/cpu/temp",str(round(getCpuTemperature(),1)),qos=0,retain=True)
 				except:
@@ -2646,7 +2656,7 @@ class Window_1_lcars(Frame):
 					afbground = '#000000'
 					fground = '#003f7e'
 				self.display_time.config(text=the_time, font=('times', (font_size_a-1), 'bold'), bg=afbground, fg='#fdaa30')
-			self.display_time.after(5000, change_value_the_time)
+			self.display_time.after(15000, change_value_the_time)
 		change_value_the_time()
 
 # updating window (Weather and PiHole)
@@ -3081,7 +3091,7 @@ def lcars_screen_20():
 	
 	root.mainloop()
 
-
+web_interface("sync", "1")
 if colorSet <= 8:
 	normal_screen()
 if colorSet == 9:
