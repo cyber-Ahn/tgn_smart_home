@@ -1312,6 +1312,40 @@ def sinric():
 def test():
 	print("nothing")
 
+def webinterface_set():
+	temp_key = input("User_Key:")
+	temp_url = input("Url:")
+	start_add_AAD = 0x2d
+	index = 0 
+	while index < 32:
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,"X")
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+	start_add_AAD = 0x2d
+	index = 0
+	while index < len(temp_key):
+		letter = temp_key[index]
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,letter) 
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+	start_add_AAD = 0x4e
+	index = 0 
+	while index < 50:
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,"X")
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+	start_add_AAD = 0x4e
+	index = 0
+	while index < len(temp_url):
+		letter = temp_url[index]
+		write_eeprom(1,ROM_ADDRESS,0x03,start_add_AAD,letter) 
+		index = index + 1
+		start_add_AAD = start_add_AAD + 1
+		print("Write: "+str(start_add_AAD))
+
 def clear_mqtt():
 	os.system('sudo systemctl stop mosquitto.service')
 	os.system('sudo rm /var/lib/mosquitto/mosquitto.db')
@@ -1323,7 +1357,7 @@ def clear_mqtt():
 if __name__ == "__main__":
 	#setRTC()
 	print("python3 settings.py command")
-	print("commands: rtc / funk / install_rom / cam / weather / pushb / save_nfc / remove_nfc / show_nfc / thinkspeak / alarm / rss / update / backup / restore / sinric / clear_mqtt")
+	print("commands: rtc / funk / install_rom / cam / weather / pushb / save_nfc / remove_nfc / show_nfc / thinkspeak / alarm / rss / update / backup / restore / sinric / clear_mqtt / webinterface")
 
 command = sys.argv[1]
 if command == "rtc":
@@ -1365,3 +1399,5 @@ if command == "test":
 	test()
 if command == "clear_mqtt":
 	clear_mqtt()
+if command == "webinterface":
+	webinterface_set()
