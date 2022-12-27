@@ -50,7 +50,17 @@ def set_socket():
         if plug.has_emeter:
             power = str(round(float(plug.current_consumption()), 2))+" W"
             voltage = str(round(float(str(plug.get_emeter_realtime()).split("'voltage_mv': ")[1].split(",")[0])/1000, 2))+" V"
-            total = str(round(float(str(plug.get_emeter_daily()).split("28: ")[1].split(",")[0]), 2))+" kWh"
+            cach_total = str(plug.get_emeter_daily()).split(": ")
+            num_total = len(cach_total)
+            num_re = 0.0
+            for i in range(num_total-1):
+                cach_da = cach_total[i+1]
+                if "}" in cach_da:
+                    cach_da = cach_da.split("}")[0]
+                else:
+                    cach_da = cach_da.split(",")[0]
+                num_re = num_re + float(cach_da)    
+            total = str(round(num_re,2))+" kWh"
             print(str(socket_ip))
             print(power)
             print(voltage)

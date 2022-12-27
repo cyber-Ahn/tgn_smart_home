@@ -158,7 +158,6 @@ def gps():
 def ini():
 	logging_tgn("check_files","tgn_smart_home.log")
 	subprocess.call('python3 libs/sys_info.py', shell=True)
-	Process(target=gps).start()
 	os.system('clear')
 	global spr
 	global su
@@ -648,7 +647,7 @@ def ini():
 	try:
 		f = open(spr_phat+"text.lang","r")
 	except IOError:
-    		print("cannot open text.lang.... file not found")
+		print("cannot open text.lang.... file not found")
 	else:
 		data = []
 		for line in f:
@@ -1171,7 +1170,7 @@ def exit():
 			print(">>Load voice.lang")
 			f = open(spr_phat+"voice.lang","r")
 		except IOError:
-    			print("cannot open voice.lang.... file not found")
+			print("cannot open voice.lang.... file not found")
 		else:
 			data = []
 			for line in f:
@@ -1286,7 +1285,7 @@ def callback33():
 	try:
 		f = open(spr_phat+"voice.lang","r")
 	except IOError:
-    		print("cannot open voice.lang.... file not found")
+		print("cannot open voice.lang.... file not found")
 	else:
 		data = []
 		for line in f:
@@ -1527,7 +1526,7 @@ def on_message(client, userdata, message):
 	if(message.topic=="tgn/esp_1/temp/sensor_2"):
 		esp_hum = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/temp/sensor_1"):
-    		esp_temp_2 = str(message.payload.decode("utf-8"))
+		esp_temp_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/temp/sensor_2"):
 		esp_hum_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/wifi/rssi"):
@@ -1908,7 +1907,7 @@ class WindowB(Frame):
 				try:
 					f = open(spr_phat+"text.lang","r")
 				except IOError:
-    					print("cannot open text.lang.... file not found")
+					print("cannot open text.lang.... file not found")
 				else:
 					dataText = []
 					for line in f:
@@ -1920,8 +1919,6 @@ class WindowB(Frame):
 					global ttiv
 					print("Check mc server")
 					mc_check(mc_add_s, mc_add_sV6)
-					setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 10 emeter"
-					os.system(setn)
 					if rssurl == "empty":
 						rssfeed = "Please set a Newsfeed"
 					else:
@@ -1990,6 +1987,7 @@ class WindowB(Frame):
 					output = output+'---------------------------------------------------------\n'
 				output = output+'Ad Blocked:'+str(ADSBLOCKED)+' Client:'+str(CLIENTS)+' DNS Queries:'+str(DNSQUERIES)
 				channel = thingspeak.Channel(id=channel_id, write_key=write_key, api_key=read_key)
+				Process(target=read_infos).start()
 				global cpu_t
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
@@ -1997,6 +1995,7 @@ class WindowB(Frame):
 					print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
+				
 				global afbground
 				global fground
 				if colorSet == 9:
@@ -2195,6 +2194,12 @@ def mc_check(ipadd, ipV6add):
 		client.publish("tgn/mc_server/player","0",qos=0,retain=True)
 		client.publish("tgn/mc_server/ip",ipadd,qos=0,retain=True)
 		client.publish("tgn/mc_server/ipV6",ipV6add,qos=0,retain=True)
+def read_infos():
+	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/shelly.py 4 info"
+	os.system(setn)
+	time.sleep(0.5)
+	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 10 emeter"
+	os.system(setn)
 #Main Prog
 ini()
 if LCDpower == 1:
@@ -2206,7 +2211,7 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 	try:
 		f = open(spr_phat+"voice.lang","r")
 	except IOError:
-    		print("cannot open voice.lang.... file not found")
+		print("cannot open voice.lang.... file not found")
 	else:
 		data = []
 		for line in f:
@@ -2693,7 +2698,7 @@ class Window_2_lcars(Frame):
 				try:
 					f = open(spr_phat+"text.lang","r")
 				except IOError:
-    					print("cannot open text.lang.... file not found")
+					print("cannot open text.lang.... file not found")
 				else:
 					dataText = []
 					for line in f:
@@ -3092,6 +3097,11 @@ def lcars_screen_20():
 	root.mainloop()
 
 web_interface("sync", "1")
+time.sleep(2)
+Process(target=gps).start()
+time.sleep(2)
+Process(target=read_infos).start()
+
 if colorSet <= 8:
 	normal_screen()
 if colorSet == 9:
