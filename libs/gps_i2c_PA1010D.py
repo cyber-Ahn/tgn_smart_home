@@ -6,6 +6,8 @@ import paho.mqtt.client as mqtt
 
 gps_address = 0x10
 
+num_count = 0
+wait_for_fix = 7200 #2 hours
 client = mqtt.Client("kasa_bridge")
 client.connect(get_ip())
 if ifI2C(gps_address) == "found device":
@@ -23,8 +25,11 @@ if ifI2C(gps_address) == "found device":
         current = time.monotonic()
         if current - last_print >= 1.0:
             last_print = current
-            if not gps.has_fix:                                            # wait for GPS Signal
-                print("Waiting for fix...")
+            if not gps.has_fix:
+                num_count = num_count + 1                                            # wait for GPS Signal
+                print("Waiting for fix..."+str(num_count))
+                if num_count == wait_for_fix:
+                    break
                 continue
             client.publish("tgn/gps/status","Online",qos=0,retain=True)
             print("=" * 40)
@@ -54,6 +59,7 @@ if ifI2C(gps_address) == "found device":
             if gps.height_geoid is not None:
                 print("Height geoid: {} meters".format(gps.height_geoid))
                 client.publish("tgn/gps/height",gps.height_geoid,qos=0,retain=True)
+            break
 else:
     print("GPS not found")
     client.publish("tgn/gps/found","GPS not found $d{}".format(gps_address),qos=0,retain=True)
