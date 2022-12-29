@@ -2,7 +2,7 @@ from sinric import SinricPro
 import asyncio
 from tgnLIB import logging_tgn, read_eeprom, get_ip
 import paho.mqtt.client as mqtt
- 
+# test
 device = []
 ROM_ADDRESS = 0x53
 sateOp = ["Off","On"]
@@ -32,10 +32,10 @@ if __name__ == '__main__':
         for line in f_d:
             count_d = count_d + 1
             if count_d == 13:
-                cach_a = line.rstrip()
+                cach_a = line.rstrip().split(":")[1]
                 device = cach_a.split(",")
             if count_d == 25:
-                APP_SECRET = line.rstrip()
+                APP_SECRET = line.rstrip().split(":")[1]
     except IOError:
         print("cannot open system.config.... file not found")
     start_add_S = 0x01

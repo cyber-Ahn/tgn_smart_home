@@ -139,7 +139,13 @@ rssfeed = "no feed"
 rssurl = "empty"
 rsslang = "en"
 #PiHole
-api_url = 'http://192.168.0.94/admin/api.php'
+pihole_url = "http://192.168.0.00"
+pihole_pw = 'pihole_pw'
+DNSQUERIES = "xxx"
+ADSBLOCKED = "xxx"
+CLIENTS = "xxx"
+DNSONLIST = "xxx"
+PIHOLECSTATUS = "0"
 #radar_cam
 radar_on = 0
 radar_sen = 0
@@ -152,6 +158,30 @@ mc_add_sV6 = "2a02:908:521:b820:2393:5e67:dba1:ebfb"
 REMOTE_SERVER = "www.google.com"
 
 #functions
+def get_pihole_data(url, pw):
+    global DNSQUERIES
+    global ADSBLOCKED
+    global CLIENTS
+    global DNSONLIST
+    global PIHOLECSTATUS
+    try:
+        session = requests.Session()
+        session.post(url+"/admin/login.php", {'pw': pw})
+        response_data = session.get(url+"/admin/api.php")
+        dataPIhole = json.loads(response_data.text)
+        DNSQUERIES = dataPIhole['dns_queries_today']
+        ADSBLOCKED = dataPIhole['ads_blocked_today']
+        CLIENTS = dataPIhole['unique_clients']
+        DNSONLIST = dataPIhole['domains_being_blocked']
+        PIHOLECSTATUS = dataPIhole['status']
+    except: 
+        print("Pihole not found")
+        DNSQUERIES = "xxx"
+        ADSBLOCKED = "xxx"
+        CLIENTS = "xxx"
+        DNSONLIST = "xxx"
+        PIHOLECSTATUS = "0"
+
 def gps():
 	subprocess.call('python3 /home/pi/tgn_smart_home/libs/gps_i2c_PA1010D.py', shell=True)
 
@@ -746,8 +776,8 @@ def ini():
 				global esp_switch_b
 				esp_switch_b = int(line.rstrip().split(":")[1])
 			if count_d == 12:
-				global api_url
-				api_url = line.rstrip().split("*")[1]
+				global pihole_url
+				pihole_url = line.rstrip().split("*")[1]
 			if count_d == 15:
 				global font_size_a
 				font_size_a = int(line.rstrip().split(":")[1])
@@ -778,6 +808,9 @@ def ini():
 			if count_d == 24:
 				global slider_length
 				slider_length = int(line.rstrip().split(":")[1])
+			if count_d == 26:
+				global pihole_pw
+				pihole_pw = line.rstrip().split("*")[1]
 		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")
@@ -1837,19 +1870,6 @@ class Window(Frame):
 					mylcd.lcd_clear()
 					mylcd.lcd_display_string("TGN Smart Home", 1, 1)
 					mylcd.lcd_display_string("IP:"+get_ip(), 2, 0)
-				if counterLCD == 60 and LCDpower == 1:
-					mylcd.lcd_clear()
-					try:
-						r = requests.get(api_url)
-						dataPIhole = json.loads(r.text)
-						DNSQUERIES = dataPIhole['dns_queries_today']
-						ADSBLOCKED = dataPIhole['ads_blocked_today']
-					except:
-						DNSQUERIES = "XXX"
-						ADSBLOCKED = "XXX"
-					mylcd.lcd_display_string("Ad Blocked:"+str(ADSBLOCKED), 1, 0)
-					mylcd.lcd_display_string("Queries:"+str(DNSQUERIES), 2, 0)
-					counterLCD = 0
 				if backlight == 0 and LCDpower == 1:
 					mylcd.backlight(0)
 				if(radar_sen==1 and radar_on == 1):
@@ -1885,20 +1905,7 @@ class WindowB(Frame):
 			newtime = time.time()
 			if newtime != the_timeb:
 				print("Load Pihole data")
-				try:
-					r = requests.get(api_url)
-					dataPIhole = json.loads(r.text)
-					DNSQUERIES = dataPIhole['dns_queries_today']
-					ADSBLOCKED = dataPIhole['ads_blocked_today']
-					CLIENTS = dataPIhole['unique_clients']
-					DNSONLIST = dataPIhole['domains_being_blocked']
-					PIHOLECSTATUS = dataPIhole['status']
-				except:
-					DNSQUERIES = "XXX"
-					ADSBLOCKED = "XXX"
-					CLIENTS = "XXX"
-					DNSONLIST = "0"
-					PIHOLECSTATUS = "0"
+				get_pihole_data(pihole_url, pihole_pw)
 				temp_data = "Room Luxmeter:"
 				try:
 					f = open(spr_phat+"text.lang","r")
@@ -2627,19 +2634,6 @@ class Window_1_lcars(Frame):
 					mylcd.lcd_clear()
 					mylcd.lcd_display_string("TGN Smart Home", 1, 1)
 					mylcd.lcd_display_string("IP:"+get_ip(), 2, 0)
-				if counterLCD == 60 and LCDpower == 1:
-					mylcd.lcd_clear()
-					try:
-						r = requests.get(api_url)
-						dataPIhole = json.loads(r.text)
-						DNSQUERIES = dataPIhole['dns_queries_today']
-						ADSBLOCKED = dataPIhole['ads_blocked_today']
-					except:
-						DNSQUERIES = "XXX"
-						ADSBLOCKED = "XXX"
-					mylcd.lcd_display_string("Ad Blocked:"+str(ADSBLOCKED), 1, 0)
-					mylcd.lcd_display_string("Queries:"+str(DNSQUERIES), 2, 0)
-					counterLCD = 0
 				if backlight == 0 and LCDpower == 1:
 					mylcd.backlight(0)
 				if(radar_sen==1 and radar_on == 1):
@@ -2676,20 +2670,7 @@ class Window_2_lcars(Frame):
 			newtime = time.time()
 			if newtime != the_timeb:
 				print("Load Pihole data")
-				try:
-					r = requests.get(api_url)
-					dataPIhole = json.loads(r.text)
-					DNSQUERIES = dataPIhole['dns_queries_today']
-					ADSBLOCKED = dataPIhole['ads_blocked_today']
-					CLIENTS = dataPIhole['unique_clients']
-					DNSONLIST = dataPIhole['domains_being_blocked']
-					PIHOLECSTATUS = dataPIhole['status']
-				except:
-					DNSQUERIES = "XXX"
-					ADSBLOCKED = "XXX"
-					CLIENTS = "XXX"
-					DNSONLIST = "0"
-					PIHOLECSTATUS = "0"
+				get_pihole_data(pihole_url, pihole_pw)
 				temp_data = "Room Luxmeter:"
 				try:
 					f = open(spr_phat+"text.lang","r")
