@@ -689,6 +689,7 @@ def ini():
 	client.connect(get_ip())
 	client.loop_start()
 	#send status to mqtt
+	client.publish("tgn/pico/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/automatic","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/bot","0",qos=0,retain=True)

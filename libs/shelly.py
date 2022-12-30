@@ -5,6 +5,7 @@ import time
 import paho.mqtt.client as mqtt
 import urllib.request
 import requests
+import json
 
 modul_num = int(sys.argv[1])
 modul_status = sys.argv[2]
@@ -60,18 +61,19 @@ def set_socket():
         if(str(get_url.getcode()) == "200"):
             print("Status ok")
             cach = requests.get('http://'+socket_ip+'/status').content
-            #print(cach.decode("UTF8")) 
-            ssid = cach.decode("UTF8").split('ssid":')[1].split('"')[1]
-            ip = cach.decode("UTF8").split('ip":')[1].split('"')[1]
-            rssi = cach.decode("UTF8").split('rssi":')[1].split('}')[0]
-            mac = format_mac(cach.decode("UTF8").split('mac":')[1].split('"')[1])
-            status = cach.decode("UTF8").split('ison":')[1].split(',')[0]
-            if(status == "true"):
+            #print(cach.decode("UTF8"))
+            t_cach = json.loads(cach.decode("UTF8"))
+            ssid = t_cach['wifi_sta']['ssid']
+            ip = t_cach['wifi_sta']['ip']
+            rssi = str(t_cach['wifi_sta']['rssi'])
+            mac = format_mac(t_cach['mac'])
+            status = str(t_cach['relays'][0]['ison'])
+            if(status == "True"):
                 status = "On"
             else:
                 status = "Off"
-            uptime = cach.decode("UTF8").split('uptime":')[1].split('}')[0]
-            power = cach.decode("UTF8").split('{"power":')[1].split(',')[0]
+            uptime = str(t_cach['uptime'])
+            power = str(t_cach['meters'][0]['power'])
             out_info = ssid +"|"+ ip +"|"+ rssi +"|"+ mac +"|"+ status +"|"+ uptime +"|"+ power
             print("---------------------------------------------------------------------------------------------------------------------")
             print(out_info)
