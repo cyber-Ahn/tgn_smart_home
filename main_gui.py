@@ -110,6 +110,8 @@ ttiv = 50000
 cach_time = ""
 day_n = ""
 count_pos_b = "1"
+#Pico
+pico_temp = "0.02"
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
@@ -1449,6 +1451,7 @@ def shutdown_other():
 #broker mesage
 def on_message(client, userdata, message):
 	global esp_temp
+	global pico_temp
 	global esp_hum
 	global esp_temp_2
 	global esp_hum_2
@@ -1553,6 +1556,8 @@ def on_message(client, userdata, message):
 				esp_b1_2 = "Rain"	
 	if(message.topic=="tgn/esp_1/temp/sensor_1"):
 		esp_temp = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/pico_1/temp/sensor_1"):
+		pico_temp = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/temp/sensor_2"):
 		esp_hum = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/temp/sensor_1"):
@@ -1996,7 +2001,7 @@ class WindowB(Frame):
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
 					timespl = format_time(pcf8563ReadTime()).split(" ")
-					print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
+					print(write_ts(channel,weather_t,esp_temp_2,esp_temp,pico_temp,"0","0","0"))
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				
@@ -2762,7 +2767,7 @@ class Window_2_lcars(Frame):
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
 					timespl = format_time(pcf8563ReadTime()).split(" ")
-					print(write_ts(channel,esp_temp_2,esp_hum_2,weather_t,weather_c,weather_w,cpu_t,weather_h))
+					print(write_ts(channel,weather_t,esp_temp_2,esp_temp,pico_temp,"0","0","0"))
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				global afbground
