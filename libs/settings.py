@@ -4,12 +4,22 @@ import binascii
 
 # NEW BUTTON
 
-ROM_ADDRESS = 0x53
-NFC_ADDRESS = 0x24
+ROM_ADDRESS = 0x00
+NFC_ADDRESS = 0x00
 spr = "de"
 spr_phat = ""
 blocknum = 4 
 phatrom = "/home/pi/tgn_smart_home/config/rom.csv"
+
+try:
+	f_d = open("/home/pi/tgn_smart_home/config/i2c.config","r")
+	for line in f_d:
+		if "ROM_ADDRESS" in line:
+			ROM_ADDRESS = int(line.rstrip().split("*")[1],16)
+		if "NFC_ADDRESS" in line:
+			NFC_ADDRESS = int(line.rstrip().split("*")[1],16)
+except IOError:
+	print("cannot open i2c.config.... file not found")
 
 if ifI2C(ROM_ADDRESS) == "found device":
 	dataX = read_eeprom(1,ROM_ADDRESS,0x01,0x2a)
@@ -1354,10 +1364,17 @@ def clear_mqtt():
 	time.sleep(10)
 	os.system('sudo reboot')
 
+def base64_set():
+	data = input("Data:")
+	cach = encode(data)
+	print(cach)
+	cach_b = decode(cach)
+	print(cach_b)
+
 if __name__ == "__main__":
 	#setRTC()
 	print("python3 settings.py command")
-	print("commands: rtc / funk / install_rom / cam / weather / pushb / save_nfc / remove_nfc / show_nfc / thinkspeak / alarm / rss / update / backup / restore / sinric / clear_mqtt / webinterface")
+	print("commands: rtc / funk / install_rom / cam / weather / pushb / save_nfc / remove_nfc / show_nfc / thinkspeak / alarm / rss / update / backup / restore / sinric / clear_mqtt / webinterface / base64")
 
 command = sys.argv[1]
 if command == "rtc":
@@ -1401,3 +1418,5 @@ if command == "clear_mqtt":
 	clear_mqtt()
 if command == "webinterface":
 	webinterface_set()
+if command == "base64":
+	base64_set()

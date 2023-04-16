@@ -4,12 +4,21 @@ import adafruit_gps
 from tgnLIB import ifI2C, get_ip
 import paho.mqtt.client as mqtt
 
-gps_address = 0x10
+gps_address = 0x00
 
 num_count = 0
 wait_for_fix = 7200 #2 hours
 client = mqtt.Client("kasa_bridge")
 client.connect(get_ip())
+
+try:
+    f_d = open("/home/pi/tgn_smart_home/config/i2c.config","r")
+    for line in f_d:
+        if "gps_address" in line:
+            gps_address = int(line.rstrip().split("*")[1],16)
+except IOError:
+	print("cannot open i2c.config.... file not found")
+
 if ifI2C(gps_address) == "found device":
     print("GPS found $d{}".format(gps_address))
     print("=" * 40)

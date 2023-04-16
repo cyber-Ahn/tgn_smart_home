@@ -1,9 +1,17 @@
 import paho.mqtt.client as mqtt
 import sys
-from tgnLIB import get_ip, logging_tgn
+from tgnLIB import get_ip, logging_tgn, decode
 
-sonoff_homecode = "10101"
+sonoff_homecode = "00000"
 sonoff_topic = "tgn/sonoff/data"
+
+try:
+    f_d = open("/home/pi/tgn_smart_home/config/system.config","r")
+    for line in f_d:
+        if "sonoff_homecode" in line:
+            sonoff_homecode = decode(line.rstrip().split("*")[1])
+except IOError:
+    print("cannot open system.config.... file not found")
 
 if __name__ == "__main__":
     print("python3 tgn_sonoff.py modulnumber channel status ip")

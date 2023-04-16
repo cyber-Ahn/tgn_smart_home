@@ -14,17 +14,30 @@ from tgnLIB import *
 
 # var
 #i2c address list
-LCD_ADDRESS = 0x3f
-MCP_ADDRESS = 0x20
-NFC_ADDRESS = 0x24
+LCD_ADDRESS = 0x00
+MCP_ADDRESS = 0x00
+NFC_ADDRESS = 0x00
+
+try:
+	f_d = open("/home/pi/tgn_smart_home/config/i2c.config","r")
+	for line in f_d:
+		if "LCD_ADDRESS" in line:
+			LCD_ADDRESS = int(line.rstrip().split("*")[1],16)
+		if "MCP_ADDRESS" in line:
+			MCP_ADDRESS = int(line.rstrip().split("*")[1],16)
+		if "NFC_ADDRESS" in line:
+			NFC_ADDRESS = int(line.rstrip().split("*")[1],16)
+except IOError:
+    print("cannot open i2c.config.... file not found")
+
 #thing speak
 channel_id = 43245
-write_key = "8WQB01T3F5JE0EZ"
-read_key = "PJGJDHMEUU1TAXQ"
+write_key = "1234567890"
+read_key = "1234567890"
 #pushbullet, openweather key 
-pushbulletkey = "o.luRM2iMEGKnns3pzkOUiEAGX3IxxVxZ"
-openweatherkey = "3aef357118b7ea5d700123785674b45"
-zipcode = 6947479
+pushbulletkey = "1234567890"
+openweatherkey = "1234567890"
+zipcode = 1234567
 #system var
 menu_on = 0
 MCP_num_gpios = 16
@@ -742,6 +755,9 @@ def ini():
 	client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
 	out_size=format_byte_size(get_dir_size(r"/home/pi/tgn_smart_home/log"))
 	client.publish("tgn/system/log",out_size,qos=0,retain=True)
+	client.publish("tgn/esp_1/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/esp_2/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/pico_1/temp/sensor_1","1.11",qos=0,retain=True)
 	client.publish("tgn/android/pmsg","V1.9",qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
@@ -759,6 +775,7 @@ def ini():
 		client.publish("tgn/i2c/lcd","online",qos=0,retain=True)
 	else:
 		client.publish("tgn/i2c/lcd","offline",qos=0,retain=True)
+	
 	try:
 		f_d = open("/home/pi/tgn_smart_home/config/system.config","r")
 		global onoff_day
@@ -813,7 +830,7 @@ def ini():
 				slider_length = int(line.rstrip().split(":")[1])
 			if count_d == 26:
 				global pihole_pw
-				pihole_pw = line.rstrip().split("*")[1]
+				pihole_pw = decode(line.rstrip().split("*")[1])
 		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")

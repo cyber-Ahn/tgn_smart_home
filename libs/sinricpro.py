@@ -1,13 +1,21 @@
 from sinric import SinricPro 
 import asyncio
-from tgnLIB import logging_tgn, read_eeprom, get_ip
+from tgnLIB import logging_tgn, read_eeprom, get_ip, decode
 import paho.mqtt.client as mqtt
 # test
 device = []
-ROM_ADDRESS = 0x53
+ROM_ADDRESS = 0x00
 sateOp = ["Off","On"]
 APP_KEY = 'xxx'
 APP_SECRET = 'xxx'
+
+try:
+    f_d = open("/home/pi/tgn_smart_home/config/i2c.config","r")
+    for line in f_d:
+        if "ROM_ADDRESS" in line:
+            ROM_ADDRESS = int(line.rstrip().split("*")[1],16)
+except IOError:
+    print("cannot open i2c.config.... file not found")
 
 def power_state(device_id, state):
     client = mqtt.Client("sinric_bridge")
@@ -35,7 +43,7 @@ if __name__ == '__main__':
                 cach_a = line.rstrip().split(":")[1]
                 device = cach_a.split(",")
             if count_d == 25:
-                APP_SECRET = line.rstrip().split(":")[1]
+                APP_SECRET = decode(line.rstrip().split(":")[1])
     except IOError:
         print("cannot open system.config.... file not found")
     start_add_S = 0x01
