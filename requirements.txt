@@ -2,7 +2,7 @@ gitdb2==2.0.6
 thingspeak==0.4.1
 gTTS==2.0.3
 feedparser==6.0.10
-gitpython==2.1.11
+GitPython==3.1.31
 fabric3==1.14.post1
 youtube_dl==2019.7.16
 spotipy==2.23.0
