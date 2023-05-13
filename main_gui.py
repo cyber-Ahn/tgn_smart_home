@@ -149,6 +149,13 @@ esp2_cou = 0
 #ESP8622/3
 esp_3_color = "0.0.0.255"
 esp_3_game = "0"
+#autoHum
+autohum_stat = 0
+autohum_on_time = "00:01"
+autohum_off_time = "01:00"
+autohum_on_var = "50.0"
+autohum_botton = "0"
+pico_hum = "76.0"
 #RSS
 rssfeed = "no feed"
 rssurl = "empty"
@@ -706,6 +713,7 @@ def ini():
 	#send status to mqtt
 	client.publish("tgn/pico/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/system/automatic","0",qos=0,retain=True)
+	client.publish("tgn/system/autohum","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/bot","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/esp1","0",qos=0,retain=True)
@@ -757,7 +765,9 @@ def ini():
 	client.publish("tgn/system/log",out_size,qos=0,retain=True)
 	client.publish("tgn/esp_1/temp/sensor_1","1.11",qos=0,retain=True)
 	client.publish("tgn/esp_2/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/pico_1/temp/sensor_2","75.0",qos=0,retain=True)
 	client.publish("tgn/pico_1/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
 	client.publish("tgn/android/pmsg","V1.9",qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
@@ -831,9 +841,46 @@ def ini():
 			if count_d == 26:
 				global pihole_pw
 				pihole_pw = decode(line.rstrip().split("*")[1])
+			if count_d == 28:
+				global autohum_on_time
+				autohum_on_time = line.rstrip().split("*")[1]
+			if count_d == 29:
+				global autohum_off_time
+				autohum_off_time = line.rstrip().split("*")[1]
+			if count_d == 30:
+				global autohum_on_var
+				autohum_on_var = line.rstrip().split("*")[1]
+			if count_d == 31:
+				global autohum_botton
+				autohum_botton = line.rstrip().split("*")[1]
 		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")
+
+def hum_check(time_in):
+	#autohum_botton
+	day_c = time_in.split(" ")[0]
+	hour_c = time_in.split(" ")[3].split(":")[0]
+	global autohum_stat
+	if ((float(pico_hum) >= float(autohum_on_var)) and (day_c == "Sun" or day_c == "Sat")):
+		if (autohum_stat == 0):
+			print("On Hum Day")
+			client.publish("tgn/system/autohum","1",qos=0,retain=True)
+			autohum_stat = 1
+			client.publish("tgn/buttons/status/8","1",qos=0,retain=True)
+	elif ((float(pico_hum) >= float(autohum_on_var)) and (float(hour_c) < float(autohum_off_time) or float(hour_c) > float(autohum_on_time))):
+		if (autohum_stat == 0):
+			print("On Hum on Hour")
+			client.publish("tgn/system/autohum","1",qos=0,retain=True)
+			autohum_stat = 1
+			client.publish("tgn/buttons/status/8","1",qos=0,retain=True)
+	else:
+		if (autohum_stat == 1):
+			print("Off Hum")
+			client.publish("tgn/system/autohum","0",qos=0,retain=True)
+			autohum_stat = 0
+			client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
+
 def on():
 	global son
 	global soff
@@ -1474,6 +1521,7 @@ def on_message(client, userdata, message):
 	global esp_hum_2
 	global esp_rssi
 	global esp_li
+	global pico_hum
 	global b9
 	global b8
 	global b7
@@ -1556,6 +1604,8 @@ def on_message(client, userdata, message):
 					client.publish("tgn/buttons/status/1","1",qos=0,retain=True)
 	if(message.topic=="tgn/esp_2/wifi/pre"):
 		esp_pr_2 = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/pico_1/temp/sensor_2"):
+		pico_hum = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/wifi/rssi"):
 		esp_rssi_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/analog/sensor_1"):
@@ -1904,6 +1954,8 @@ class Window(Frame):
 				cach_time = pcf8563ReadTime()
 				the_time= format_time(cach_time)+" / Automatic: "+ond+" "+rca+"\n"+stats
 				client.publish("tgn/system/time",format_time(cach_time),qos=0,retain=True)
+				web_interface_read()
+				hum_check(format_time(cach_time))
 				global afbground
 				global fground
 				if colorSet == 9:
@@ -2609,7 +2661,6 @@ class Window_1_lcars(Frame):
 					if float(esp_temp) >= float(esp_temp_2):
 						mcp.output(0, 1)
 				stats = ""
-				web_interface_read()
 				try:
 					client.publish("tgn/cpu/temp",str(round(getCpuTemperature(),1)),qos=0,retain=True)
 				except:
@@ -2668,6 +2719,8 @@ class Window_1_lcars(Frame):
 				cach_time = pcf8563ReadTime()
 				the_time= format_time(cach_time)+"\nAutomatic: "+ond+"\n"+stats
 				client.publish("tgn/system/time",format_time(cach_time),qos=0,retain=True)
+				web_interface_read()
+				hum_check(format_time(cach_time))
 				global afbground
 				global fground
 				if colorSet == 9:
