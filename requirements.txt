@@ -27,7 +27,7 @@ numpy==1.22.4
 sinricpro==2.6.3
 pyttsx3==2.90
 PyCryptodome==3.9.9
-PyPDF2==1.27.5
+PyPDF2==1.27.9
 psutil==5.8.0
 tabulate==0.8.9
 pyqrcode==1.2.1
