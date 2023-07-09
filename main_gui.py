@@ -178,6 +178,26 @@ mc_add_s = "192.168.0.90"
 mc_add_sV6 = "2a02:908:521:b820:2393:5e67:dba1:ebfb"
 #test server
 REMOTE_SERVER = "www.google.com"
+#air conditioner
+power_air = "off"
+sol_temp = 25.1
+sol_hum = 75.1
+start_temp_cooler = 23.1
+delay = 0.6
+temp_is = 0.0
+hum_is = 0.0
+temp_out = 0.0
+stat_air = 0
+first_boot = "yes"
+cach_air = 0
+# ir Vars
+ir_power = "x"
+ir_fan = "x"
+ir_cool = "x"
+ir_dry = "x"
+ir_up = "x"
+ir_down = "x"
+ir_topic = "x"
 
 #functions
 def get_pihole_data(url, pw):
@@ -853,9 +873,47 @@ def ini():
 			if count_d == 31:
 				global autohum_botton
 				autohum_botton = line.rstrip().split("*")[1]
+			if count_d == 32:
+				global sol_temp
+				sol_temp = float(line.rstrip().split("*")[1])
+			if count_d == 33:
+				global sol_hum
+				sol_hum = float(line.rstrip().split("*")[1])
+			if count_d == 34:
+				global start_temp_cooler
+				start_temp_cooler= float(line.rstrip().split("*")[1])
+			if count_d == 35:
+				global delay
+				delay= float(line.rstrip().split("*")[1])
+			if count_d == 36:
+				global ir_power
+				ir_power = str(line.rstrip().split("*")[1])
+			if count_d == 37:
+				global ir_fan
+				ir_fan = str(line.rstrip().split("*")[1])
+			if count_d == 38:
+				global ir_cool
+				ir_cool = str(line.rstrip().split("*")[1])
+			if count_d == 39:
+				global ir_dry
+				ir_dry = str(line.rstrip().split("*")[1])
+			if count_d == 40:
+				global ir_up
+				ir_up = str(line.rstrip().split("*")[1])
+			if count_d == 41:
+				global ir_down
+				ir_down = str(line.rstrip().split("*")[1])
+			if count_d == 42:
+				global ir_topic
+				ir_topic = str(line.rstrip().split("*")[1])
 		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")
+	client.publish("tgn/air_conditioner/power","off",qos=0,retain=True)
+	client.publish("tgn/air_conditioner/stat",stat_air,qos=0,retain=True)
+	client.publish("tgn/air_conditioner/delay",delay,qos=0,retain=True)
+	client.publish("tgn/air_conditioner/sol_temp",sol_temp,qos=0,retain=True)
+	client.publish("tgn/air_conditioner/sol_hum",sol_hum,qos=0,retain=True)
 
 def hum_check(time_in):
 	#autohum_botton
@@ -880,6 +938,64 @@ def hum_check(time_in):
 			client.publish("tgn/system/autohum","0",qos=0,retain=True)
 			autohum_stat = 0
 			client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
+	air_conditioner_check()
+
+def air_switch():
+	global power_air
+	if power_air == "on":
+		power_air = "off"
+	elif power_air == "off":
+		power_air = "on"
+	client.publish("tgn/air_conditioner/power",power_air,qos=0,retain=True)
+
+def air_conditioner_check():
+	global stat_air
+	global cach_air
+	global first_boot
+	temp_is = float(esp_temp)
+	hum_is = float(esp_hum)
+	temp_out = float(esp_temp_2)
+	if power_air == "on":
+		if str(temp_is) != "nan" and str(temp_out) != "nan":
+			if int(sol_temp) <= int(temp_is):
+				if int(temp_out) <= int(temp_is):
+					stat_air = 1
+				else:
+					stat_air = 2
+			elif hum_is >= sol_hum:
+				stat_air = 3
+			else:
+				stat_air = 0
+	else:
+		stat_air = 0
+	if cach_air != stat_air:
+		print("Staus Air:" + str(stat_air))
+		client.publish("tgn/air_conditioner/stat",stat_air,qos=0,retain=True)
+		if  stat_air != 0 and cach_air == 9 or cach_air == 0:
+			print("power on")
+			client.publish(ir_topic,ir_power)
+			time.sleep(20)
+		if stat_air == 1:
+			print("fan")
+			client.publish(ir_topic,ir_fan)
+		if stat_air == 2:
+			print("cool")
+			client.publish(ir_topic,ir_cool)
+			time.sleep(10)
+			if first_boot == "yes":
+				num_loop = ((sol_temp-start_temp_cooler)+1)
+				for i in range(int(num_loop)):
+					print("up")
+					client.publish(ir_topic,ir_up)
+					time.sleep(3)
+				first_boot = "no"
+		if stat_air == 3:
+			print("dry")
+			client.publish(ir_topic,ir_dry)
+		if stat_air == 0:
+			print("power off")
+			client.publish(ir_topic,ir_power)
+		cach_air = stat_air
 
 def on():
 	global son
@@ -1540,6 +1656,18 @@ def on_message(client, userdata, message):
 	global count_pos_b
 	global esp_3_color
 	global esp_3_game
+	global power_air
+	global sol_temp
+	global sol_hum
+	global delay
+	if(message.topic=="tgn/air_conditioner/power"):
+		power_air = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/air_conditioner/delay"):
+		delay = float(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/air_conditioner/sol_temp"):
+		sol_temp = float(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/air_conditioner/sol_hum"):
+		sol_hum = float(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/system/radar"):
 		if(str(message.payload.decode("utf-8"))=="1"):
 			client.publish("tgn/system/radar","0",qos=0,retain=True)
@@ -2025,8 +2153,8 @@ class WindowB(Frame):
 						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+"\n"+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+'ESP:'+esp_temp+'�C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(format_lux(int(esp_li)))+'LUX\n'
-						output = output+'ESP2:'+esp_temp_2+'�C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(format_lux(int(esp_li_2)))+'LUX\n'
+						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(format_lux(int(esp_li)))+'LUX\n'
+						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(format_lux(int(esp_li_2)))+'LUX\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+temp_data+" / "+str(format_lux(int(esp_li)))+'LUX\n'
 						global weather_t
@@ -2487,7 +2615,7 @@ def normal_screen():
 	B8 = Button(buttonFrame1, text=(data[109].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=all_off)
 	B8.grid(row=4, column=1, padx=10, pady=3)
 	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
-		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg=buttona, fg=fground, width=button_width_a, command=callback33)
+		B9 = Button(buttonFrame1, text=(data[10].rstrip()), bg=buttona, fg=fground, width=button_width_a, command=air_switch)
 		B9.grid(row=4, column=2, padx=10, pady=3)
 	B10 = Button(buttonFrame1, text=(data[139].rstrip()), bg=buttonb, fg=fground, width=button_width_a, command=clearLOG)
 	B10.grid(row=5, column=0, padx=10, pady=3)
@@ -3106,7 +3234,7 @@ def lcars_screen_20():
 	B8 = Button(root, text=(data[109].rstrip()), highlightbackground = "#fbd05f", highlightthickness = 2, borderwidth=0, bg='#fbd05f', fg='#000000',activebackground='#fbd05f', activeforeground='#000000', width=(button_width_b-3), command=all_off)
 	B8.place(x = 807,y = 134)
 	if speech == 1 and is_connected(REMOTE_SERVER)=="Online":
-		B9 = Button(root, text=(data[10].rstrip()), highlightbackground = "#fbd05f", highlightthickness = 2, borderwidth=0, bg='#fbd05f', fg='#000000',activebackground='#fbd05f', activeforeground='#000000', width=(button_width_b-3), command=callback33)
+		B9 = Button(root, text=(data[10].rstrip()), highlightbackground = "#fbd05f", highlightthickness = 2, borderwidth=0, bg='#fbd05f', fg='#000000',activebackground='#fbd05f', activeforeground='#000000', width=(button_width_b-3), command=air_switch)
 		B9.place(x = 924,y = 134)
 	B10 = Button(root, text=(data[139].rstrip()), highlightbackground = "#fbd05f", highlightthickness = 2, borderwidth=0, bg='#fbd05f', fg='#000000',activebackground='#fbd05f', activeforeground='#000000', width=(button_width_b-3), command=clearLOG)
 	B10.place(x = 807,y = 176)
@@ -3151,7 +3279,7 @@ def lcars_screen_20():
 
 web_interface("sync", "1")
 time.sleep(2)
-Process(target=gps).start()
+#Process(target=gps).start()
 time.sleep(2)
 Process(target=read_infos).start()
 
