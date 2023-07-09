@@ -958,7 +958,7 @@ def air_conditioner_check():
 	if power_air == "on":
 		if str(temp_is) != "nan" and str(temp_out) != "nan":
 			if int(sol_temp) <= int(temp_is):
-				if int(temp_out) <= int(temp_is):
+				if int(temp_out) <= int(sol_temp):
 					stat_air = 1
 				else:
 					stat_air = 2
