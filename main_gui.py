@@ -995,6 +995,8 @@ def air_conditioner_check():
 		if stat_air == 0:
 			print("power off")
 			client.publish(ir_topic,ir_power)
+			time.sleep(2)
+			client.publish(ir_topic,ir_down)
 		cach_air = stat_air
 
 def on():
