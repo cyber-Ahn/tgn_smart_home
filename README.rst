@@ -70,6 +70,30 @@ Button Name Configuration for set System
  * p_buttonname = Kasa HS100
  * y_buttonname = Shelly
 
+API use
+ * ini API: 
+    python3 /home/pi/tgn_smart_home/tgn-api/master_key.py
+    save this Key (Master_key) !!!
+
+* generate user_keys
+    http://192.168.0.98:5555/genkey/Master_key
+    save the user_key
+
+* set button
+    http://192.168.0.98:5555/api/USER-KEY&var=button&var=BUTTON-NUMBER&var=STATUS
+    example: http://192.168.0.98:5555/api/mmvdnQzWa06sJijOvfncQ6sswa&var=button&var=3&var=1
+
+* Ir Air Conditioner
+    http://192.168.0.98:5555/api/USER-KEY&var=IrAirConditioner&var=COMMAND
+    example: http://192.168.0.98:5555/api/mmvdnQzWa06sJijOvfncQtfzggu&var=IrAirConditioner&var=power
+    Commands:
+        power
+        fan
+        cool
+        dry
+        up
+        down
+
 Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
  * Pi Commands
  
