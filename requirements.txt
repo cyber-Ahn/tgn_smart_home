@@ -37,3 +37,4 @@ pyHS100==0.3.5.2
 ShellyPy==0.2.0
 Adafruit-Blinka==8.9.0
 adafruit-circuitpython-gps==3.10.7
+Flask==2.3.3
