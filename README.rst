@@ -90,14 +90,8 @@ API use
     http://192.168.0.98:5555/api/USER-KEY&var=IrAirConditioner&var=COMMAND
 
     example: http://192.168.0.98:5555/api/mmvdnQzWa06sJijOvfncQtfzggu&var=IrAirConditioner&var=power
-    Commands:
 
-        power
-        fan
-        cool
-        dry
-        up
-        down
+    Commands:power | fan | cool | dry | up | down
 
 Commands for HA Bridge or Google Assistant(need Auto Voice and Tasker):
  * Pi Commands
