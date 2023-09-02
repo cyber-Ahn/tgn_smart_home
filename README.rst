@@ -82,14 +82,14 @@ API use
     save the user_key
 
 * set button
-    http://192.111.0.5:5555/api/USER-KEY&var=button&var=BUTTON-NUMBER&var=STATUS
+    http://192.111.0.5:5555/api/key=USER-KEY&opt=button&butnr=BUTTON-NUMBER&stat=STATUS
 
-    example: http://192.111.0.5:5555/api/mmvdnQzWa06sJijOvfncQ6sswa&var=button&var=3&var=1
+    example: http://192.111.0.5:5555/api/key=mmvdnQzWa06sJijOvfncQ6sswa&opt=button&butnr=3&stat=1
 
 * Ir Air Conditioner
-    http://192.111.0.5:5555/api/USER-KEY&var=IrAirConditioner&var=COMMAND
+    http://192.111.0.5:5555/api/key=USER-KEY&opt=IrAirConditioner&butnr=COMMAND
 
-    example: http://192.111.0.5:5555/api/mmvdnQzWa06sJijOvfncQtfzggu&var=IrAirConditioner&var=power
+    example: http://192.111.0.5:5555/api/key=mmvdnQzWa06sJijOvfncQtfzggu&opt=IrAirConditioner&butnr=power
 
     Commands:power | fan | cool | dry | up | down
 

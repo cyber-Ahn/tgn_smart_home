@@ -9,7 +9,11 @@ class api:
         print("Api request")
 
     def decode_data(data):
-        data_cach = data.split("&var=")
+        data_cach = []
+        if "key=" in data: data_cach.append(data.split("key=")[1].split("&opt=")[0])
+        if "&opt=" in data: data_cach.append(data.split("&opt=")[1].split("&butnr=")[0])
+        if "&butnr=" in data: data_cach.append(data.split("&butnr=")[1].split("&stat=")[0])
+        if "&stat=" in data: data_cach.append(data.split("&stat=")[1])
         uidd = data_cach[0]
         data_read = []
         read = []
