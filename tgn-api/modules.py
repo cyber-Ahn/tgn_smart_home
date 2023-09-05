@@ -10,10 +10,10 @@ class api:
 
     def decode_data(data):
         data_cach = []
-        if "key=" in data: data_cach.append(data.split("key=")[1].split("&opt=")[0])
-        if "&opt=" in data: data_cach.append(data.split("&opt=")[1].split("&butnr=")[0])
-        if "&butnr=" in data: data_cach.append(data.split("&butnr=")[1].split("&stat=")[0])
-        if "&stat=" in data: data_cach.append(data.split("&stat=")[1])
+        data_cach.append(data.get("key"))
+        data_cach.append(data.get("opt"))
+        data_cach.append(data.get("butnr"))
+        data_cach.append(data.get("stat"))
         uidd = data_cach[0]
         data_read = []
         read = []

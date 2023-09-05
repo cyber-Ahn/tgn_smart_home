@@ -1,12 +1,12 @@
-from flask import Flask
+from flask import Flask, request
 from modules import api
 from tgnLIB import get_ip
 
 app = Flask(__name__)
 
-@app.route("/api/<data>")
-def apidecoder(data):
-    return api.decode_data(data)
+@app.route("/api", methods=["GET"])
+def apidecoder():
+    return api.decode_data(request.args)
 
 @app.route("/genkey/<data>")
 def keyGen(data):
