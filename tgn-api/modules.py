@@ -39,10 +39,13 @@ class api:
                         ir_topic = read[42-1].split("*")[1]
                         if(data_cach[2] == "power"):
                             com = read[36-1].split("*")[1]
+                            com2 = read[43-1].split("*")[1]
                             client = mqtt.Client("TGN API")
                             client.connect(get_ip())
                             client.loop_start()
                             client.publish(ir_topic,com,qos=0,retain=True)
+                            time.sleep(1)
+                            client.publish(ir_topic,com2,qos=0,retain=True)
                             client.loop_stop()
                             return("Air Conditioner: "+data_cach[2])
                         elif(data_cach[2] == "fan"):
