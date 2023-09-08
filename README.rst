@@ -83,9 +83,9 @@ API use
     save the user_key
 
 * read API
-    http://192.168.0.98:5555/api/read?key=USER-KEY
+    http://192.111.0.5:5555/api/read?key=USER-KEY
 
-    example: http://192.168.0.98:5555/api/read?key=mmvdnQzWa06sJijOvfncQ6vrd
+    example: http://192.111.0.5:5555/api/read?key=mmvdnQzWa06sJijOvfncQ6vrd
 
 * set button
     http://192.111.0.5:5555/api?key=USER-KEY&opt=button&butnr=BUTTON-NUMBER&stat=STATUS
