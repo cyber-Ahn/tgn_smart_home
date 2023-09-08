@@ -1,12 +1,52 @@
-from tgnLIB import decode, get_ip
+import paho.mqtt.client as mqtt
 import string
 import secrets
-import paho.mqtt.client as mqtt
+from tgnLIB import decode, get_ip
 import time
+
+d_out = {"API_TGN":"ok"}
 
 class api:
     def __init__(self):
         print("Api request")
+    
+    def add_dict(top_d, data_d):
+        cach = top_d.split("/")
+        num = len(cach)
+        if num == 4:
+            if cach[1] in d_out and cach[2] in d_out[cach[1]]: d_out[cach[1]][cach[2]].update({cach[3]: data_d})
+            elif cach[1] in d_out: d_out[cach[1]].update({cach[2]:{cach[3]: data_d}})
+            else: d_out.update({cach[1]:{cach[2]:{cach[3]: data_d}}})
+        elif num == 3:
+            if cach[1] in d_out: d_out[cach[1]].update({cach[2]: data_d})
+            else: d_out.update({cach[1]:{cach[2]: data_d}})
+        else:
+            d_out.update({cach[1]: data_d})
+    
+    def on_message(client, userdata, message):
+        api.add_dict(message.topic, message.payload.decode("utf-8"))
+
+    def read_data(data):
+        data_cach = []
+        data_cach.append(data.get("key"))
+        uidd = data_cach[0]
+        data_read = []
+        try:
+            f_d = open("/home/pi/tgn_smart_home/tgn-api/api.db","r")
+            for line in f_d:
+                data_read.append(line.rstrip())
+            f_d.close()
+            if( uidd in data_read):
+                client = mqtt.Client("TGN Smart Home")
+                client.connect(get_ip())
+                client.on_message=api.on_message
+                client.loop_start()
+                client.subscribe([("tgn/#",0)])
+                time.sleep(2)
+                client.loop_stop()
+                return(d_out)
+        except IOError:
+            return("cannot open api.db.... file not found - Please start master_key.py")
 
     def decode_data(data):
         data_cach = []
