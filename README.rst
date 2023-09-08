@@ -71,6 +71,7 @@ Button Name Configuration for set System
  * y_buttonname = Shelly
 
 API use
+
 * ini API: 
     python3 /home/pi/tgn_smart_home/tgn-api/master_key.py
 
