@@ -13,7 +13,16 @@ class api:
     def add_dict(top_d, data_d):
         cach = top_d.split("/")
         num = len(cach)
-        if num == 4:
+        if num == 5:
+            if cach[1] in d_out and cach[2] in d_out[cach[1]]: 
+                d_out[cach[1]][cach[2]][cach[3]].update({cach[4]: data_d})
+            elif cach[1] in d_out and cach[2] in d_out[cach[1]]: 
+                d_out[cach[1]][cach[2]].update({cach[3]:{cach[4]: data_d}})
+            elif cach[1] in d_out:
+                d_out[cach[1]].update({cach[2]:{cach[3]:{cach[4]: data_d}}})
+            else: 
+                d_out.update({cach[1]:{cach[2]:{cach[3]:{cach[4]: data_d}}}})
+        elif num == 4:
             if cach[1] in d_out and cach[2] in d_out[cach[1]]: d_out[cach[1]][cach[2]].update({cach[3]: data_d})
             elif cach[1] in d_out: d_out[cach[1]].update({cach[2]:{cach[3]: data_d}})
             else: d_out.update({cach[1]:{cach[2]:{cach[3]: data_d}}})
