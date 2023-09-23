@@ -6,6 +6,27 @@ import socket
 import sys
 from datetime import datetime
 
+def hue_start():
+    try:
+        from pyHUE import HueApi
+    except:
+        print("pyHUE not found! Install: 'git clone https://github.com/cyber-Ahn/pyHUE.git' ")
+    import time
+    hue_bridge_ip = "192.168.0.34"
+    hue_bridge_user_id = "wpBmTd9f7UEcK-ZLs7oypzKoeBJ3Nl0nFhrYaxBd"
+    try:
+        hue = HueApi(ip=hue_bridge_ip,user=hue_bridge_user_id)
+        cach_name = hue.get_light_list()
+        for x in cach_name:
+            name = x.split("|")[2] 
+            hue.set_light(name,"enable","0")
+            hue.set_light(name,"brightness","254")
+            hue.set_light(name,"color",[255,0,255])
+    except:
+        print("Bridge offline! Tray again in 30 sec.")
+        time.sleep(30)
+        hue_start()
+
 def bytes_to_GB(bytes):
     gb = bytes/(1024*1024*1024)
     gb = round(gb, 2)
@@ -95,3 +116,4 @@ for interface_name, interface_addresses in if_addrs.items():
             elif str(address.family) == 'AddressFamily.AF_PACKET':
                 client.publish("tgn/info/network/mac",address.address,qos=0,retain=True)
                 print("[+] MAC Address :", address.address)
+hue_start()

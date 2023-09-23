@@ -77,26 +77,11 @@ sudo python3 setup.py install
 cd ..
 sleep 3
 rm -fr Adafruit_Python_BMP/
-sudo mv /home/pi/tgn_smart_home/setup_files/habridge_install.sh /home/pi/tgn_smart_home
-sudo mv /home/pi/tgn_smart_home/setup_files/AlexaInstaller.sh /home/pi/tgn_smart_home
 clear
 echo -e "\e[33m>> \e[31mCopy tgn NeuralNetwork (y/n)?\e[32m"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then
 git clone https://github.com/cyber-Ahn/tgn_neural_network.git
-clear
-fi
-echo -e "\e[33m>> \e[31mset authority\e[32m"
-chmod +x start_gui.sh
-chmod +x habridge_install.sh
-sleep 5
-echo -e "\e[33m>> \e[31mInstall habridge (y/n)?\e[32m"
-read answer
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-sudo bash habridge_install.sh
-sleep 1
-sudo rm -r habridge_install.sh
-sleep 5
 clear
 fi
 echo -e "\e[33m>> \e[31mInstall PiHole (y/n)?\e[32m"
@@ -114,8 +99,6 @@ read ver
 sudo mv /home/pi/tgn_smart_home/setup_files/tgnLIB.py /usr/local/lib/python"$ver"/dist-packages/
 sudo mv /home/pi/tgn_smart_home/setup_files/tgn_file_crypt.py /usr/local/lib/python"$ver"/dist-packages/
 sudo python3 /usr/local/lib/python"$ver"/dist-packages/tgn_file_crypt.py
-sudo mv /home/pi/tgn_setup_lib/setup_files/habridge.config /home/pi/habridge/data
-sudo mv /home/pi/tgn_setup_lib/setup_files/device.db /home/pi/habridge/data
 sudo cp /home/pi/tgn_smart_home/setup_files/adlists.list /etc/.pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/adlists.list /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/black.list /etc/pihole/

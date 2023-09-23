@@ -227,13 +227,15 @@ def get_pihole_data(url, pw):
 def gps():
 	subprocess.call('python3 /home/pi/tgn_smart_home/libs/gps_i2c_PA1010D.py', shell=True)
 
+def info_sys():
+	subprocess.call('python3 /home/pi/tgn_smart_home/libs/sys_info.py', shell=True)
+
 def ini():
 	logging_tgn("check_files","tgn_smart_home.log")
-	subprocess.call('python3 libs/sys_info.py', shell=True)
 	os.system('clear')
 	global spr
 	global su
-	Process(target=splash).start()
+	#Process(target=splash).start()
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(radar_sw_pin, GPIO.IN)
 	#MCP23017 I2C
@@ -2373,8 +2375,6 @@ def callback48():
 	print(str(radar_on))
 def clearLOG():
 	print("Clear Logs")
-	setn = "rm -fr /home/pi/tgn_smart_home/log/ha_bridge.log"
-	os.system(setn)
 	setn = "rm -fr /home/pi/tgn_smart_home/log/sinric.log"
 	os.system(setn)
 	setn = "rm -fr /home/pi/tgn_smart_home/log/sonoff.log"
@@ -3282,6 +3282,7 @@ def lcars_screen_20():
 web_interface("sync", "1")
 time.sleep(2)
 #Process(target=gps).start()
+Process(target=info_sys).start()
 time.sleep(2)
 Process(target=read_infos).start()
 
