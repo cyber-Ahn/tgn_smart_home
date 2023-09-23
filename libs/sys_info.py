@@ -5,6 +5,7 @@ import psutil
 import socket
 import sys
 from datetime import datetime
+from tgnLIB import decode
 
 def hue_start():
     try:
@@ -12,8 +13,17 @@ def hue_start():
     except:
         print("pyHUE not found! Install: 'git clone https://github.com/cyber-Ahn/pyHUE.git' ")
     import time
-    hue_bridge_ip = "192.168.0.00"
-    hue_bridge_user_id = "hue_user_id"
+    hue_bridge_ip = "192.168.0.34"
+    hue_bridge_user_id = "wpBmTd9f7UEcK-ZLs7oypzKoeBJ3Nl0nFhrYaxBd"
+    try:
+        f_d = open("/home/pi/tgn_smart_home/config/system.config","r")
+        for line in f_d:
+            if "hue_user" in line:
+                hue_bridge_user_id = decode(line.rstrip().split("*")[1])
+            if "hue_ip" in line:
+                hue_bridge_ip = line.rstrip().split("*")[1]
+    except IOError:
+        print("cannot open system.config.... file not found")
     try:
         hue = HueApi(ip=hue_bridge_ip,user=hue_bridge_user_id)
         cach_name = hue.get_light_list()
