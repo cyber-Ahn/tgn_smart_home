@@ -12,8 +12,8 @@ def hue_start():
     except:
         print("pyHUE not found! Install: 'git clone https://github.com/cyber-Ahn/pyHUE.git' ")
     import time
-    hue_bridge_ip = "192.168.0.34"
-    hue_bridge_user_id = "wpBmTd9f7UEcK-ZLs7oypzKoeBJ3Nl0nFhrYaxBd"
+    hue_bridge_ip = "192.168.0.00"
+    hue_bridge_user_id = "wpBmTd9f7UEcK-ZLs7oypzKoeBJ3Nl0nFhrYaxBdx"
     try:
         hue = HueApi(ip=hue_bridge_ip,user=hue_bridge_user_id)
         cach_name = hue.get_light_list()
