@@ -1,0 +1,12 @@
+[Unit]
+Description=TGN_MQTT_SERVER
+After=network.service
+
+[Service]
+ExecStart=/home/pi/tgn_smart_home/tgn-api/synric.sh
+
+RestartSec=15
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

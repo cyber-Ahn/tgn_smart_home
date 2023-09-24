@@ -145,9 +145,13 @@ sudo rm -fr /home/pi/tgn_smart_home/setup_4.sh
 sudo rm -fr /home/pi/tgn_smart_home/requirements.txt
 sudo rm -fr /home/pi/tgn_smart_home/requirements_apt.txt
 sudo chmod +x /home/pi/tgn_smart_home/tgn-api/api.sh
+sudo chmod +x /home/pi/tgn_smart_home/tgn-api/synric.sh
 sudo cp /home/pi/tgn_smart_home/tgn-api/tgnapi.service /etc/systemd/system
+sudo cp /home/pi/tgn_smart_home/tgn-api/tgnsynric.service /etc/systemd/system
 systemctl daemon-reload >/dev/null 2>&1
 systemctl enable tgnapi.service >/dev/null 2>&1
 systemctl start tgnapi.service >/dev/null 2>&1
+systemctl enable tgnsynric.service >/dev/null 2>&1
+systemctl start tgnsynric.service >/dev/null 2>&1
 sleep 10
 reboot
