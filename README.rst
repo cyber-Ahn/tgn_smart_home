@@ -65,6 +65,7 @@ Installation:
 GUI Start with /home/pi/start_main_gui.sh
 
 Button Name Configuration for set System
+
  * buttonname   = 423MHZ
  * s_buttonname = Sonoff
  * p_buttonname = Kasa HS100
@@ -72,27 +73,27 @@ Button Name Configuration for set System
 
 API use
 
-* ini API: 
+ * ini API: 
     python3 /home/pi/tgn_smart_home/tgn-api/master_key.py
 
     save this Key (Master_key) !!!
 
-* generate user_keys
+ * generate user_keys
     http://192.111.0.5:5555/genkey/Master_key
 
     save the user_key
 
-* read API
+ * read API
     http://192.111.0.5:5555/api/read?key=USER-KEY
 
     example: http://192.111.0.5:5555/api/read?key=mmvdnQzWa06sJijOvfncQ6vrd
 
-* set button
+ * set button
     http://192.111.0.5:5555/api?key=USER-KEY&opt=button&butnr=BUTTON-NUMBER&stat=STATUS
 
     example: http://192.111.0.5:5555?api/key=mmvdnQzWa06sJijOvfncQ6sswa&opt=button&butnr=3&stat=1
 
-* Ir Air Conditioner
+ * Ir Air Conditioner
     http://192.111.0.5:5555/api?stat=0&key=USER-KEY&opt=IrAirConditioner&butnr=COMMAND
 
     example: http://192.111.0.5:5555/api?stat=0&key=mmvdnQzWa06sJijOvfncQtfzggu&opt=IrAirConditioner&butnr=power
