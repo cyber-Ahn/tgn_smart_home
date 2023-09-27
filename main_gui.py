@@ -235,7 +235,7 @@ def ini():
 	os.system('clear')
 	global spr
 	global su
-	#Process(target=splash).start()
+	Process(target=splash).start()
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(radar_sw_pin, GPIO.IN)
 	#MCP23017 I2C
