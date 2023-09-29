@@ -145,6 +145,13 @@ class api:
                             return("command not foend")
                     except IOError:
                         return("cannot open system.config")
+                elif(data_cach[1] == "RPiPshutdown"):
+                    client = mqtt.Client("TGN API")
+                    client.connect(get_ip())
+                    client.loop_start()
+                    client.publish("tgn/pico/shutdown","1",qos=0,retain=True)
+                    client.loop_stop()
+                    return("shutdown RPIP")
                 else:
                     return("command is not supported!")
             else:
