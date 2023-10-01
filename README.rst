@@ -27,6 +27,7 @@ Plug / Socket / Modul Options:
  * 433Mhz RF Socket / Wireless Transmitter-Reciver-Modul Link-Kit für ARM / MCU -- Transmitter on GPIO 17 /Reciver on GPIO 26
  * Wlan-Socket Kasa HS100
  * Shelly (V. 1 / 2 / 2.5 / 4 / plug / bulb )
+ * Sonoff (TGN-Sonoff)
 
 ON I2C Bus: (all Optional)
  
@@ -40,10 +41,10 @@ ON I2C Bus: (all Optional)
   
 Sensors optional:
    
-   * NodeMcu with DHT22, Fotoresitor and Small Display
-   * Android Phone for Smart Home App
-   * NodeMcu with DHT22, Fotoresistor and PIR Sensor
-   * NodeMcu with NeoPixel Light (ws2812b)
+   * NodeMcu/RPI Pico with DHT22, Fotoresitor and Small Display
+   * Android/RPI Pico Phone for Smart Home App
+   * NodeMcu/RPI Pico with DHT22, Fotoresistor and PIR Sensor
+   * NodeMcu/RPI Pico with NeoPixel Light (ws2812b)
    
 Installation:
 
