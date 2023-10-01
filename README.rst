@@ -3,7 +3,7 @@
 |Build Status|  |Python versions|
 
 Project for a smarthome control with 433MHz transmitter or some WLAN Plugs, weather info, optional NodeMCU or Raspberry PI Pico boards as Sensors, Android App(sep. Project),
-Api-Server and sinric-bridge for Alexa.
+Api-Server and Sinric-bridge Server for Alexa.
 
 The setup installs all required libraries and programs.
 
