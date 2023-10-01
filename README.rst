@@ -124,7 +124,7 @@ API use
    :target: https://github.com/cyber-Ahn/tgn_smart_home
 .. |Bild_2| image:: https://caworks-sl.de/Smart_Home_Images/IMG_20180602_215043.jpg
    :target: https://github.com/cyber-Ahn/tgn_smart_home
-.. |Bild_3| image:: https://caworks-sl.de/Smart_Home_Images/Smart Home Comunications.jpg
+.. |Bild_3| image:: https://caworks-sl.de/Smart_Home_Images/Smart_Home_Comunications.jpg
    :target: https://github.com/cyber-Ahn/tgn_smart_home
 .. |Bild_4| image:: https://caworks-sl.de/Smart_Home_Images/IMG_20180602_214845.jpg
    :target: https://github.com/cyber-Ahn/tgn_smart_home
