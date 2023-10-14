@@ -151,6 +151,7 @@ esp_3_color = "0.0.0.255"
 esp_3_game = "0"
 #autoHum
 autohum_stat = 0
+autohum_stat_b = 0
 autohum_on_time = "00:01"
 autohum_off_time = "01:00"
 autohum_on_var = "50.0"
@@ -922,6 +923,7 @@ def hum_check(time_in):
 	day_c = time_in.split(" ")[0]
 	hour_c = time_in.split(" ")[3].split(":")[0]
 	global autohum_stat
+	global autohum_stat_b
 	if ((float(pico_hum) >= float(autohum_on_var)) and (day_c == "Sun" or day_c == "Sat")):
 		if (autohum_stat == 0):
 			print("On Hum Day")
@@ -940,6 +942,26 @@ def hum_check(time_in):
 			client.publish("tgn/system/autohum","0",qos=0,retain=True)
 			autohum_stat = 0
 			client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
+	air_conditioner_check()
+	#-------------
+	if ((float(esp_hum) >= float(autohum_on_var)) and (day_c == "Sun" or day_c == "Sat") and str(esp_temp) != "nan"):
+		if (autohum_stat_b == 0):
+			print("On Hum Day")
+			client.publish("tgn/system/autohum_b","1",qos=0,retain=True)
+			autohum_stat_b = 1
+			client.publish("tgn/buttons/status/9","1",qos=0,retain=True)
+	elif ((float(esp_hum) >= float(autohum_on_var)) and (float(hour_c) < float(autohum_off_time) or float(hour_c) > float(autohum_on_time)) and str(esp_temp) != "nan"):
+		if (autohum_stat_b == 0):
+			print("On Hum on Hour")
+			client.publish("tgn/system/autohum_b","1",qos=0,retain=True)
+			autohum_stat_b = 1
+			client.publish("tgn/buttons/status/9","1",qos=0,retain=True)
+	else:
+		if (autohum_stat_b == 1 and str(esp_temp) != "nan"):
+			print("Off Hum")
+			client.publish("tgn/system/autohum_b","0",qos=0,retain=True)
+			autohum_stat_b = 0
+			client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
 	air_conditioner_check()
 
 def air_switch():
