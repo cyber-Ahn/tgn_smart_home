@@ -42,7 +42,7 @@ ON I2C Bus: (all Optional)
 Sensors optional:
    
    * NodeMcu/RPI Pico with DHT22, Fotoresitor and Small Display
-   * Android/RPI Pico Phone for Smart Home App
+   * Android Phone for Smart Home App
    * NodeMcu/RPI Pico with DHT22, Fotoresistor and PIR Sensor
    * NodeMcu/RPI Pico with NeoPixel Light (ws2812b)
    
