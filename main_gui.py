@@ -18,18 +18,6 @@ LCD_ADDRESS = 0x00
 MCP_ADDRESS = 0x00
 NFC_ADDRESS = 0x00
 
-try:
-	f_d = open("/home/pi/tgn_smart_home/config/i2c.config","r")
-	for line in f_d:
-		if "LCD_ADDRESS" in line:
-			LCD_ADDRESS = int(line.rstrip().split("*")[1],16)
-		if "MCP_ADDRESS" in line:
-			MCP_ADDRESS = int(line.rstrip().split("*")[1],16)
-		if "NFC_ADDRESS" in line:
-			NFC_ADDRESS = int(line.rstrip().split("*")[1],16)
-except IOError:
-    print("cannot open i2c.config.... file not found")
-
 #thing speak
 channel_id = 43245
 write_key = "1234567890"
@@ -200,6 +188,19 @@ ir_up = "x"
 ir_down = "x"
 ir_topic = "x"
 
+#load i2c address
+try:
+	f_d = open("/home/pi/tgn_smart_home/config/i2c.config","r")
+	for line in f_d:
+		if "LCD_ADDRESS" in line:
+			LCD_ADDRESS = int(line.rstrip().split("*")[1],16)
+		if "MCP_ADDRESS" in line:
+			MCP_ADDRESS = int(line.rstrip().split("*")[1],16)
+		if "NFC_ADDRESS" in line:
+			NFC_ADDRESS = int(line.rstrip().split("*")[1],16)
+except IOError:
+    print("cannot open i2c.config.... file not found")
+
 #functions
 def get_pihole_data(url, pw):
     global DNSQUERIES
@@ -342,7 +343,7 @@ def ini():
 		RTCpower = 1
 	print(">>initialize EEPROM")
 	time.sleep(3)
-	if ifI2C(ROM_ADDRESS) == "found device":
+	if ifI2C(ROM_ADDRESS) == "found device" or RTCpower == 1:
 		logging_tgn("Boot System - Read ROM","tgn_smart_home.log")
 		start_add_U = 0xcf
 		if(su==1):
@@ -957,11 +958,11 @@ def hum_check(time_in):
 			autohum_stat_b = 1
 			client.publish("tgn/buttons/status/9","1",qos=0,retain=True)
 	else:
-		if (autohum_stat_b == 1 and str(esp_temp) != "nan"):
+		if (autohum_stat_b == 1 and str(esp_hum) != "nan"):
 			print("Off Hum")
 			client.publish("tgn/system/autohum_b","0",qos=0,retain=True)
 			autohum_stat_b = 0
-			client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
+			#client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
 	air_conditioner_check()
 
 def air_switch():
