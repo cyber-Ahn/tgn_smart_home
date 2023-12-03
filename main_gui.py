@@ -343,7 +343,7 @@ def ini():
 		RTCpower = 1
 	print(">>initialize EEPROM")
 	time.sleep(3)
-	if ifI2C(ROM_ADDRESS) == "found device" or RTCpower == 1:
+	if ifI2C(ROM_ADDRESS) == "found device" or ifI2C(ROM_ADDRESS) == "not found":
 		logging_tgn("Boot System - Read ROM","tgn_smart_home.log")
 		start_add_U = 0xcf
 		if(su==1):
