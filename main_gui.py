@@ -118,14 +118,14 @@ esp_ls = 0
 esp_switch = 70
 esp_switch_b = 120
 esp_temp = "0.02"
-esp_hum = "--"
+esp_hum = "1.1"
 esp_rssi = "--"
 esp_li = "100"
 #ESP8622/2
 esp_ip_2 = "---.---.---.---"
 esp_pr_2 = "--"
 esp_temp_2 = "0.05"
-esp_hum_2 = "--"
+esp_hum_2 = "1.1"
 esp_rssi_2 = "--"
 esp_li_2 = "100"
 esp_b1_2 = "off"
@@ -238,8 +238,6 @@ def ini():
 	global spr
 	global su
 	Process(target=splash).start()
-	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(radar_sw_pin, GPIO.IN)
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
@@ -2791,15 +2789,7 @@ class Window_1_lcars(Frame):
 					mqtt_msg_cach = mqtt_msg
 					if(su==1):
 						Process(target=TextToSpeech, args=(mqtt_msg,spr)).start()
-				if GPIO.input(radar_sw_pin) == 0:
-					if radar_sw_state == 1 and radar_on == 1:
-						radar_sw_state = 0
-						print("Picture Off")
-				else:
-					if radar_sw_state == 0 and radar_on == 1:
-						radar_sw_state = 1
-						print("Take a Picture and send to Pushbullet.....")
-						Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/",pushbulletkey)).start()
+				
 				if MCPpower == 1:
 					if mcp.input(9) >> 9 == 1:
 						callback12() #light(button[3])
