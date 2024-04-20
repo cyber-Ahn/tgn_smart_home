@@ -13,7 +13,6 @@ if [ "$(id -u)" != "0" ]; then
    echo "The script must be executed as root!"
    exit 1
 fi
-
 echo -e "\e[32m#######################################################"
 echo -e "\e[32m####      \e[31mtgn_smart_home INSTALLATION FOR           \e[32m###"
 echo -e "\e[32m####           \e[31mRASPBERRY PI 3 & PI 3 B+             \e[32m###"
