@@ -41,7 +41,7 @@ spr = "en"
 spr_phat = ""
 textcpu = ""
 textswitch = ""
-su = 0
+su = 1
 Ts = 0
 pw = "0"
 buttons = ["1", "2", "3", "4", "5", "6","7","8","9"]
@@ -237,7 +237,7 @@ def ini():
 	os.system('clear')
 	global spr
 	global su
-	Process(target=splash).start()
+	#Process(target=splash).start()
 	#MCP23017 I2C
 	print(">>initialize MCP23017")
 	if ifI2C(MCP_ADDRESS) == "found device":
@@ -259,7 +259,7 @@ def ini():
 		if(su==1):
 			Process(target=TextToSpeech, args=("MCP23017 not found",spr)).start()
 	#LCD
-	time.sleep(2)
+	time.sleep(4)
 	print(">>initialize LCD Display")
 	if ifI2C(LCD_ADDRESS) == "found device":
 		global LCDpower
@@ -940,9 +940,7 @@ def hum_check(time_in):
 			print("Off Hum")
 			client.publish("tgn/system/autohum","0",qos=0,retain=True)
 			autohum_stat = 0
-			client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
-	air_conditioner_check()
-	#-------------
+			#client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
 	if ((float(esp_hum) >= float(autohum_on_var)) and (day_c == "Sun" or day_c == "Sat") and str(esp_temp) != "nan"):
 		if (autohum_stat_b == 0):
 			print("On Hum Day")
@@ -1803,9 +1801,8 @@ def on_message(client, userdata, message):
 			else:
 				send(9,b9)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9))
-			web_interface("9", str(b9))
 			if(su==1):
-				Process(target=TextToSpeech, args=(buttons[8],spr)).start()
+				Process(target=TextToSpeech, args=(buttons[8].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/8"):
 		if(int(message.payload.decode("utf-8")) != b8):
 			b8 = int(message.payload.decode("utf-8"))
@@ -1821,9 +1818,8 @@ def on_message(client, userdata, message):
 			else:
 				send(8,b8)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6b,str(b8))
-			web_interface("8", str(b8))
 			if(su==1):
-				Process(target=TextToSpeech, args=(buttons[7],spr)).start()
+				Process(target=TextToSpeech, args=(buttons[7].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/7"):
 		if(int(message.payload.decode("utf-8")) != b7):
 			b7 = int(message.payload.decode("utf-8"))
@@ -1839,9 +1835,8 @@ def on_message(client, userdata, message):
 			else:
 				send(7,b7)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6a,str(b7))
-			web_interface("7", str(b7))
 			if(su==1):
-				Process(target=TextToSpeech, args=(buttons[6],spr)).start()
+				Process(target=TextToSpeech, args=(buttons[6].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/6"):
 		if(int(message.payload.decode("utf-8")) != b6):
 			b6 = int(message.payload.decode("utf-8"))
@@ -1857,9 +1852,8 @@ def on_message(client, userdata, message):
 			else:
 				send(6,b6)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
-			web_interface("6", str(b6))
 			if(su==1):
-				Process(target=TextToSpeech, args=(buttons[5],spr)).start()
+				Process(target=TextToSpeech, args=(buttons[5].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/5"):
 		if(int(message.payload.decode("utf-8")) != b5):
 			b5 = int(message.payload.decode("utf-8"))
@@ -1875,9 +1869,8 @@ def on_message(client, userdata, message):
 			else:
 				send(5,b5)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x05,str(b5))
-			web_interface("5", str(b5))
 			if(su==1):
-				Process(target=TextToSpeech, args=(buttons[4],spr)).start()
+				Process(target=TextToSpeech, args=(buttons[4].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/4"):
 		if(int(message.payload.decode("utf-8")) != b4):
 			b4 = int(message.payload.decode("utf-8"))
@@ -1893,9 +1886,8 @@ def on_message(client, userdata, message):
 			else:
 				send(4,b4)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x04,str(b4))
-			web_interface("4", str(b4))
 			if(su==1):
-				Process(target=TextToSpeech, args=(buttons[3],spr)).start()
+				Process(target=TextToSpeech, args=(buttons[3].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/3"):
 		if(int(message.payload.decode("utf-8")) != b3):
 			b3 = int(message.payload.decode("utf-8"))
@@ -1911,9 +1903,8 @@ def on_message(client, userdata, message):
 			else:
 				send(3,b3)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x03,str(b3))
-			web_interface("3", str(b3))
 			if(su==1):
-				Process(target=TextToSpeech, args=(buttons[2],spr)).start()
+				Process(target=TextToSpeech, args=(buttons[2].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/2"):
 		if(int(message.payload.decode("utf-8")) != b2):
 			b2 = int(message.payload.decode("utf-8"))
@@ -1929,9 +1920,8 @@ def on_message(client, userdata, message):
 			else:
 				send(2,b2)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x02,str(b2))
-			web_interface("2", str(b2))
 			if(su==1):
-				Process(target=TextToSpeech, args=(buttons[1],spr)).start()
+				Process(target=TextToSpeech, args=(buttons[1].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/1"):
 		if(int(message.payload.decode("utf-8")) != b1):
 			b1 = int(message.payload.decode("utf-8"))
@@ -1947,9 +1937,8 @@ def on_message(client, userdata, message):
 			else:
 				send(1,b1)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x01,str(b1))
-			web_interface("1", str(b1))
 			if(su==1):
-				Process(target=TextToSpeech, args=(buttons[0],spr)).start()
+				Process(target=TextToSpeech, args=(buttons[0].split("_")[1],spr)).start()
 	if(message.topic=="tgn/system/shutdown"):
 		if(int(message.payload.decode("utf-8")) == 1):
 			if(su==1):
@@ -1997,6 +1986,15 @@ def on_message(client, userdata, message):
 		if(int(message.payload.decode("utf-8")) >= 1):
 			client.publish("tgn/esp_32_cam/record","0",qos=0,retain=True)
 			Process(target=ip_cam_record, args=("http://192.168.0.15/capture", 30.0, 800, 600, "/home/pi/Videos/", int(message.payload.decode("utf-8")))).start()
+	if(message.topic=="tgn/voice/mic/status"):
+		if(int(message.payload.decode("utf-8")) >= 1):
+			client.publish("tgn/voice/mic/status","0",qos=0,retain=True)
+			try:
+				setn = "lxterminal -e python3 /home/pi/tgn_chat/main.py"
+				os.system(setn)
+			except IOError:
+				print("TGN_chat not installed")
+
 # updating window (Clock and Temps)
 the_time=''
 TIME = newtime = time.time()
@@ -2107,7 +2105,6 @@ class Window(Frame):
 				cach_time = pcf8563ReadTime()
 				the_time= format_time(cach_time)+" / Automatic: "+ond+" "+rca+"\n"+stats
 				client.publish("tgn/system/time",format_time(cach_time),qos=0,retain=True)
-				web_interface_read()
 				hum_check(format_time(cach_time))
 				global afbground
 				global fground
@@ -2862,7 +2859,6 @@ class Window_1_lcars(Frame):
 				cach_time = pcf8563ReadTime()
 				the_time= format_time(cach_time)+"\nAutomatic: "+ond+"\n"+stats
 				client.publish("tgn/system/time",format_time(cach_time),qos=0,retain=True)
-				web_interface_read()
 				hum_check(format_time(cach_time))
 				global afbground
 				global fground
@@ -3292,7 +3288,6 @@ def lcars_screen_20():
 	
 	root.mainloop()
 
-web_interface("sync", "1")
 time.sleep(2)
 #Process(target=gps).start()
 Process(target=info_sys).start()
