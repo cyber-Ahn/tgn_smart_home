@@ -17,6 +17,9 @@ from tgnLIB import *
 LCD_ADDRESS = 0x00
 MCP_ADDRESS = 0x00
 NFC_ADDRESS = 0x00
+ROM_CACH = 0x00
+CLOCK_CACH = 0x00
+GPS_CACH = 0x00
 
 #thing speak
 channel_id = 43245
@@ -198,6 +201,12 @@ try:
 			MCP_ADDRESS = int(line.rstrip().split("*")[1],16)
 		if "NFC_ADDRESS" in line:
 			NFC_ADDRESS = int(line.rstrip().split("*")[1],16)
+		if "ROM_ADDRESS" in line:
+			ROM_CACH = int(line.rstrip().split("*")[1],16)
+		if "clock_address" in line:
+			CLOCK_CACH = int(line.rstrip().split("*")[1],16)
+		if "gps_address" in line:
+			GPS_CACH = int(line.rstrip().split("*")[1],16)
 except IOError:
     print("cannot open i2c.config.... file not found")
 
@@ -737,7 +746,6 @@ def ini():
 	client.publish("tgn/system/automatic","0",qos=0,retain=True)
 	client.publish("tgn/system/autohum","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot","0",qos=0,retain=True)
-	client.publish("tgn/system/reboot/bot","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/esp1","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/esp2","0",qos=0,retain=True)
 	client.publish("tgn/system/reboot/esp3","0",qos=0,retain=True)
@@ -791,6 +799,12 @@ def ini():
 	client.publish("tgn/pico_1/temp/sensor_1","1.11",qos=0,retain=True)
 	client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
 	client.publish("tgn/android/pmsg","V1.9",qos=0,retain=True)
+	client.publish("tgn/i2c/add/gps",GPS_CACH,qos=0,retain=True)
+	client.publish("tgn/i2c/add/rom",ROM_CACH,qos=0,retain=True)
+	client.publish("tgn/i2c/add/nfc",NFC_ADDRESS,qos=0,retain=True)
+	client.publish("tgn/i2c/add/lcd",LCD_ADDRESS,qos=0,retain=True)
+	client.publish("tgn/i2c/add/mcp",MCP_ADDRESS,qos=0,retain=True)
+	client.publish("tgn/i2c/add/clock",CLOCK_CACH,qos=0,retain=True)
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
@@ -2374,7 +2388,7 @@ def splash():
 	label = tk.Label(root, height=WMHEIGHT, width=WMWIDTH, bg="black")
 	label.pack()
 	root.after(0, update, 0)
-	root.after(45000, root.destroy)
+	root.after(90000, root.destroy)
 	root.mainloop()
 def webplayer():
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/mediaplayer.py"
