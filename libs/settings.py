@@ -1409,9 +1409,9 @@ if command == "rss":
 if command == "update":
 	update_ver()
 if command == "backup":
-	backup_rom(blocknum, phatrom)
+	backup_rom(blocknum, phatrom, ROM_ADDRESS)
 if command == "restore":
-	restore_rom(blocknum, phatrom)
+	restore_rom(blocknum, phatrom, ROM_ADDRESS)
 if command == "test":
 	test()
 if command == "clear_mqtt":
