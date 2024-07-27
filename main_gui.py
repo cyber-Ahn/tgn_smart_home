@@ -289,6 +289,14 @@ def ini():
 		print(">>LCD Display not found")
 		if(su==1):
 			Process(target=TextToSpeech, args=("LCD Display not found",spr)).start()
+	time.sleep(2)
+	if ifI2C(ROM_ADDRESS) == "found device":
+		if(su==1):
+			Process(target=TextToSpeech, args=("ROM configured",spr)).start()
+	else:
+		print(">>ROM not found")
+		if(su==1):
+			Process(target=TextToSpeech, args=("ROM not found",spr)).start()
 	global ontime
 	global offtime
 	global s1
@@ -950,11 +958,11 @@ def hum_check(time_in):
 			autohum_stat = 1
 			client.publish("tgn/buttons/status/8","1",qos=0,retain=True)
 	else:
-		if (autohum_stat == 1):
+		if (autohum_stat == 1 and (float(pico_hum) <= float(autohum_on_var)-5)):
 			print("Off Hum")
 			client.publish("tgn/system/autohum","0",qos=0,retain=True)
 			autohum_stat = 0
-			#client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
+			client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
 	if ((float(esp_hum) >= float(autohum_on_var)) and (day_c == "Sun" or day_c == "Sat") and str(esp_temp) != "nan"):
 		if (autohum_stat_b == 0):
 			print("On Hum Day")
@@ -968,11 +976,11 @@ def hum_check(time_in):
 			autohum_stat_b = 1
 			client.publish("tgn/buttons/status/9","1",qos=0,retain=True)
 	else:
-		if (autohum_stat_b == 1 and str(esp_hum) != "nan"):
+		if (autohum_stat_b == 1 and str(esp_hum) != "nan" and (float(esp_hum) <= float(autohum_on_var)-5)):
 			print("Off Hum")
 			client.publish("tgn/system/autohum_b","0",qos=0,retain=True)
 			autohum_stat_b = 0
-			#client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
+			client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
 	air_conditioner_check()
 
 def air_switch():
@@ -1963,6 +1971,8 @@ def on_message(client, userdata, message):
 			if LCDpower == 1:
 				mylcd.lcd_clear()
 				mylcd.backlight(0)
+			client.publish("tgn/system/shutdown","0",qos=0,retain=True)
+			time.sleep(5)
 			call(['shutdown', '-h', 'now'], shell=False)
 	if(message.topic=="tgn/system/reboot"):
 		if(int(message.payload.decode("utf-8")) == 1):
