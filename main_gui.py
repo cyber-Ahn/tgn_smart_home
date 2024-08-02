@@ -110,8 +110,6 @@ phat = "/home/pi/tgn_smart_home/icons/"
 color_button = []
 mqtt_msg = "empty"
 mqtt_msg_cach = "empty"
-ttiv = 50000
-cach_time = ""
 day_n = ""
 count_pos_b = "1"
 #Pico
@@ -150,7 +148,6 @@ autohum_botton = "0"
 pico_hum = "76.0"
 #RSS
 rssfeed = "no feed"
-rssurl = "empty"
 rsslang = "en"
 #PiHole
 pihole_url = "http://192.168.0.00"
@@ -240,6 +237,71 @@ def gps():
 
 def info_sys():
 	subprocess.call('python3 /home/pi/tgn_smart_home/libs/sys_info.py', shell=True)
+
+def set_mqtt_start():
+	client.publish("tgn/pico/shutdown","0",qos=0,retain=True)
+	client.publish("tgn/system/automatic","0",qos=0,retain=True)
+	client.publish("tgn/system/autohum","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot/esp1","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot/esp2","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot/esp3","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot/esp4","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot/cam","0",qos=0,retain=True)
+	client.publish("tgn/system/reboot/sonoff","0",qos=0,retain=True)
+	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
+	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
+	client.publish("tgn/system/radar","0",qos=0,retain=True)
+	client.publish("tgn/bot/shutdown","0",qos=0,retain=True)
+	client.publish("tgn/bot/status","offline",qos=0,retain=True)
+	client.publish("tgn/system/weather","0",qos=0,retain=True)
+	client.publish("tgn/system/mic","0",qos=0,retain=True)
+	client.publish("tgn/system/clock","0",qos=0,retain=True)
+	client.publish("tgn/esp_1/analog/sensor_1","50",qos=0,retain=True)
+	client.publish("tgn/esp_2/analog/sensor_1","200",qos=0,retain=True)
+	client.publish("tgn/language",spr,qos=0,retain=True)
+	client.publish("tgn/version",version,qos=0,retain=True)
+	client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
+	client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
+	client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
+	client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
+	client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
+	client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
+	client.publish("tgn/buttons/status/7",b7,qos=0,retain=True)
+	client.publish("tgn/buttons/status/8",b8,qos=0,retain=True)
+	client.publish("tgn/buttons/status/9",b9,qos=0,retain=True)
+	client.publish("tgn/buttons/name/1",b1A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/2",b2A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/3",b3A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/4",b4A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/5",b5A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/6",b6A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/7",b7A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/8",b8A,qos=0,retain=True)
+	client.publish("tgn/buttons/name/9",b9A,qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/color","0.0.0.255",qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/color_cach","-65279",qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
+	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
+	client.publish("tgn/mqtt-msg","System Online",qos=0,retain=True)
+	client.publish("tgn/gesture/touch","0",qos=0,retain=True)
+	client.publish("tgn/gesture/btn_ni_li","6",qos=0,retain=True)
+	client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
+	out_size=format_byte_size(get_dir_size(r"/home/pi/tgn_smart_home/log"))
+	client.publish("tgn/system/log",out_size,qos=0,retain=True)
+	client.publish("tgn/esp_1/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/esp_2/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/pico_1/temp/sensor_2","75.0",qos=0,retain=True)
+	client.publish("tgn/pico_1/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
+	client.publish("tgn/android/pmsg","V1.9",qos=0,retain=True)
+	client.publish("tgn/i2c/add/gps",GPS_CACH,qos=0,retain=True)
+	client.publish("tgn/i2c/add/rom",ROM_CACH,qos=0,retain=True)
+	client.publish("tgn/i2c/add/nfc",NFC_ADDRESS,qos=0,retain=True)
+	client.publish("tgn/i2c/add/lcd",LCD_ADDRESS,qos=0,retain=True)
+	client.publish("tgn/i2c/add/mcp",MCP_ADDRESS,qos=0,retain=True)
+	client.publish("tgn/i2c/add/clock",CLOCK_CACH,qos=0,retain=True)
 
 def ini():
 	logging_tgn("check_files","tgn_smart_home.log")
@@ -750,69 +812,7 @@ def ini():
 	client.connect(get_ip())
 	client.loop_start()
 	#send status to mqtt
-	client.publish("tgn/pico/shutdown","0",qos=0,retain=True)
-	client.publish("tgn/system/automatic","0",qos=0,retain=True)
-	client.publish("tgn/system/autohum","0",qos=0,retain=True)
-	client.publish("tgn/system/reboot","0",qos=0,retain=True)
-	client.publish("tgn/system/reboot/esp1","0",qos=0,retain=True)
-	client.publish("tgn/system/reboot/esp2","0",qos=0,retain=True)
-	client.publish("tgn/system/reboot/esp3","0",qos=0,retain=True)
-	client.publish("tgn/system/reboot/esp4","0",qos=0,retain=True)
-	client.publish("tgn/system/reboot/cam","0",qos=0,retain=True)
-	client.publish("tgn/system/reboot/sonoff","0",qos=0,retain=True)
-	client.publish("tgn/ip",get_ip(),qos=0,retain=True)
-	client.publish("tgn/system/shutdown","0",qos=0,retain=True)
-	client.publish("tgn/system/radar","0",qos=0,retain=True)
-	client.publish("tgn/bot/shutdown","0",qos=0,retain=True)
-	client.publish("tgn/bot/status","offline",qos=0,retain=True)
-	client.publish("tgn/system/weather","0",qos=0,retain=True)
-	client.publish("tgn/system/mic","0",qos=0,retain=True)
-	client.publish("tgn/system/clock","0",qos=0,retain=True)
-	client.publish("tgn/esp_1/analog/sensor_1","50",qos=0,retain=True)
-	client.publish("tgn/esp_2/analog/sensor_1","200",qos=0,retain=True)
-	client.publish("tgn/language",spr,qos=0,retain=True)
-	client.publish("tgn/version",version,qos=0,retain=True)
-	client.publish("tgn/buttons/status/1",b1,qos=0,retain=True)
-	client.publish("tgn/buttons/status/2",b2,qos=0,retain=True)
-	client.publish("tgn/buttons/status/3",b3,qos=0,retain=True)
-	client.publish("tgn/buttons/status/4",b4,qos=0,retain=True)
-	client.publish("tgn/buttons/status/5",b5,qos=0,retain=True)
-	client.publish("tgn/buttons/status/6",b6,qos=0,retain=True)
-	client.publish("tgn/buttons/status/7",b7,qos=0,retain=True)
-	client.publish("tgn/buttons/status/8",b8,qos=0,retain=True)
-	client.publish("tgn/buttons/status/9",b9,qos=0,retain=True)
-	client.publish("tgn/buttons/name/1",b1A,qos=0,retain=True)
-	client.publish("tgn/buttons/name/2",b2A,qos=0,retain=True)
-	client.publish("tgn/buttons/name/3",b3A,qos=0,retain=True)
-	client.publish("tgn/buttons/name/4",b4A,qos=0,retain=True)
-	client.publish("tgn/buttons/name/5",b5A,qos=0,retain=True)
-	client.publish("tgn/buttons/name/6",b6A,qos=0,retain=True)
-	client.publish("tgn/buttons/name/7",b7A,qos=0,retain=True)
-	client.publish("tgn/buttons/name/8",b8A,qos=0,retain=True)
-	client.publish("tgn/buttons/name/9",b9A,qos=0,retain=True)
-	client.publish("tgn/esp_3/neopixel/color","0.0.0.255",qos=0,retain=True)
-	client.publish("tgn/esp_3/neopixel/color_cach","-65279",qos=0,retain=True)
-	client.publish("tgn/esp_3/neopixel/brightness","10",qos=0,retain=True)
-	client.publish("tgn/esp_3/neopixel/mode","normal",qos=0,retain=True)
-	client.publish("tgn/esp_3/neopixel/setneo","nothing",qos=0,retain=True)
-	client.publish("tgn/mqtt-msg","System Online",qos=0,retain=True)
-	client.publish("tgn/gesture/touch","0",qos=0,retain=True)
-	client.publish("tgn/gesture/btn_ni_li","6",qos=0,retain=True)
-	client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
-	out_size=format_byte_size(get_dir_size(r"/home/pi/tgn_smart_home/log"))
-	client.publish("tgn/system/log",out_size,qos=0,retain=True)
-	client.publish("tgn/esp_1/temp/sensor_1","1.11",qos=0,retain=True)
-	client.publish("tgn/esp_2/temp/sensor_1","1.11",qos=0,retain=True)
-	client.publish("tgn/pico_1/temp/sensor_2","75.0",qos=0,retain=True)
-	client.publish("tgn/pico_1/temp/sensor_1","1.11",qos=0,retain=True)
-	client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
-	client.publish("tgn/android/pmsg","V1.9",qos=0,retain=True)
-	client.publish("tgn/i2c/add/gps",GPS_CACH,qos=0,retain=True)
-	client.publish("tgn/i2c/add/rom",ROM_CACH,qos=0,retain=True)
-	client.publish("tgn/i2c/add/nfc",NFC_ADDRESS,qos=0,retain=True)
-	client.publish("tgn/i2c/add/lcd",LCD_ADDRESS,qos=0,retain=True)
-	client.publish("tgn/i2c/add/mcp",MCP_ADDRESS,qos=0,retain=True)
-	client.publish("tgn/i2c/add/clock",CLOCK_CACH,qos=0,retain=True)
+	set_mqtt_start()
 	if MCPpower == 1:
 		client.publish("tgn/i2c/mcp","online",qos=0,retain=True)
 	else:
@@ -1819,11 +1819,6 @@ def on_message(client, userdata, message):
 				os.system(setn)
 			elif "y_" in buttons[8]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/shelly.py 9 " + str(b9)
-				os.system(setn)
-			else:
-				send(9,b9)
-			write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9))
-			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[8].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/8"):
 		if(int(message.payload.decode("utf-8")) != b8):
@@ -1971,7 +1966,7 @@ def on_message(client, userdata, message):
 			if LCDpower == 1:
 				mylcd.lcd_clear()
 				mylcd.backlight(0)
-			client.publish("tgn/system/shutdown","0",qos=0,retain=True)
+			set_mqtt_start()
 			time.sleep(5)
 			call(['shutdown', '-h', 'now'], shell=False)
 	if(message.topic=="tgn/system/reboot"):
