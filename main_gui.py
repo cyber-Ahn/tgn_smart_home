@@ -112,6 +112,10 @@ mqtt_msg = "empty"
 mqtt_msg_cach = "empty"
 day_n = ""
 count_pos_b = "1"
+hum_1 = "50.0"
+hum_2 = "50.0"
+hum_3 = "50.0"
+hum_4 = "50.0"
 #Pico
 pico_temp = "0.02"
 #ESP8622/1
@@ -294,6 +298,10 @@ def set_mqtt_start():
 	client.publish("tgn/esp_2/temp/sensor_1","1.11",qos=0,retain=True)
 	client.publish("tgn/pico_1/temp/sensor_2","75.0",qos=0,retain=True)
 	client.publish("tgn/pico_1/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/pico_5/temp/sensor_2","75.0",qos=0,retain=True)
+	client.publish("tgn/pico_5/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/pico_6/temp/sensor_2","75.0",qos=0,retain=True)
+	client.publish("tgn/pico_6/temp/sensor_1","1.11",qos=0,retain=True)
 	client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
 	client.publish("tgn/android/pmsg","V1.9",qos=0,retain=True)
 	client.publish("tgn/i2c/add/gps",GPS_CACH,qos=0,retain=True)
@@ -1705,6 +1713,10 @@ def on_message(client, userdata, message):
 	global sol_temp
 	global sol_hum
 	global delay
+	global hum_1
+	global hum_2
+	global hum_3
+	global hum_4
 	if(message.topic=="tgn/air_conditioner/power"):
 		power_air = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/air_conditioner/delay"):
@@ -1808,6 +1820,14 @@ def on_message(client, userdata, message):
 		esp_rssi = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/analog/sensor_1"):
 		esp_li = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/esp_1/temp/sensor_2"):
+		hum_1 = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/pico_1/temp/sensor_2"):
+		hum_2 = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/pico_5/temp/sensor_2"):
+		hum_3 = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/pico_6/temp/sensor_2"):
+		hum_4 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/buttons/status/9"):
 		if(int(message.payload.decode("utf-8")) != b9):
 			b9 = int(message.payload.decode("utf-8"))
@@ -2239,7 +2259,7 @@ class WindowB(Frame):
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
 					timespl = format_time(pcf8563ReadTime()).split(" ")
-					print(write_ts(channel,weather_t,esp_temp_2,esp_temp,pico_temp,"0","0","0"))
+					print(write_ts(channel,esp_temp_2,esp_temp,pico_temp,hum_1,hum_2,hum_3,hum_4))
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				
@@ -2995,7 +3015,7 @@ class Window_2_lcars(Frame):
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
 					timespl = format_time(pcf8563ReadTime()).split(" ")
-					print(write_ts(channel,weather_t,esp_temp_2,esp_temp,pico_temp,"0","0","0"))
+					print(write_ts(channel,esp_temp_2,esp_temp,pico_temp,hum_1,hum_2,hum_3,hum_4))
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				global afbground
