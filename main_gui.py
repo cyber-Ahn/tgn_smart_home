@@ -310,6 +310,12 @@ def set_mqtt_start():
 	client.publish("tgn/i2c/add/lcd",LCD_ADDRESS,qos=0,retain=True)
 	client.publish("tgn/i2c/add/mcp",MCP_ADDRESS,qos=0,retain=True)
 	client.publish("tgn/i2c/add/clock",CLOCK_CACH,qos=0,retain=True)
+	client.publish("tgn/esp_1/name","Living room",qos=0,retain=True)
+	client.publish("tgn/esp_2/name","Outside",qos=0,retain=True)
+	client.publish("tgn/pico_1/name","Children's room",qos=0,retain=True)
+	client.publish("tgn/pico_5/name","Bathroom",qos=0,retain=True)
+	client.publish("tgn/pico_6/name","Bedroom",qos=0,retain=True)
+
 
 def ini():
 	logging_tgn("check_files","tgn_smart_home.log")
