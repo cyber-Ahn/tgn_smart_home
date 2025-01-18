@@ -118,6 +118,8 @@ hum_3 = "50.0"
 hum_4 = "50.0"
 #Pico
 pico_temp = "0.02"
+pico_temp_5 = "0.02"
+pico_temp_6 = "0.02"
 #ESP8622/1
 esp_ls = 0
 esp_switch = 70
@@ -294,14 +296,14 @@ def set_mqtt_start():
 	client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
 	out_size=format_byte_size(get_dir_size(r"/home/pi/tgn_smart_home/log"))
 	client.publish("tgn/system/log",out_size,qos=0,retain=True)
-	client.publish("tgn/esp_1/temp/sensor_1","1.11",qos=0,retain=True)
-	client.publish("tgn/esp_2/temp/sensor_1","1.11",qos=0,retain=True)
-	client.publish("tgn/pico_1/temp/sensor_2","75.0",qos=0,retain=True)
-	client.publish("tgn/pico_1/temp/sensor_1","1.11",qos=0,retain=True)
-	client.publish("tgn/pico_5/temp/sensor_2","75.0",qos=0,retain=True)
-	client.publish("tgn/pico_5/temp/sensor_1","1.11",qos=0,retain=True)
-	client.publish("tgn/pico_6/temp/sensor_2","75.0",qos=0,retain=True)
-	client.publish("tgn/pico_6/temp/sensor_1","1.11",qos=0,retain=True)
+	client.publish("tgn/esp_1/temp/sensor_1","21.0",qos=0,retain=True)
+	client.publish("tgn/esp_2/temp/sensor_1","21.0",qos=0,retain=True)
+	client.publish("tgn/pico_1/temp/sensor_2","40.0",qos=0,retain=True)
+	client.publish("tgn/pico_1/temp/sensor_1","21.0",qos=0,retain=True)
+	client.publish("tgn/pico_5/temp/sensor_2","40.0",qos=0,retain=True)
+	client.publish("tgn/pico_5/temp/sensor_1","21.0",qos=0,retain=True)
+	client.publish("tgn/pico_6/temp/sensor_2","40.0",qos=0,retain=True)
+	client.publish("tgn/pico_6/temp/sensor_1","21.0",qos=0,retain=True)
 	client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
 	client.publish("tgn/android/pmsg","V1.9",qos=0,retain=True)
 	client.publish("tgn/i2c/add/gps",GPS_CACH,qos=0,retain=True)
@@ -310,12 +312,14 @@ def set_mqtt_start():
 	client.publish("tgn/i2c/add/lcd",LCD_ADDRESS,qos=0,retain=True)
 	client.publish("tgn/i2c/add/mcp",MCP_ADDRESS,qos=0,retain=True)
 	client.publish("tgn/i2c/add/clock",CLOCK_CACH,qos=0,retain=True)
-	client.publish("tgn/esp_1/name","Living room",qos=0,retain=True)
+	client.publish("tgn/esp_1/name","Room 1",qos=0,retain=True)
 	client.publish("tgn/esp_2/name","Outside",qos=0,retain=True)
-	client.publish("tgn/pico_1/name","Children's room",qos=0,retain=True)
-	client.publish("tgn/pico_5/name","Bathroom",qos=0,retain=True)
-	client.publish("tgn/pico_6/name","Bedroom",qos=0,retain=True)
+	client.publish("tgn/pico_1/name","Room 2",qos=0,retain=True)
+	client.publish("tgn/pico_5/name","Room 3",qos=0,retain=True)
+	client.publish("tgn/pico_6/name","Room 4",qos=0,retain=True)
 
+def log_temp_hum(data_th):
+    logging_tgn(data_th,"room_data.log")
 
 def ini():
 	logging_tgn("check_files","tgn_smart_home.log")
@@ -1691,6 +1695,8 @@ def shutdown_other():
 def on_message(client, userdata, message):
 	global esp_temp
 	global pico_temp
+	global pico_temp_5
+	global pico_temp_6
 	global esp_hum
 	global esp_temp_2
 	global esp_hum_2
@@ -1816,6 +1822,10 @@ def on_message(client, userdata, message):
 		esp_temp = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/pico_1/temp/sensor_1"):
 		pico_temp = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/pico_5/temp/sensor_1"):
+		pico_temp_5 = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/pico_6/temp/sensor_1"):
+		pico_temp_6 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/temp/sensor_2"):
 		esp_hum = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/temp/sensor_1"):
@@ -2265,7 +2275,8 @@ class WindowB(Frame):
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
 					timespl = format_time(pcf8563ReadTime()).split(" ")
-					print(write_ts(channel,esp_temp_2,esp_temp,pico_temp,hum_1,hum_2,hum_3,hum_4))
+					print(write_ts(channel,pico_temp_5,esp_temp,pico_temp,hum_1,hum_2,hum_3,hum_4))
+					log_temp_hum("LR:"+esp_temp+"#"+hum_1+"|KR:"+pico_temp+"#"+hum_2+"|WC:"+pico_temp_5+"#"+hum_3+"|BR:"+pico_temp_6+"#"+hum_4)
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				
@@ -3021,7 +3032,8 @@ class Window_2_lcars(Frame):
 				cpu_t = getCpuTemperature()
 				if Ts == 1:
 					timespl = format_time(pcf8563ReadTime()).split(" ")
-					print(write_ts(channel,esp_temp_2,esp_temp,pico_temp,hum_1,hum_2,hum_3,hum_4))
+					print(write_ts(channel,pico_temp_5,esp_temp,pico_temp,hum_1,hum_2,hum_3,hum_4))
+					log_temp_hum("LR:"+esp_temp+"#"+hum_1+"|KR:"+pico_temp+"#"+hum_2+"|WC:"+pico_temp_5+"#"+hum_3+"|BR:"+pico_temp_6+"#"+hum_4)
 					output = output+'\n'+(dataText[36].rstrip()+' Update:'+timespl[3])
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				global afbground
