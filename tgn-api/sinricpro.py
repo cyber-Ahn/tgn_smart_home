@@ -50,6 +50,7 @@ if __name__ == '__main__':
         for line in f_d:
             count_d = count_d + 1
             if count_d == 13:
+                print(line)
                 cach_a = line.rstrip().split(":")[1]
                 device = cach_a.split(",")
             if count_d == 25:

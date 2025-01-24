@@ -3,8 +3,14 @@ import string
 import secrets
 from tgnLIB import decode, get_ip
 import time
+import shutil
+import openpyxl
+import subprocess
+import os
 
 d_out = {"API_TGN":"ok"}
+phat_data = "/home/pi/tgn_smart_home/log/"
+file_name = "room_data.log"
 
 class api:
     def __init__(self):
