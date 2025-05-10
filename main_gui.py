@@ -29,6 +29,10 @@ read_key = "1234567890"
 pushbulletkey = "1234567890"
 openweatherkey = "1234567890"
 zipcode = 1234567
+#shelly door
+shelly_topic = "shellies/#"
+shelly_cach = {"wifi_sta":{"ssid": "Matrix"},}
+shelly_message = "no data"
 #system var
 menu_on = 0
 MCP_num_gpios = 16
@@ -122,8 +126,8 @@ pico_temp_5 = "0.02"
 pico_temp_6 = "0.02"
 #ESP8622/1
 esp_ls = 0
-esp_switch = 70
-esp_switch_b = 120
+esp_switch = 27000
+esp_switch_b = 40000
 esp_temp = "0.02"
 esp_hum = "1.1"
 esp_rssi = "--"
@@ -136,8 +140,8 @@ esp_hum_2 = "1.1"
 esp_rssi_2 = "--"
 esp_li_2 = "100"
 esp_b1_2 = "off"
-esp_switch_2 = 70
-esp_switch_2_b = 120
+esp_switch_2 = 27000
+esp_switch_2_b = 40000
 esp_ls_2 = 0
 esp_2_button = "5"
 esp2_cou = 0
@@ -957,6 +961,21 @@ def ini():
 	client.publish("tgn/air_conditioner/sol_temp",sol_temp,qos=0,retain=True)
 	client.publish("tgn/air_conditioner/sol_hum",sol_hum,qos=0,retain=True)
 
+def decode_shelly(data_shelly):
+	global shelly_message
+	json_data = json.loads(data_shelly)
+	shelly_ip = json_data['wifi_sta']['ip']
+	shelly_temp = json_data['tmp']['value']
+	shelly_lux = json_data['lux']['value']
+	shelly_door = json_data['sensor']['state']
+	shelly_bat_prec = json_data['bat']['value']
+	shelly_bat_vol = json_data['bat']['voltage']
+	if shelly_message != shelly_door:
+		shelly_message = shelly_door
+		print("Message: "+shelly_message)
+		client.publish("tgn/android/pmsg","Door: "+shelly_message,qos=0,retain=True)
+	print("IP:"+shelly_ip+"\nTemp:"+str(shelly_temp)+"C\nLux:"+str(shelly_lux)+"Lux\nDoor State:"+shelly_door+"\nBattery:"+str(shelly_bat_prec)+"%\nBat. Voltage:"+str(shelly_bat_vol)+"V")
+
 def hum_check(time_in):
 	#autohum_botton
 	day_c = time_in.split(" ")[0]
@@ -1059,6 +1078,7 @@ def air_conditioner_check():
 			time.sleep(2)
 			client.publish(ir_topic,ir_down)
 		cach_air = stat_air
+	decode_shelly(shelly_cach)
 
 def on():
 	global son
@@ -1729,6 +1749,9 @@ def on_message(client, userdata, message):
 	global hum_2
 	global hum_3
 	global hum_4
+	global shelly_cach
+	if(message.topic=="shellies/shellydw2-1B7C9D/info"):
+		shelly_cach = (message.payload.decode("utf-8"))
 	if(message.topic=="tgn/air_conditioner/power"):
 		power_air = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/air_conditioner/delay"):
@@ -2065,6 +2088,7 @@ class Window(Frame):
 			client.on_message=on_message
 			client.loop_start()
 			client.subscribe([("MQTChroma/*",1),(main_topic,0)])
+			client.subscribe([("MQTChroma/*",1),(shelly_topic,0)])
 			time.sleep(2)
 			client.loop_stop()
 			global the_time
@@ -2230,8 +2254,8 @@ class WindowB(Frame):
 						output = output+(dataText[30].rstrip())+str(data['pressure'])+'hpa \n'
 						output = output+(dataText[31].rstrip())+str(data['sunrise'])+"\n"+(dataText[32].rstrip())+str(data['sunset'])+'\n'
 						output = output+'---------------------------------------------------------\n'
-						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(format_lux(int(esp_li)))+'LUX\n'
-						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(format_lux(int(esp_li_2)))+'LUX\n'
+						output = output+'ESP:'+esp_temp+'°C / '+esp_hum+'% / '+esp_rssi+'dbm / '+str(esp_li)+'LUX\n'
+						output = output+'ESP2:'+esp_temp_2+'°C / '+esp_b1_2+' / '+esp_rssi_2+'dbm / '+str(esp_li_2)+'LUX\n'
 						output = output+'---------------------------------------------------------\n'
 						output = output+temp_data+" / "+str(format_lux(int(esp_li)))+'LUX\n'
 						global weather_t
@@ -2828,6 +2852,7 @@ class Window_1_lcars(Frame):
 			client.on_message=on_message
 			client.loop_start()
 			client.subscribe([("MQTChroma/*",1),(main_topic,0)])
+			client.subscribe([("MQTChroma/*",1),(shelly_topic,0)])
 			time.sleep(2)
 			client.loop_stop()
 			global the_time
