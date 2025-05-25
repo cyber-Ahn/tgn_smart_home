@@ -1697,6 +1697,9 @@ def callback44():
 def sonoff_set(mod, stati):
 	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/tgn_sonoff.py "+mod+" 0 "+stati+" "+get_ip()
 	os.system(setn)
+def tasmota_set(mod, stati):
+	setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/tasmota.py "+mod+" 0 "+stati+" "+get_ip()
+	os.system(setn)
 def bot_down():
 	client.publish("tgn/bot/shutdown","1",qos=0,retain=True)
 	Process(target=sound).start()
@@ -1873,6 +1876,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button9:"+str(b9),"tgn_smart_home.log")
 			if "s_" in buttons[8]:
 				sonoff_set("9", str(b9))
+			elif "t_" in buttons[8]:
+				tasmota_set("9", str(b9))
 			elif "p_" in buttons[8]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 9 " + str(b9)
 				os.system(setn)
@@ -1885,6 +1890,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button8:"+str(b8),"tgn_smart_home.log")
 			if "s_" in buttons[7]:
 				sonoff_set("8", str(b8))
+			elif "t_" in buttons[7]:
+				tasmota_set("8", str(b8))
 			elif "p_" in buttons[7]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 8 " + str(b8)
 				os.system(setn)
@@ -1902,6 +1909,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button7:"+str(b7),"tgn_smart_home.log")
 			if "s_" in buttons[6]:
 				sonoff_set("7", str(b7))
+			elif "t_" in buttons[6]:
+				tasmota_set("7", str(b7))
 			elif "p_" in buttons[6]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 7 " + str(b7)
 				os.system(setn)
@@ -1919,6 +1928,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button6:"+str(b6),"tgn_smart_home.log")
 			if "s_" in buttons[5]:
 				sonoff_set("6", str(b6))
+			elif "t_" in buttons[5]:
+				tasmota_set("6", str(b6))
 			elif "p_" in buttons[5]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 6 " + str(b6)
 				os.system(setn)
@@ -1936,6 +1947,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button5:"+str(b5),"tgn_smart_home.log")
 			if "s_" in buttons[4]:
 				sonoff_set("5", str(b5))
+			elif "t_" in buttons[4]:
+				tasmota_set("5", str(b5))
 			elif "p_" in buttons[4]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 5 " + str(b5)
 				os.system(setn)
@@ -1953,6 +1966,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button4:"+str(b4),"tgn_smart_home.log")
 			if "s_" in buttons[3]:
 				sonoff_set("4", str(b4))
+			elif "t_" in buttons[3]:
+				tasmota_set("4", str(b4))
 			elif "p_" in buttons[3]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 4 " + str(b4)
 				os.system(setn)
@@ -1970,6 +1985,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button3:"+str(b3),"tgn_smart_home.log")
 			if "s_" in buttons[2]:
 				sonoff_set("3", str(b3))
+			elif "t_" in buttons[2]:
+				tasmota_set("3", str(b3))
 			elif "p_" in buttons[2]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 3 " + str(b3)
 				os.system(setn)
@@ -1987,6 +2004,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button2:"+str(b2),"tgn_smart_home.log")
 			if "s_" in buttons[1]:
 				sonoff_set("2", str(b2))
+			elif "t_" in buttons[1]:
+				tasmota_set("2", str(b2))
 			elif "p_" in buttons[1]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 2 " + str(b2)
 				os.system(setn)
@@ -2004,6 +2023,8 @@ def on_message(client, userdata, message):
 			logging_tgn("Button1:"+str(b1),"tgn_smart_home.log")
 			if "s_" in buttons[0]:
 				sonoff_set("1", str(b1))
+			elif "t_" in buttons[0]:
+				tasmota_set("1", str(b1))
 			elif "p_" in buttons[0]:
 				setn = "lxterminal -e python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 1 " + str(b1)
 				os.system(setn)
@@ -2279,15 +2300,6 @@ class WindowB(Frame):
 						client.publish("tgn/room/light",readLight(),qos=0,retain=True)
 						client.publish("tgn/weather/icon",str(data['icon']),qos=0,retain=True)
 						global we_cach
-						if data['sky'] == "Rain":
-							sonoff_set("6", "1")
-							client.publish("tgn/weather/rain","Rain",qos=0,retain=True)
-						elif data['sky'] == "Thunderstorm":
-							sonoff_set("6", "1")
-							client.publish("tgn/weather/rain","Rain",qos=0,retain=True)
-						else:
-							sonoff_set("6", "0")
-							client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
 						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" °C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
@@ -2527,7 +2539,7 @@ if su==1 and is_connected(REMOTE_SERVER)=="Online":
 			Process(target=TextToSpeech, args=((data[4].rstrip()),spr)).start()
 
 def remove_var(name_b_c):
-	if "s_" in name_b_c or "p_" in name_b_c or "y_" in name_b_c :
+	if "s_" in name_b_c or "p_" in name_b_c or "y_" in name_b_c or "t_" in name_b_c :
 		name_b_c = name_b_c.split("_")[1]
 	return name_b_c
 
@@ -3038,15 +3050,6 @@ class Window_2_lcars(Frame):
 						client.publish("tgn/room/light",readLight(),qos=0,retain=True)
 						client.publish("tgn/weather/icon",str(data['icon']),qos=0,retain=True)
 						global we_cach
-						if data['sky'] == "Rain":
-							sonoff_set("6", "1")
-							client.publish("tgn/weather/rain","Rain",qos=0,retain=True)
-						elif data['sky'] == "Thunderstorm":
-							sonoff_set("6", "1")
-							client.publish("tgn/weather/rain","Rain",qos=0,retain=True)
-						else:
-							sonoff_set("6", "0")
-							client.publish("tgn/weather/rain","no Rain",qos=0,retain=True)
 						we_cach = "Temperature "+str(weather_t)+"°C \n Max Temperature "+str(data['temp_max'])+" °C \n Sky "+data['sky']+"\n Windspeed "+str(data['wind'])
 					else:
 						output = output+(dataText[35].rstrip())+'\n'
