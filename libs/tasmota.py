@@ -25,7 +25,10 @@ def tasmota(modul, channel, status, mqtt_ip):
         status = "OFF"
     print("send")
     socket_ip = data_ip[(int(modul)-1)].rstrip()
-    socket_ip = "cmnd/tasmota_"+socket_ip+"/POWER"
+    if channel == "0":
+        socket_ip = "cmnd/tasmota_"+socket_ip+"/POWER"
+    else:
+        socket_ip = "cmnd/tasmota_"+socket_ip+"/POWER"+channel
     data_send = status + " - " + mqtt_ip  + " - " + socket_ip + " - " + modul
     print(data_send)
     logging_tgn("topic:"+socket_ip+";modul:"+modul+";channel:"+channel+";status:"+status+";mqtt_ip:"+mqtt_ip,"tasmota.log")
