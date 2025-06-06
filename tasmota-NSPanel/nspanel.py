@@ -26,6 +26,7 @@ esp_br = "0"
 w_temp = "0"
 w_temp_min = "0"
 w_temp_max = "0"
+t_temp = "22"
 
 try:
     print(">>Load panel.config")
@@ -60,6 +61,8 @@ def ini():
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"HMI_resources":[{"index":7,"ctype":"group","id":"7","uiid":1}]}',qos=0,retain=True)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"temperature":'+temp+',"humidity":'+hum+'}',qos=0,retain=True)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"HMI_weather":30,"HMI_outdoorTemp":{"current":'+w_temp+',"range":"-3,8"}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"ATCEnable":1,"ATCMode":0}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"ATCMode":0,"ATCExpect0":'+t_temp+'}',qos=0,retain=True)
         print("end Setup Display")
         set_clock()
 
@@ -106,6 +109,7 @@ def on_message(client, userdata, message):
     global w_temp
     global w_temp_min
     global w_temp_max
+    global t_temp
     if(message.topic=="tele/"+tasmo_id+"/LWT"):
         panel_status = (message.payload.decode("utf-8"))
         ini()
@@ -151,6 +155,8 @@ def on_message(client, userdata, message):
         w_temp_min = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/weather/temp_max"):
         w_temp_max = (message.payload.decode("utf-8"))
+    if(message.topic=="tgn/thermostat/sol_temp"):
+        t_temp = (message.payload.decode("utf-8"))
     if(message.topic=="tele/"+tasmo_id+"/RESULT"):
         tasmo_result = (message.payload.decode("utf-8"))
         decode_result(tasmo_result)
@@ -159,10 +165,15 @@ def decode_result(data_res):
     print(data_res)
     cach = json.loads(data_res)
     try:
+        tasmo_num = cach['NSPanel']['id']
         type = cach['NSPanel']['ctype']
     except:
         type = "device"
-    tasmo_num = cach['NSPanel']['id']
+        tasmo_num = "x"
+    try:
+        atc = str(cach['NSPanel']['ATCMode'])
+    except:
+        atc = "1"
     if type == "group":
         tasmo_stat = cach['NSPanel']['params']['switch']
         if tasmo_stat == "on": tasmo_stat = "1"
@@ -192,7 +203,13 @@ def decode_result(data_res):
                 col = "255.255.255.255"
             client.publish("tgn/esp_3/neopixel/color",col,qos=0,retain=True)
         except:
-            print("")
+            print("")       
+    elif atc == "0":
+        t_cach = str(cach['NSPanel']['ATCExpect0'])
+        if t_temp != t_cach:
+            print("Set Sol_Temp: "+t_cach)
+            client.publish("tgn/thermostat/sol_temp",t_cach,qos=0,retain=True)
+     
 
 def main_prog():
     while True:
@@ -204,6 +221,11 @@ def main_prog():
         client.loop_stop()
         time.sleep(5)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"temperature":'+temp+',"humidity":'+hum+'}',qos=0,retain=True)
+        if t_temp > temp:
+            client.publish("tgn/thermostat/heater","On",qos=0,retain=True)
+        else:
+            client.publish("tgn/thermostat/heater","Off",qos=0,retain=True)
+        client.publish("tgn/thermostat/is_temp",temp,qos=0,retain=True)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"1","params":{"switch":"'+bt1+'"}}}',qos=0,retain=True)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"2","params":{"switch":"'+bt2+'"}}}',qos=0,retain=True)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"3","params":{"switch":"'+bt3+'"}}}',qos=0,retain=True)
@@ -220,6 +242,7 @@ def main_prog():
         esp_br_r = str((int(esp_br)/255)*100)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"8","params":{"light_type":1,"bright":'+esp_br_r+'}}}',qos=0,retain=True)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"HMI_weather":30,"HMI_outdoorTemp":{"current":'+w_temp+',"range":"'+w_temp_min+','+w_temp_max+'"}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"ATCMode":0,"ATCExpect0":'+t_temp+'}',qos=0,retain=True)
         set_clock()
         
 ini()
