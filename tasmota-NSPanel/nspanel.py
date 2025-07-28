@@ -27,6 +27,8 @@ w_temp = "0"
 w_temp_min = "0"
 w_temp_max = "0"
 t_temp = "22"
+summertemp = "18"
+summermod = "on"
 
 try:
     print(">>Load panel.config")
@@ -63,6 +65,8 @@ def ini():
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"HMI_weather":30,"HMI_outdoorTemp":{"current":'+w_temp+',"range":"-3,8"}}',qos=0,retain=True)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"ATCEnable":1,"ATCMode":0}',qos=0,retain=True)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"ATCMode":0,"ATCExpect0":'+t_temp+'}',qos=0,retain=True)
+        client.publish("tgn/thermostat/summer_temp",summertemp,qos=0,retain=True)
+        client.publish("tgn/thermostat/summer_mod",summermod,qos=0,retain=True)
         print("end Setup Display")
         set_clock()
 
@@ -110,6 +114,8 @@ def on_message(client, userdata, message):
     global w_temp_min
     global w_temp_max
     global t_temp
+    global summertemp
+    global summermod
     if(message.topic=="tele/"+tasmo_id+"/LWT"):
         panel_status = (message.payload.decode("utf-8"))
         ini()
@@ -160,6 +166,10 @@ def on_message(client, userdata, message):
     if(message.topic=="tele/"+tasmo_id+"/RESULT"):
         tasmo_result = (message.payload.decode("utf-8"))
         decode_result(tasmo_result)
+    if(message.topic=="tgn/thermostat/summer_temp"):
+        summertemp = (message.payload.decode("utf-8"))
+    if(message.topic=="tgn/thermostat/summer_mod"):
+        summermod = (message.payload.decode("utf-8"))
 
 def decode_result(data_res):
     print(data_res)
@@ -221,6 +231,8 @@ def main_prog():
         client.loop_stop()
         time.sleep(5)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"temperature":'+temp+',"humidity":'+hum+'}',qos=0,retain=True)
+        if summermod == "on":
+            client.publish("tgn/thermostat/sol_temp",summertemp,qos=0,retain=True)
         if t_temp > temp:
             client.publish("tgn/thermostat/heater","On",qos=0,retain=True)
         else:
