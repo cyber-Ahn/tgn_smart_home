@@ -11,7 +11,8 @@ client = mqtt.Client("zigbee")
 client.connect(get_ip())
 
 bat_low = 25
-summertemp = "12"
+summertemp = "0"
+summermod_cach = ""
 data_nc = []
 window_1_id = "0"
 window_1_cach = "empty"
@@ -41,7 +42,7 @@ thermo_cal_4 = "0"
 
 shelly_1_id = "0"
 door_1_cach = "empty"
-summermod = "on"
+summermod = "x"
 t_temp = "0"
 temp = 11
 
@@ -209,6 +210,7 @@ def on_message(client, userdata, message):
 
 def main_prog():
     print("Start zigbee modul")
+    global summermod_cach
     while True:
         client.on_message=on_message
         client.loop_start()
@@ -218,28 +220,47 @@ def main_prog():
         time.sleep(2)
         client.loop_stop()
         time.sleep(5)
-        if summermod == "on":
+        if summermod != summermod_cach:
+            summermod_cach = summermod
             client.publish("tgn/thermostat/sol_temp",summertemp,qos=0,retain=True)
+            client.publish(thermostat_1_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+            client.publish(thermostat_2_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+            client.publish(thermostat_3_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+            client.publish(thermostat_4_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+        elif summermod == "off":
+            summermod_cach = summermod
+            client.publish("tgn/thermostat/sol_temp",t_temp,qos=0,retain=True)
+            client.publish(thermostat_1_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+            client.publish(thermostat_2_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+            client.publish(thermostat_3_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+            client.publish(thermostat_4_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+            if window_1 == "open":
+                client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            elif window_1 == "closed":
+                client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+                client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+                client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+                client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)-2.0)+'}',qos=0,retain=True)
         if t_temp > temp:
             client.publish("tgn/thermostat/heater","On",qos=0,retain=True)
         else:
             client.publish("tgn/thermostat/heater","Off",qos=0,retain=True)
-        if window_1 == "open":
-            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 8}',qos=0,retain=True)
-            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 8}',qos=0,retain=True)
-            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 8}',qos=0,retain=True)
-            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 8}',qos=0,retain=True)
-        elif window_1 == "closed":
-            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)-2.0)+'}',qos=0,retain=True)
+        
         battery_name = "Battery Ok"
         client.publish("tgn/battery_empty",battery_name,qos=0,retain=True)
         if int(battery_window_1) < bat_low:
             battery_name ="window_wz"
         if int(battery_thermostat_1) < bat_low:
             battery_name ="thermostat_1"
+        if int(battery_thermostat_2) < bat_low:
+            battery_name ="thermostat_2"
+        if int(battery_thermostat_3) < bat_low:
+            battery_name ="thermostat_3"
+        if int(battery_thermostat_4) < bat_low:
+            battery_name ="thermostat_4"
         if int(battery_door_1) < bat_low:
             battery_name ="door_1"
         print(battery_name)
