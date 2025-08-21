@@ -248,9 +248,7 @@ def main_prog():
             client.publish("tgn/thermostat/heater","On",qos=0,retain=True)
         else:
             client.publish("tgn/thermostat/heater","Off",qos=0,retain=True)
-        
         battery_name = "Battery Ok"
-        client.publish("tgn/battery_empty",battery_name,qos=0,retain=True)
         if int(battery_window_1) < bat_low:
             battery_name ="window_wz"
         if int(battery_thermostat_1) < bat_low:
@@ -264,5 +262,6 @@ def main_prog():
         if int(battery_door_1) < bat_low:
             battery_name ="door_1"
         print(battery_name)
+        client.publish("tgn/battery_empty",battery_name,qos=0,retain=True)
 ini()
 main_prog()
