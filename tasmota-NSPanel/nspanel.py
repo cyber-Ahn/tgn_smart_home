@@ -20,6 +20,13 @@ bt4 = "off"
 bt5 = "off"
 bt6 = "off"
 bt7 = "off"
+bn1 = "empty"
+bn2 = "empty"
+bn3 = "empty"
+bn4 = "empty"
+bn5 = "empty"
+bn6 = "empty"
+bn7 = "empty"
 tasmo_result = "empty"
 esp_col = "0.0.0.255"
 esp_br = "0"
@@ -110,6 +117,13 @@ def on_message(client, userdata, message):
     global w_temp_min
     global w_temp_max
     global t_temp
+    global bn1
+    global bn2
+    global bn3
+    global bn4
+    global bn5
+    global bn6
+    global bn7
     if(message.topic=="tele/"+tasmo_id+"/LWT"):
         panel_status = (message.payload.decode("utf-8"))
         ini()
@@ -145,6 +159,20 @@ def on_message(client, userdata, message):
         bt7 = (message.payload.decode("utf-8"))
         if bt7 == "1": bt7 = "on" 
         elif bt7 == "0": bt7 = "off"
+    if(message.topic=="tgn/buttons/name/1"):
+        bn1 = (message.payload.decode("utf-8")).split("_")[1]
+    if(message.topic=="tgn/buttons/name/2"):
+        bn2 = (message.payload.decode("utf-8")).split("_")[1]
+    if(message.topic=="tgn/buttons/name/3"):
+        bn3 = (message.payload.decode("utf-8")).split("_")[1]
+    if(message.topic=="tgn/buttons/name/4"):
+        bn4 = (message.payload.decode("utf-8")).split("_")[1]
+    if(message.topic=="tgn/buttons/name/5"):
+        bn5 = (message.payload.decode("utf-8")).split("_")[1]
+    if(message.topic=="tgn/buttons/name/6"):
+        bn6 = (message.payload.decode("utf-8")).split("_")[1]
+    if(message.topic=="tgn/buttons/name/7"):
+        bn7 = (message.payload.decode("utf-8")).split("_")[1]
     if(message.topic=="tgn/esp_3/neopixel/color"):
         esp_col = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/esp_3/neopixel/brightness"):
@@ -222,13 +250,14 @@ def main_prog():
         time.sleep(5)
         client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"temperature":'+temp+',"humidity":'+hum+'}',qos=0,retain=True)
         client.publish("tgn/thermostat/is_temp",temp,qos=0,retain=True)
-        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"1","params":{"switch":"'+bt1+'"}}}',qos=0,retain=True)
-        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"2","params":{"switch":"'+bt2+'"}}}',qos=0,retain=True)
-        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"3","params":{"switch":"'+bt3+'"}}}',qos=0,retain=True)
-        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"4","params":{"switch":"'+bt4+'"}}}',qos=0,retain=True)
-        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"5","params":{"switch":"'+bt5+'"}}}',qos=0,retain=True)
-        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"6","params":{"switch":"'+bt6+'"}}}',qos=0,retain=True)
-        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"7","params":{"switch":"'+bt7+'"}}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"1","name":"'+bn1+'","params":{"switch":"'+bt1+'"}}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"2","name":"'+bn2+'","params":{"switch":"'+bt2+'"}}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"3","name":"'+bn3+'","params":{"switch":"'+bt3+'"}}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"4","name":"'+bn4+'","params":{"switch":"'+bt4+'"}}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"5","name":"'+bn5+'","params":{"switch":"'+bt5+'"}}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"6","name":"'+bn6+'","params":{"switch":"'+bt6+'"}}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"7","name":"'+bn7+'","params":{"switch":"'+bt7+'"}}}',qos=0,retain=True)
+        client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"8","name":"RGB"}}',qos=0,retain=True)
         if esp_col == "0.0.0.255":
             client.publish("cmnd/"+tasmo_id+"/NSPSend",'{"relation":{"id":"8","params":{"switch":"off"}}}',qos=0,retain=True)
         else:
