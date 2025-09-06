@@ -5,6 +5,7 @@ sudo curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt-get install -y nodejs git make g++ gcc libsystemd-dev
 corepack enable
 node --version
+sudo mkdir /opt/zigbee2mqtt
 sudo chown -R pi: /opt/zigbee2mqtt
 git clone --depth 1 https://github.com/Koenkk/zigbee2mqtt.git /opt/zigbee2mqtt
 cd /opt/zigbee2mqtt
