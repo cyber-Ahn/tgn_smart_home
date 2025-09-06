@@ -221,29 +221,30 @@ def main_prog():
         client.loop_stop()
         time.sleep(5)
         if summermod != summermod_cach:
-            summermod_cach = summermod
-            client.publish("tgn/thermostat/sol_temp",summertemp,qos=0,retain=True)
-            client.publish(thermostat_1_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
-            client.publish(thermostat_2_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
-            client.publish(thermostat_3_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
-            client.publish(thermostat_4_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
-        elif summermod == "off":
-            summermod_cach = summermod
-            client.publish("tgn/thermostat/sol_temp",t_temp,qos=0,retain=True)
-            client.publish(thermostat_1_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
-            client.publish(thermostat_2_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
-            client.publish(thermostat_3_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
-            client.publish(thermostat_4_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
-            if window_1 == "open":
-                client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-                client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-                client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-                client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-            elif window_1 == "closed":
-                client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-                client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-                client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-                client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)-2.0)+'}',qos=0,retain=True)
+            if summermod == "on":
+                summermod_cach = summermod
+                client.publish("tgn/thermostat/sol_temp",summertemp,qos=0,retain=True)
+                client.publish(thermostat_1_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+                client.publish(thermostat_2_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+                client.publish(thermostat_3_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+                client.publish(thermostat_4_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+            elif summermod == "off":
+                summermod_cach = summermod
+                client.publish("tgn/thermostat/sol_temp",t_temp,qos=0,retain=True)
+                client.publish(thermostat_1_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+                client.publish(thermostat_2_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+                client.publish(thermostat_3_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+                client.publish(thermostat_4_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+                if window_1 == "open":
+                    client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                    client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                    client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                elif window_1 == "closed":
+                    client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+                    client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+                    client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)-2.0)+'}',qos=0,retain=True)
         if t_temp > temp:
             client.publish("tgn/thermostat/heater","On",qos=0,retain=True)
         else:
