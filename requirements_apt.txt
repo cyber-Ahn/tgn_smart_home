@@ -8,7 +8,7 @@ libhdf5-dev
 libhdf5-serial-dev
 libatlas-base-dev
 flac
-python-dev
+python3-dev
 libportaudio2
 libportaudiocpp0
 portaudio19-dev
