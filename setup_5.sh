@@ -115,7 +115,8 @@ echo -e "\e[33m>> \e[31mInstall Code-OSSm PI4 (y/n)?\e[32m"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then
 cd setup_files
-sudo apt install ./code-oss_arm64.deb
+sudo apt update
+sudo apt install code
 cd ..
 sleep 3
 clear

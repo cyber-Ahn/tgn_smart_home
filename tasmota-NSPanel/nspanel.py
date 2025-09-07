@@ -185,6 +185,8 @@ def on_message(client, userdata, message):
         w_temp_max = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/sol_temp"):
         t_temp = (message.payload.decode("utf-8"))
+        if int(t_temp) <= 16:
+            t_temp = "16"
     if(message.topic=="tele/"+tasmo_id+"/RESULT"):
         tasmo_result = (message.payload.decode("utf-8"))
         decode_result(tasmo_result)
@@ -236,7 +238,7 @@ def decode_result(data_res):
         t_cach = str(cach['NSPanel']['ATCExpect0'])
         if t_temp != t_cach:
             print("Set Sol_Temp: "+t_cach)
-            client.publish("tgn/thermostat/sol_temp",t_cach,qos=0,retain=True)
+            #client.publish("tgn/thermostat/sol_temp",t_cach,qos=0,retain=True)
      
 
 def main_prog():
