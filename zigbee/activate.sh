@@ -11,7 +11,6 @@ git clone --depth 1 https://github.com/Koenkk/zigbee2mqtt.git /opt/zigbee2mqtt
 cd /opt/zigbee2mqtt
 pnpm install --frozen-lockfile
 sudo rm -fr /opt/zigbee2mqtt/data/configuration.yaml
-sudo cp /home/pi/tgn_smart_home/zigbee/configuration.yaml /opt/zigbee2mqtt/data
 chmod -R 777 /opt/zigbee2mqtt/
 #---- autostart
 systemctl stop pihole-FTL
