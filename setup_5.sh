@@ -108,7 +108,7 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py thinkspeak
 clear
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py rss
 clear
-sudo mrdir /home/pi/.config/autostart
+sudo mkdir /home/pi/.config/autostart
 sudo cp /home/pi/tgn_smart_home/setup_files/tgn.desktop /home/pi/.config/autostart
 fi
 echo -e "\e[33m>> \e[31mInstall Code-OSSm PI4 (y/n)?\e[32m"
