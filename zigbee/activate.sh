@@ -15,6 +15,7 @@ sudo cp /home/pi/tgn_smart_home/zigbee/configuration.yaml /opt/zigbee2mqtt/data
 chmod -R 777 /opt/zigbee2mqtt/
 #---- autostart
 systemctl stop pihole-FTL
+pnpm start
 xdg-open 'http://192.168.0.98:8080'
 read answer
 echo -e "\e[33m>> \e[31mSettings Saved (y/n)?\e[32m"
