@@ -17,6 +17,7 @@ data_nc = []
 window_1_id = "0"
 window_1_cach = "empty"
 window_1 = "closed"
+window_1_stat = "xx"
 
 thermostat_1_id = "0"
 thermostat_2_id = "0"
@@ -84,6 +85,7 @@ else:
 
 def ini():
     client.publish("tgn/thermostat/summer_temp",summertemp,qos=0,retain=True)
+    #client.publish("tgn/thermostat/summer_mod","on",qos=0,retain=True)
     client.publish("tgn/thermostat/window_1",window_1,qos=0,retain=True)
     client.publish(thermostat_1_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
     client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
@@ -211,6 +213,7 @@ def on_message(client, userdata, message):
 def main_prog():
     print("Start zigbee modul")
     global summermod_cach
+    global window_1_stat
     while True:
         client.on_message=on_message
         client.loop_start()
@@ -262,6 +265,12 @@ def main_prog():
             battery_name ="thermostat_4"
         if int(battery_door_1) < bat_low:
             battery_name ="door_1"
+        if window_1 != window_1_stat:
+            window_1_stat = window_1
+            if window_1 == "closed":
+                battery_name = "Window_1 closed"
+            else:
+                battery_name = "Window_1 open"
         print(battery_name)
         client.publish("tgn/battery_empty",battery_name,qos=0,retain=True)
 ini()
