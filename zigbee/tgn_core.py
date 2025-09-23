@@ -45,6 +45,7 @@ shelly_1_id = "0"
 door_1_cach = "empty"
 summermod = "x"
 t_temp = "0"
+t_temp_cach = "0"
 temp = 11
 
 battery_name = "empty"
@@ -223,7 +224,7 @@ def main_prog():
         time.sleep(2)
         client.loop_stop()
         time.sleep(5)
-        if summermod != summermod_cach:
+        if summermod != summermod_cach or t_temp != t_temp_cach:
             if summermod == "on":
                 summermod_cach = summermod
                 client.publish("tgn/thermostat/sol_temp",summertemp,qos=0,retain=True)
@@ -244,6 +245,7 @@ def main_prog():
                     client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
                     client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
                 elif window_1 == "closed":
+                    t_temp_cach = t_temp
                     client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
                     client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
                     client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
