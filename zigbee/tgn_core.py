@@ -16,8 +16,10 @@ summermod_cach = ""
 data_nc = []
 window_1_id = "0"
 window_1_cach = "empty"
+window_cach = ""
 window_1 = "closed"
 window_1_stat = "xx"
+cou = 5
 
 thermostat_1_id = "0"
 thermostat_2_id = "0"
@@ -46,7 +48,9 @@ door_1_cach = "empty"
 summermod = "x"
 t_temp = "0"
 t_temp_cach = "0"
-temp = 11
+temp_1 = 11.5
+temp_3 = 11.5
+temp_4 = 11.5
 
 battery_name = "empty"
 battery_window_1 = "0"
@@ -55,7 +59,6 @@ battery_thermostat_1 = "0"
 battery_thermostat_2 = "0"
 battery_thermostat_3 = "0"
 battery_thermostat_4 = "0"
-
 
 try:
     print(">>Load zigbee.config")
@@ -97,11 +100,11 @@ def ini():
     client.publish(thermostat_2_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
     time.sleep(0.3)
     client.publish(thermostat_3_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
-    client.publish(thermostat_3_id+"/set",'{"local_temperature_calibration": 1.0}',qos=0,retain=True)
+    client.publish(thermostat_3_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
     client.publish(thermostat_3_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
     time.sleep(0.3)
     client.publish(thermostat_4_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
-    client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": 0.2}',qos=0,retain=True)
+    client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
     client.publish(thermostat_4_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
 
 def decode_window(decode_data,num,typ):
@@ -146,6 +149,7 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/thermostat_1_local",thermo_is_1,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_1_setpoint",thermo_out_1,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_1__cal",thermo_cal_1,qos=0,retain=True)
+        client.publish("tgn/thermostat/status/1",cach['running_state'],qos=0,retain=True)
     if typ == "thermostat" and num == "2":
         thermo_is_2 = cach['local_temperature']
         thermo_out_2 = cach['occupied_heating_setpoint']
@@ -154,6 +158,7 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/thermostat_2_local",thermo_is_2,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_2_setpoint",thermo_out_2,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_2__cal",thermo_cal_2,qos=0,retain=True)
+        client.publish("tgn/thermostat/status/2",cach['running_state'],qos=0,retain=True)
     if typ == "thermostat" and num == "3":
         thermo_is_3 = cach['local_temperature']
         thermo_out_3 = cach['occupied_heating_setpoint']
@@ -162,6 +167,7 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/thermostat_3_local",thermo_is_3,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_3_setpoint",thermo_out_3,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_3__cal",thermo_cal_3,qos=0,retain=True)
+        client.publish("tgn/thermostat/status/3",cach['running_state'],qos=0,retain=True)
     if typ == "thermostat" and num == "4":
         thermo_is_4 = cach['local_temperature']
         thermo_out_4 = cach['occupied_heating_setpoint']
@@ -170,13 +176,16 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/thermostat_4_local",thermo_is_4,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_4_setpoint",thermo_out_4,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_4__cal",thermo_cal_4,qos=0,retain=True)
+        client.publish("tgn/thermostat/status/4",cach['running_state'],qos=0,retain=True)
     if typ == "door":
         battery_door_1 = cach['bat']['value']
 
 def on_message(client, userdata, message):
     global t_temp
     global summertemp
-    global temp
+    global temp_1
+    global temp_3
+    global temp_4
     global summermod
     global window_1_cach
     global thermostat_1_cach
@@ -189,7 +198,11 @@ def on_message(client, userdata, message):
     if(message.topic=="tgn/thermostat/summer_temp"):
         summertemp = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/esp_1/temp/sensor_1"):
-        temp = (message.payload.decode("utf-8"))
+        temp_1 = float((message.payload.decode("utf-8")))
+    if(message.topic=="tgn/pico_6/temp/sensor_1"):
+        temp_3 = float((message.payload.decode("utf-8")))
+    if(message.topic=="tgn/pico_5/temp/sensor_1"):
+        temp_4 = float((message.payload.decode("utf-8")))
     if(message.topic=="tgn/thermostat/summer_mod"):
         summermod = (message.payload.decode("utf-8"))
     if(message.topic==window_1_id):
@@ -215,6 +228,9 @@ def main_prog():
     print("Start zigbee modul")
     global summermod_cach
     global window_1_stat
+    global t_temp_cach
+    global window_cach
+    global cou
     while True:
         client.on_message=on_message
         client.loop_start()
@@ -224,7 +240,7 @@ def main_prog():
         time.sleep(2)
         client.loop_stop()
         time.sleep(5)
-        if summermod != summermod_cach or t_temp != t_temp_cach:
+        if summermod != summermod_cach or t_temp != t_temp_cach or window_1 != window_cach:
             if summermod == "on":
                 summermod_cach = summermod
                 client.publish("tgn/thermostat/sol_temp",summertemp,qos=0,retain=True)
@@ -234,6 +250,7 @@ def main_prog():
                 client.publish(thermostat_4_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
             elif summermod == "off":
                 summermod_cach = summermod
+                window_cach = window_1
                 client.publish("tgn/thermostat/sol_temp",t_temp,qos=0,retain=True)
                 client.publish(thermostat_1_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
                 client.publish(thermostat_2_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
@@ -249,8 +266,8 @@ def main_prog():
                     client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
                     client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
                     client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)-2.0)+'}',qos=0,retain=True)
-        if t_temp > temp:
+                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)-1.0)+'}',qos=0,retain=True)
+        if float(t_temp) > temp_1:
             client.publish("tgn/thermostat/heater","On",qos=0,retain=True)
         else:
             client.publish("tgn/thermostat/heater","Off",qos=0,retain=True)
@@ -275,5 +292,22 @@ def main_prog():
                 battery_name = "Window_1 open"
         print(battery_name)
         client.publish("tgn/battery_empty",battery_name,qos=0,retain=True)
+        if cou == 8:
+            ocor_1 = round(temp_1 - float(thermo_is_1),2)
+            ocor_3 = round(temp_3 - float(thermo_is_3),2)
+            ocor_4 = round(temp_4 - float(thermo_is_4),2)
+            if abs(ocor_1) >= 0.5:
+                print("T1:"+str(ocor_1))
+                client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": '+str(ocor_1)+'}',qos=0,retain=True)
+                client.publish(thermostat_2_id+"/set",'{"local_temperature_calibration": '+str(ocor_1)+'}',qos=0,retain=True)
+            if abs(ocor_3) >= 0.5:
+                print("T3:"+str(ocor_3))
+                client.publish(thermostat_3_id+"/set",'{"local_temperature_calibration": '+str(ocor_3)+'}',qos=0,retain=True)
+            if abs(ocor_4) >= 0.5:
+                print("T4:"+str(ocor_4))
+                client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": '+str(ocor_4)+'}',qos=0,retain=True)
+            cou = 0
+        cou += 1
+        print(cou)
 ini()
 main_prog()
