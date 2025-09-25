@@ -296,6 +296,9 @@ def main_prog():
             ocor_1 = round(temp_1 - float(thermo_is_1),2)
             ocor_3 = round(temp_3 - float(thermo_is_3),2)
             ocor_4 = round(temp_4 - float(thermo_is_4),2)
+            ocor_1 = float(thermo_cal_1 + ocor_1)
+            ocor_3 = float(thermo_cal_3 + ocor_3)
+            ocor_4 = float(thermo_cal_4 + ocor_4)
             if abs(ocor_1) >= 0.5:
                 print("T1:"+str(ocor_1))
                 client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": '+str(ocor_1)+'}',qos=0,retain=True)
