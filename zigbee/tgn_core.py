@@ -133,6 +133,7 @@ def decode_window(decode_data,num,typ):
         try:
             window_1 = cach['contact']
             battery_window_1 = cach['battery']
+            client.publish("tgn/thermostat/window_1_bat",battery_window_1,qos=0,retain=True)
             if window_1:
                 window_1 = "closed"
             else:
@@ -146,6 +147,7 @@ def decode_window(decode_data,num,typ):
         thermo_out_1 = cach['occupied_heating_setpoint']
         thermo_cal_1 = cach['local_temperature_calibration']
         battery_thermostat_1 = cach['battery']
+        client.publish("tgn/thermostat/thermostat_1_bat",battery_thermostat_1,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_1_local",thermo_is_1,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_1_setpoint",thermo_out_1,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_1__cal",thermo_cal_1,qos=0,retain=True)
@@ -155,6 +157,7 @@ def decode_window(decode_data,num,typ):
         thermo_out_2 = cach['occupied_heating_setpoint']
         thermo_cal_2 = cach['local_temperature_calibration']
         battery_thermostat_2 = cach['battery']
+        client.publish("tgn/thermostat/thermostat_2_bat",battery_thermostat_2,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_2_local",thermo_is_2,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_2_setpoint",thermo_out_2,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_2__cal",thermo_cal_2,qos=0,retain=True)
@@ -164,6 +167,7 @@ def decode_window(decode_data,num,typ):
         thermo_out_3 = cach['occupied_heating_setpoint']
         thermo_cal_3 = cach['local_temperature_calibration']
         battery_thermostat_3 = cach['battery']
+        client.publish("tgn/thermostat/thermostat_3_bat",battery_thermostat_3,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_3_local",thermo_is_3,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_3_setpoint",thermo_out_3,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_3__cal",thermo_cal_3,qos=0,retain=True)
@@ -173,12 +177,14 @@ def decode_window(decode_data,num,typ):
         thermo_out_4 = cach['occupied_heating_setpoint']
         thermo_cal_4 = cach['local_temperature_calibration']
         battery_thermostat_4 = cach['battery']
+        client.publish("tgn/thermostat/thermostat_4_bat",battery_thermostat_4,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_4_local",thermo_is_4,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_4_setpoint",thermo_out_4,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_4__cal",thermo_cal_4,qos=0,retain=True)
         client.publish("tgn/thermostat/status/4",cach['running_state'],qos=0,retain=True)
     if typ == "door":
         battery_door_1 = cach['bat']['value']
+        client.publish("tgn/thermostat/door_1_bat",battery_door_1,qos=0,retain=True)
 
 def on_message(client, userdata, message):
     global t_temp
@@ -266,7 +272,7 @@ def main_prog():
                     client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
                     client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
                     client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)-1.0)+'}',qos=0,retain=True)
+                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)-0.0)+'}',qos=0,retain=True)
         if float(t_temp) > temp_1:
             client.publish("tgn/thermostat/heater","On",qos=0,retain=True)
         else:
@@ -294,19 +300,26 @@ def main_prog():
         client.publish("tgn/battery_empty",battery_name,qos=0,retain=True)
         if cou == 8:
             ocor_1 = round(temp_1 - float(thermo_is_1),2)
+            ocor_2 = round(temp_1 - float(thermo_is_2),2)
             ocor_3 = round(temp_3 - float(thermo_is_3),2)
             ocor_4 = round(temp_4 - float(thermo_is_4),2)
-            ocor_1 = float(thermo_cal_1 + ocor_1)
-            ocor_3 = float(thermo_cal_3 + ocor_3)
-            ocor_4 = float(thermo_cal_4 + ocor_4)
             if abs(ocor_1) >= 0.5:
+                ocor_1 = float(thermo_cal_1 + ocor_1)
                 print("T1:"+str(ocor_1))
                 client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": '+str(ocor_1)+'}',qos=0,retain=True)
-                client.publish(thermostat_2_id+"/set",'{"local_temperature_calibration": '+str(ocor_1)+'}',qos=0,retain=True)
+                time.sleep(0.3)
+            if abs(ocor_2) >= 0.5:
+                ocor_2 = float(thermo_cal_2 + ocor_2)
+                print("T2:"+str(ocor_2))
+                client.publish(thermostat_2_id+"/set",'{"local_temperature_calibration": '+str(ocor_2)+'}',qos=0,retain=True)
+                time.sleep(0.3)
             if abs(ocor_3) >= 0.5:
+                ocor_3 = float(thermo_cal_3 + ocor_3)
                 print("T3:"+str(ocor_3))
                 client.publish(thermostat_3_id+"/set",'{"local_temperature_calibration": '+str(ocor_3)+'}',qos=0,retain=True)
+                time.sleep(0.3)
             if abs(ocor_4) >= 0.5:
+                ocor_4 = float(thermo_cal_4 + ocor_4)
                 print("T4:"+str(ocor_4))
                 client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": '+str(ocor_4)+'}',qos=0,retain=True)
             cou = 0
