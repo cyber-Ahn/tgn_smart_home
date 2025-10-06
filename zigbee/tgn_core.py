@@ -185,6 +185,7 @@ def decode_window(decode_data,num,typ):
     if typ == "door":
         battery_door_1 = cach['bat']['value']
         client.publish("tgn/thermostat/door_1_bat",battery_door_1,qos=0,retain=True)
+        client.publish("tgn/thermostat/door_1",cach['sensor']['state'],qos=0,retain=True)
 
 def on_message(client, userdata, message):
     global t_temp
