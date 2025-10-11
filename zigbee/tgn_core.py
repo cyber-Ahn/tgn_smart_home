@@ -20,6 +20,15 @@ window_cach = ""
 window_1 = "closed"
 window_1_stat = "xx"
 cou = 5
+ir_cach = "nothing"
+ir_botton = "nothing"
+ir_power = "p"
+ir_fan = "f"
+ir_cool = "c"
+ir_dry = "dr"
+ir_up = "u"
+ir_down = "d"
+ir_empty = "e"
 
 thermostat_1_id = "0"
 thermostat_2_id = "0"
@@ -64,7 +73,7 @@ try:
     print(">>Load zigbee.config")
     f = open("/home/pi/tgn_smart_home/zigbee/device.config","r")
 except IOError:
-    print("cannot open panel.config.... file not found")
+    print("cannot open system.config.... file not found")
 else:
     for line in f:
         cach_n = line.rstrip()
@@ -87,10 +96,40 @@ else:
             shelly_1_id = "shellies/"+cach_n.split(":")[1]+"/info"
             print("Door 1:       "+shelly_1_id)
 
+try:
+    print(">>Load system.config")
+    f = open("/home/pi/tgn_smart_home/config/system.config","r")
+except IOError:
+    print("cannot open system.config.... file not found")
+else:
+    for line in f:
+        cach_n = line.rstrip()
+        if cach_n.split("*")[0] == "ir_power":
+            ir_power = cach_n.split("*")[1]
+            print("powe:"+ir_power)
+        if cach_n.split("*")[0] == "ir_fan":
+            ir_fan = cach_n.split("*")[1]
+            print("powe:"+ir_fan)
+        if cach_n.split("*")[0] == "ir_cool":
+            ir_cool = cach_n.split("*")[1]
+            print("powe:"+ir_cool)
+        if cach_n.split("*")[0] == "ir_dry":
+            ir_dry = cach_n.split("*")[1]
+            print("powe:"+ir_dry)
+        if cach_n.split("*")[0] == "ir_up":
+            ir_up = cach_n.split("*")[1]
+            print("powe:"+ir_up)
+        if cach_n.split("*")[0] == "ir_down":
+            ir_down = cach_n.split("*")[1]
+            print("powe:"+ir_down)
+        if cach_n.split("*")[0] == "ir_clear":
+            ir_empty = cach_n.split("*")[1]
+            print("powe:"+ir_empty)
+
 def ini():
     client.publish("tgn/thermostat/summer_temp",summertemp,qos=0,retain=True)
-    #client.publish("tgn/thermostat/summer_mod","on",qos=0,retain=True)
     client.publish("tgn/thermostat/window_1",window_1,qos=0,retain=True)
+    client.publish("tgn/air_conditioner/button",ir_cach,qos=0,retain=True)
     client.publish(thermostat_1_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
     client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
     client.publish(thermostat_1_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
@@ -200,6 +239,7 @@ def on_message(client, userdata, message):
     global thermostat_3_cach
     global thermostat_4_cach
     global door_1_cach
+    global ir_botton
     if(message.topic=="tgn/thermostat/sol_temp"):
         t_temp = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/summer_temp"):
@@ -212,6 +252,8 @@ def on_message(client, userdata, message):
         temp_4 = float((message.payload.decode("utf-8")))
     if(message.topic=="tgn/thermostat/summer_mod"):
         summermod = (message.payload.decode("utf-8"))
+    if(message.topic=="tgn/air_conditioner/button"):
+        ir_botton = (message.payload.decode("utf-8"))
     if(message.topic==window_1_id):
         window_1_cach = (message.payload.decode("utf-8"))
         decode_window(window_1_cach,"1","window")
@@ -238,6 +280,7 @@ def main_prog():
     global t_temp_cach
     global window_cach
     global cou
+    global ir_botton
     while True:
         client.on_message=on_message
         client.loop_start()
@@ -247,6 +290,27 @@ def main_prog():
         time.sleep(2)
         client.loop_stop()
         time.sleep(5)
+        if ir_botton != ir_cach:
+            print("send IR:"+ir_botton)
+            if ir_botton == "power":
+                client.publish("cmnd/tasmota_E3DAF4/IRSend",ir_power,qos=0,retain=True)
+                time.sleep(1)
+                client.publish("cmnd/tasmota_E3DAF4/IRSend",ir_empty,qos=0,retain=True)
+            if ir_botton == "cool":
+                client.publish("cmnd/tasmota_E3DAF4/IRSend",ir_cool,qos=0,retain=True)
+                client.publish("tgn/air_conditioner/modus","cool_mode",qos=0,retain=True)
+            if ir_botton == "fan":
+                client.publish("cmnd/tasmota_E3DAF4/IRSend",ir_fan,qos=0,retain=True)
+                client.publish("tgn/air_conditioner/modus","fan_mode",qos=0,retain=True)
+            if ir_botton == "dry":
+                client.publish("cmnd/tasmota_E3DAF4/IRSend",ir_dry,qos=0,retain=True)
+                client.publish("tgn/air_conditioner/modus","dry_mode",qos=0,retain=True)
+            if ir_botton == "up":
+                client.publish("cmnd/tasmota_E3DAF4/IRSend",ir_up,qos=0,retain=True)
+            if ir_botton == "down":
+                client.publish("cmnd/tasmota_E3DAF4/IRSend",ir_down,qos=0,retain=True)
+            ir_botton = ir_cach
+            client.publish("tgn/air_conditioner/button",ir_cach,qos=0,retain=True)
         if summermod != summermod_cach or t_temp != t_temp_cach or window_1 != window_cach:
             if summermod == "on":
                 summermod_cach = summermod

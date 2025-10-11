@@ -2124,15 +2124,6 @@ class Window(Frame):
 					mqtt_msg_cach = mqtt_msg
 					if(su==1):
 						Process(target=TextToSpeech, args=(mqtt_msg,spr)).start()
-				if GPIO.input(radar_sw_pin) == 0:
-					if radar_sw_state == 1 and radar_on == 1:
-						radar_sw_state = 0
-						print("Picture Off")
-				else:
-					if radar_sw_state == 0 and radar_on == 1:
-						radar_sw_state = 1
-						print("Take a Picture and send to Pushbullet.....")
-						Process(target=ip_cam_capture, args=("http://192.168.0.15/capture","/home/pi/Pictures/",pushbulletkey)).start()
 				if MCPpower == 1:
 					if mcp.input(9) >> 9 == 1:
 						callback12() #light(button[3])
@@ -2208,7 +2199,7 @@ class Window(Frame):
 				hum_check(format_time(cach_time))
 				global afbground
 				global fground
-				if colorSet == 9:
+				if colorSet == 9 or colorSet == 0:
 					afbground = '#000000'
 					fground = '#003f7e'
 				self.display_time.config(text=the_time, font=('times', font_size_a, 'bold'), bg=afbground, fg=fground)
@@ -2320,7 +2311,7 @@ class WindowB(Frame):
 				
 				global afbground
 				global fground
-				if colorSet == 9:
+				if colorSet == 9 or colorSet == 0:
 					afbground = '#000000'
 					fground = '#eaa424'
 				self.display_time.config(text=output, font=('times', font_size_b, 'bold'), bg=afbground, fg=fground)
@@ -2340,7 +2331,7 @@ class WindowC(Frame):
 	def __init__(self,master):
 		global afbground
 		global fground
-		if colorSet == 9:
+		if colorSet == 9 or colorSet == 0:
 			afbground = '#000000'
 			fground = '#eaa424'
 		Frame.__init__(self, master)
@@ -2627,6 +2618,7 @@ def normal_screen():
 				color_button.append(bu_cach) 
 			cou = cou + 1
 		color_button.append("LCARS")
+		color_button.append("ioBrocker")
 	index_bu = len(color_button)
 	if index_bu >= 1:    
 		colmenu.add_command(label=color_button[0], command=lambda: key(1,color_button[0]))
@@ -2651,6 +2643,8 @@ def normal_screen():
 		colorSet = method
 		if but_name == "LCARS":
 			colorSet = 9
+		if but_name == "ioBrocker":
+			colorSet = 0
 		write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
 		time.sleep(1)
 		os.execv(sys.executable, ['python3'] + sys.argv)
@@ -2957,7 +2951,7 @@ class Window_1_lcars(Frame):
 				hum_check(format_time(cach_time))
 				global afbground
 				global fground
-				if colorSet == 9:
+				if colorSet == 9 or colorSet == 0:
 					afbground = '#000000'
 					fground = '#003f7e'
 				self.display_time.config(text=the_time, font=('times', (font_size_a-1), 'bold'), bg=afbground, fg='#fdaa30')
@@ -3070,7 +3064,7 @@ class Window_2_lcars(Frame):
 					client.publish("tgn/system/update",timespl[3],qos=0,retain=True)
 				global afbground
 				global fground
-				if colorSet == 9:
+				if colorSet == 9 or colorSet == 0:
 					afbground = '#000000'
 					fground = '#eaa424'
 				self.display_time.config(text=output, font=('times', font_size_b, 'bold'), bg=afbground, fg=fground)
@@ -3091,7 +3085,7 @@ class Window_3_lcars(Frame):
 	def __init__(self,master):
 		global afbground
 		global fground
-		if colorSet == 9:
+		if colorSet == 9 or colorSet == 0:
 			afbground = '#cf0209'
 			fground = '#ffffff'
 		Frame.__init__(self, master)
@@ -3212,6 +3206,7 @@ def lcars_screen_20():
 					color_button.append(bu_cach) 
 				cou = cou + 1
 			color_button.append("LCARS")
+			color_button.append("ioBrocker")
 		index_bu = len(color_button)
 		if index_bu >= 1:    
 			colmenu.add_command(label=color_button[0], command=lambda: key(1,color_button[0]))
@@ -3236,6 +3231,8 @@ def lcars_screen_20():
 			colorSet = method
 			if but_name == "LCARS":
 				colorSet = 9
+			if but_name == "ioBrocker":
+				colorSet = 0
 			write_eeprom(1,ROM_ADDRESS,0x00,0x07,str(colorSet))
 			time.sleep(1)
 			os.execv(sys.executable, ['python3'] + sys.argv)
@@ -3383,7 +3380,16 @@ Process(target=info_sys).start()
 time.sleep(2)
 Process(target=read_infos).start()
 
-if colorSet <= 8:
-	normal_screen()
+def browser_start():
+	subprocess.call('chromium --kiosk http://192.168.0.98:8082/vis/index.html#Start', shell=True)
+
 if colorSet == 9:
-    lcars_screen_20()
+	print("Load LCARS")
+	lcars_screen_20()
+if colorSet == 0:
+	print("Load ioBrocker")
+	Process(target=browser_start).start()
+	lcars_screen_20()
+if colorSet <= 8:
+	print("Load normal")
+	normal_screen()
