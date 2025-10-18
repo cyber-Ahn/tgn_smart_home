@@ -3381,7 +3381,7 @@ time.sleep(2)
 Process(target=read_infos).start()
 
 def browser_start():
-	subprocess.call('chromium --kiosk http://192.168.0.98:8082/vis/index.html#Start', shell=True)
+	subprocess.call('chromium  --password-store=basic  --kiosk http://192.168.0.98:8082/vis/index.html#Start', shell=True)
 
 if colorSet == 9:
 	print("Load LCARS")
