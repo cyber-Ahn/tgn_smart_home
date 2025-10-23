@@ -2488,6 +2488,12 @@ def clearLOG():
 	os.system(setn)
 	setn = "rm -fr /home/pi/tgn_smart_home/log/shelly.log"
 	os.system(setn)
+	setn = "rm -fr /home/pi/tgn_smart_home/log/radiator.log"
+	os.system(setn)
+	setn = "rm -fr /home/pi/tgn_smart_home/log/room_data.log"
+	os.system(setn)
+	setn = "rm -fr /home/pi/tgn_smart_home/log/tasmota.log"
+	os.system(setn)
 def mc_check(ipadd, ipV6add):
 	server = MinecraftServer.lookup(ipadd)
 	try:

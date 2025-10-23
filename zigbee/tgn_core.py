@@ -1,11 +1,12 @@
 import json
 import paho.mqtt.client as mqtt
 import time
-from tgnLIB import get_ip
+from tgnLIB import get_ip, logging_tgn
 
 zig_topic = "zigbee2mqtt/#"
 tgn_topic = "tgn/#"
 she_topic = "shellies/#"
+log = "on"
 
 client = mqtt.Client("zigbee")
 client.connect(get_ip())
@@ -68,6 +69,10 @@ battery_thermostat_1 = "0"
 battery_thermostat_2 = "0"
 battery_thermostat_3 = "0"
 battery_thermostat_4 = "0"
+status_thermostat_1 = "0"
+status_thermostat_2 = "0"
+status_thermostat_3 = "0"
+status_thermostat_4 = "0"
 
 try:
     print(">>Load zigbee.config")
@@ -168,6 +173,10 @@ def decode_window(decode_data,num,typ):
     global battery_thermostat_2
     global battery_thermostat_3
     global battery_thermostat_4
+    global status_thermostat_1
+    global status_thermostat_2
+    global status_thermostat_3
+    global status_thermostat_4
     if typ == "window" and num == "1":
         try:
             window_1 = cach['contact']
@@ -186,41 +195,45 @@ def decode_window(decode_data,num,typ):
         thermo_out_1 = cach['occupied_heating_setpoint']
         thermo_cal_1 = cach['local_temperature_calibration']
         battery_thermostat_1 = cach['battery']
+        status_thermostat_1 = cach['running_state']
         client.publish("tgn/thermostat/thermostat_1_bat",battery_thermostat_1,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_1_local",thermo_is_1,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_1_setpoint",thermo_out_1,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_1__cal",thermo_cal_1,qos=0,retain=True)
-        client.publish("tgn/thermostat/status/1",cach['running_state'],qos=0,retain=True)
+        client.publish("tgn/thermostat/status/1",status_thermostat_1,qos=0,retain=True)
     if typ == "thermostat" and num == "2":
         thermo_is_2 = cach['local_temperature']
         thermo_out_2 = cach['occupied_heating_setpoint']
         thermo_cal_2 = cach['local_temperature_calibration']
         battery_thermostat_2 = cach['battery']
+        status_thermostat_2 = cach['running_state']
         client.publish("tgn/thermostat/thermostat_2_bat",battery_thermostat_2,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_2_local",thermo_is_2,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_2_setpoint",thermo_out_2,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_2__cal",thermo_cal_2,qos=0,retain=True)
-        client.publish("tgn/thermostat/status/2",cach['running_state'],qos=0,retain=True)
+        client.publish("tgn/thermostat/status/2",status_thermostat_2,qos=0,retain=True)
     if typ == "thermostat" and num == "3":
         thermo_is_3 = cach['local_temperature']
         thermo_out_3 = cach['occupied_heating_setpoint']
         thermo_cal_3 = cach['local_temperature_calibration']
         battery_thermostat_3 = cach['battery']
+        status_thermostat_3 = cach['running_state']
         client.publish("tgn/thermostat/thermostat_3_bat",battery_thermostat_3,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_3_local",thermo_is_3,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_3_setpoint",thermo_out_3,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_3__cal",thermo_cal_3,qos=0,retain=True)
-        client.publish("tgn/thermostat/status/3",cach['running_state'],qos=0,retain=True)
+        client.publish("tgn/thermostat/status/3",status_thermostat_3,qos=0,retain=True)
     if typ == "thermostat" and num == "4":
         thermo_is_4 = cach['local_temperature']
         thermo_out_4 = cach['occupied_heating_setpoint']
         thermo_cal_4 = cach['local_temperature_calibration']
         battery_thermostat_4 = cach['battery']
+        status_thermostat_4 = cach['running_state']
         client.publish("tgn/thermostat/thermostat_4_bat",battery_thermostat_4,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_4_local",thermo_is_4,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_4_setpoint",thermo_out_4,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_4__cal",thermo_cal_4,qos=0,retain=True)
-        client.publish("tgn/thermostat/status/4",cach['running_state'],qos=0,retain=True)
+        client.publish("tgn/thermostat/status/4",status_thermostat_4,qos=0,retain=True)
     if typ == "door":
         battery_door_1 = cach['bat']['value']
         client.publish("tgn/thermostat/door_1_bat",battery_door_1,qos=0,retain=True)
@@ -364,6 +377,8 @@ def main_prog():
         print(battery_name)
         client.publish("tgn/battery_empty",battery_name,qos=0,retain=True)
         if cou == 8:
+            if log== "on":
+                logging_tgn("Radiator 1:"+status_thermostat_1+"|"+"Radiator 2:"+status_thermostat_2+"|"+"Radiator 3:"+status_thermostat_3+"|"+"Radiator 4:"+status_thermostat_4+"|","radiator.log")
             ocor_1 = round(temp_1 - float(thermo_is_1),2)
             ocor_2 = round(temp_1 - float(thermo_is_2),2)
             ocor_3 = round(temp_3 - float(thermo_is_3),2)
