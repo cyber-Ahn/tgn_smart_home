@@ -955,6 +955,17 @@ def ini():
 		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")
+	num_ip = 0
+	try:
+		print(">>Load ip_socket_list.config")
+		f = open("/home/pi/tgn_smart_home/config/ip_socket_list.config","r")
+	except IOError:
+		print("cannot open ip_socket_list.config.... file not found")
+	else:
+		for line in f:
+			num_ip = num_ip + 1
+			print(str(num_ip)+":"+line.rstrip())
+			client.publish("tgn/buttons/ip/"+str(num_ip),line.rstrip(),qos=0,retain=True)
 	client.publish("tgn/air_conditioner/power","off",qos=0,retain=True)
 	client.publish("tgn/air_conditioner/stat",stat_air,qos=0,retain=True)
 	client.publish("tgn/air_conditioner/delay",delay,qos=0,retain=True)
