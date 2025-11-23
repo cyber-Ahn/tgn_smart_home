@@ -12,15 +12,20 @@ client = mqtt.Client("zigbee")
 client.connect(get_ip())
 
 bat_low = 25
+cou = 5
 summertemp = "0"
 summermod_cach = ""
 data_nc = []
+w_temp = "15.0"
+accuracy_mode = "1"
+accuracy_cach = "x"
+
 window_1_id = "0"
 window_1_cach = "empty"
 window_cach = ""
 window_1 = "closed"
 window_1_stat = "xx"
-cou = 5
+
 ir_cach = "nothing"
 ir_botton = "nothing"
 ir_power = "p"
@@ -69,6 +74,7 @@ battery_thermostat_1 = "0"
 battery_thermostat_2 = "0"
 battery_thermostat_3 = "0"
 battery_thermostat_4 = "0"
+
 status_thermostat_1 = "0"
 status_thermostat_2 = "0"
 status_thermostat_3 = "0"
@@ -253,8 +259,11 @@ def on_message(client, userdata, message):
     global thermostat_4_cach
     global door_1_cach
     global ir_botton
+    global w_temp
     if(message.topic=="tgn/thermostat/sol_temp"):
         t_temp = (message.payload.decode("utf-8"))
+    if(message.topic=="tgn/weather/temp"):
+        w_temp = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/summer_temp"):
         summertemp = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/esp_1/temp/sensor_1"):
@@ -294,6 +303,8 @@ def main_prog():
     global window_cach
     global cou
     global ir_botton
+    global accuracy_cach
+    global accuracy_mode
     while True:
         client.on_message=on_message
         client.loop_start()
@@ -377,7 +388,7 @@ def main_prog():
         print(battery_name)
         client.publish("tgn/battery_empty",battery_name,qos=0,retain=True)
         if cou == 8:
-            if log== "on":
+            if log == "on":
                 logging_tgn("Radiator 1:"+status_thermostat_1+"|"+"Radiator 2:"+status_thermostat_2+"|"+"Radiator 3:"+status_thermostat_3+"|"+"Radiator 4:"+status_thermostat_4+"|","radiator.log")
             ocor_1 = round(temp_1 - float(thermo_is_1),2)
             ocor_2 = round(temp_1 - float(thermo_is_2),2)
@@ -404,6 +415,26 @@ def main_prog():
                 client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": '+str(ocor_4)+'}',qos=0,retain=True)
             cou = 0
         cou += 1
-        print(cou)
+        print("Step:"+str(cou))
+        if float(w_temp) <= 9.0:
+            accuracy_mode = "0"
+            client.publish("tgn/thermostat/accuracy","-0.5",qos=0,retain=True)
+        else:
+            accuracy_mode = "1"
+            client.publish("tgn/thermostat/accuracy","-1",qos=0,retain=True)
+        if accuracy_cach != accuracy_mode:
+            accuracy_cach = accuracy_mode
+            if accuracy_mode == "1":
+                print("accuracy: -1")
+                client.publish(thermostat_1_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
+                client.publish(thermostat_2_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
+                client.publish(thermostat_3_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
+                client.publish(thermostat_4_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
+            elif accuracy_mode == "0":
+                print("accuracy: -0,5")
+                client.publish(thermostat_1_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
+                client.publish(thermostat_2_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
+                client.publish(thermostat_3_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
+                client.publish(thermostat_4_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
 ini()
 main_prog()
