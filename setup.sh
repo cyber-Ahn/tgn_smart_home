@@ -103,11 +103,7 @@ sudo mv /home/pi/tgn_smart_home/setup_files/adlists.list /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/black.list /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/blacklist.txt /etc/pihole/
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
-sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/mosquitto.conf /etc/mosquitto/
-sudo mv /home/pi/tgn_smart_home/setup_files/start_sinric.sh /home/pi
-sudo chmod +x /home/pi/start_sinric.sh
-sudo chmod +x /home/pi/start_main_gui.sh
 clear
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
 sleep 5
@@ -120,10 +116,11 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py thinkspeak
 clear
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py rss
 clear
-sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /etc/xdg/lxsession/LXDE-pi/autostart
-sudo echo "@lxterminal -e /home/pi/start_main_gui.sh" >>  /home/pi/.config/lxsession/LXDE-pi/autostart
-sudo echo "@lxterminal -e /home/pi/start_sinric.sh" >>  /etc/xdg/lxsession/LXDE-pi/autostart
-sudo echo "@lxterminal -e /home/pi/start_sinric.sh" >>  /home/pi/.config/lxsession/LXDE-pi/autostart
+sudo chmod +x /home/pi/tgncore.sh
+sudo cp /home/pi/tgn_smart_home/tgncore.service /etc/systemd/system
+systemctl daemon-reload >/dev/null 2>&1
+systemctl enable tgncore.service >/dev/null 2>&1
+systemctl start tgncore.service >/dev/null 2>&1
 echo -e "\e[33m>> \e[31mInstall Java (y/n)?\e[32m"
 read answer
 if [ "$answer" != "${answer#[Yy]}" ] ;then

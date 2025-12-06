@@ -1,0 +1,15 @@
+[Unit]
+ Description=TGN Core Startup Script
+ After=network.service
+
+ [Service]
+ Environment=XAUTHORITY=/home/pi/.Xauthority
+ DISPLAY=:0
+ Type=idle
+ ExecStart=/home/pi/tgn_smart_home/tgncore.sh
+ RestartSec=15
+ Restart=always
+ User=pi
+
+ [Install]
+ WantedBy=multi-user.target

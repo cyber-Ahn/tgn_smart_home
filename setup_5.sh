@@ -92,9 +92,7 @@ sudo mv /home/pi/tgn_smart_home/setup_files/tgnLIB.py /usr/local/lib/python"$ver
 sudo mv /home/pi/tgn_smart_home/setup_files/tgn_file_crypt.py /usr/local/lib/python"$ver"/dist-packages/
 sudo python3 /usr/local/lib/python"$ver"/dist-packages/tgn_file_crypt.py
 sudo mv /home/pi/tgn_smart_home/setup_files/.asoundrc /home/pi
-sudo mv /home/pi/tgn_smart_home/setup_files/start_main_gui.sh /home/pi
 sudo mv /home/pi/tgn_smart_home/setup_files/mosquitto.conf /etc/mosquitto/
-sudo chmod +x /home/pi/start_main_gui.sh
 sleep 3
 clear
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py install_rom
@@ -108,8 +106,11 @@ sudo python3 /home/pi/tgn_smart_home/libs/settings.py thinkspeak
 clear
 sudo python3 /home/pi/tgn_smart_home/libs/settings.py rss
 clear
-sudo mkdir /home/pi/.config/autostart
-sudo cp /home/pi/tgn_smart_home/setup_files/tgn.desktop /home/pi/.config/autostart
+sudo chmod +x /home/pi/tgncore.sh
+sudo cp /home/pi/tgn_smart_home/tgncore.service /etc/systemd/system
+systemctl daemon-reload >/dev/null 2>&1
+systemctl enable tgncore.service >/dev/null 2>&1
+systemctl start tgncore.service >/dev/null 2>&1
 fi
 echo -e "\e[33m>> \e[31mInstall Code-OSSm PI4 (y/n)?\e[32m"
 read answer

@@ -10,32 +10,32 @@ from tgnLIB import decode
 def hue_start():
     try:
         from pyHUE import HueApi
+        import time
+        hue_bridge_ip = "192.168.0.34"
+        hue_bridge_user_id = "wpBmTd9f7UEcK-ZLs7oypzKoeBJ3Nl0nFhrYaxBd"
+        try:
+            f_d = open("/home/pi/tgn_smart_home/config/system.config","r")
+            for line in f_d:
+                if "hue_user" in line:
+                    hue_bridge_user_id = decode(line.rstrip().split("*")[1])
+                if "hue_ip" in line:
+                    hue_bridge_ip = line.rstrip().split("*")[1]
+        except IOError:
+            print("cannot open system.config.... file not found")
+        try:
+            hue = HueApi(ip=hue_bridge_ip,user=hue_bridge_user_id)
+            cach_name = hue.get_light_list()
+            for x in cach_name:
+                name = x.split("|")[2] 
+                hue.set_light(name,"enable","0")
+                hue.set_light(name,"brightness","254")
+                hue.set_light(name,"color",[255,0,255])
+        except:
+            print("Bridge offline! Tray again in 30 sec.")
+            time.sleep(30)
+            hue_start()
     except:
         print("pyHUE not found! Install: 'git clone https://github.com/cyber-Ahn/pyHUE.git' ")
-    import time
-    hue_bridge_ip = "192.168.0.34"
-    hue_bridge_user_id = "wpBmTd9f7UEcK-ZLs7oypzKoeBJ3Nl0nFhrYaxBd"
-    try:
-        f_d = open("/home/pi/tgn_smart_home/config/system.config","r")
-        for line in f_d:
-            if "hue_user" in line:
-                hue_bridge_user_id = decode(line.rstrip().split("*")[1])
-            if "hue_ip" in line:
-                hue_bridge_ip = line.rstrip().split("*")[1]
-    except IOError:
-        print("cannot open system.config.... file not found")
-    try:
-        hue = HueApi(ip=hue_bridge_ip,user=hue_bridge_user_id)
-        cach_name = hue.get_light_list()
-        for x in cach_name:
-            name = x.split("|")[2] 
-            hue.set_light(name,"enable","0")
-            hue.set_light(name,"brightness","254")
-            hue.set_light(name,"color",[255,0,255])
-    except:
-        print("Bridge offline! Tray again in 30 sec.")
-        time.sleep(30)
-        hue_start()
 
 def bytes_to_GB(bytes):
     gb = bytes/(1024*1024*1024)
@@ -104,12 +104,12 @@ for partition in disk_partitions:
         print("[+] Free Disk Space :", bytes_to_GB(disk_usage.free), "GB")
         print("[+] Used Disk Space :", bytes_to_GB(disk_usage.used), "GB")
         print("[+] Percentage Used :", disk_usage.percent, "%")
-    client.publish("tgn/info/disk/device",partition.device,qos=0,retain=True)
-    client.publish("tgn/info/disk/file-sys",partition.fstype,qos=0,retain=True)
-    client.publish("tgn/info/disk/total",str(bytes_to_GB(disk_usage.total))+"Gb",qos=0,retain=True)
-    client.publish("tgn/info/disk/free",str(bytes_to_GB(disk_usage.free))+"Gb",qos=0,retain=True)
-    client.publish("tgn/info/disk/used",str(bytes_to_GB(disk_usage.used))+"Gb",qos=0,retain=True)
-    client.publish("tgn/info/disk/precent",str(disk_usage.percent)+"%",qos=0,retain=True)
+        client.publish("tgn/info/disk/device",partition.device,qos=0,retain=True)
+        client.publish("tgn/info/disk/file-sys",partition.fstype,qos=0,retain=True)
+        client.publish("tgn/info/disk/total",str(bytes_to_GB(disk_usage.total))+"Gb",qos=0,retain=True)
+        client.publish("tgn/info/disk/free",str(bytes_to_GB(disk_usage.free))+"Gb",qos=0,retain=True)
+        client.publish("tgn/info/disk/used",str(bytes_to_GB(disk_usage.used))+"Gb",qos=0,retain=True)
+        client.publish("tgn/info/disk/precent",str(disk_usage.percent)+"%",qos=0,retain=True)
 if_addrs = psutil.net_if_addrs()
 for interface_name, interface_addresses in if_addrs.items():
     for address in interface_addresses:
