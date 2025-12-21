@@ -1447,8 +1447,6 @@ def pcf8563ReadTimeB():
 		on()
 	if ond == "yes" and (cach_time == off1 or cach_time == off2):
 		off()
-	if alarm_s == "on" and alarm_t == cach_time:
-		alarm_go()
 	return(time_out)
 
 def air_conditioner_check():
@@ -1580,6 +1578,13 @@ def main_prog():
 		#---------------------------------
 		if counter_loop == make_loop:
 			print("20m loop")
+			#Sun  2025/12/21 09:53:42
+			ch_day = trigger.split(" ")[0]
+			ch_hour = trigger.split(" ")[3].split(":")[0]
+			if ch_day == "Sun" and ch_hour == "10":
+				print("Valve moving")
+				logging_tgn("Valve moving","tgn_smart_home.log")
+				client.publish("tgn/thermostat/valve_movement","on",qos=0,retain=True)
 			counter_loop = 0
 			temp_data = "Room Luxmeter:"
 			get_pihole_data(pihole_url, pihole_pw)

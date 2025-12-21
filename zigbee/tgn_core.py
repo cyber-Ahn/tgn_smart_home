@@ -13,7 +13,7 @@ client.connect(get_ip())
 
 bat_low = 25
 cou = 5
-summertemp = "0"
+summertemp = "7"
 summermod_cach = ""
 data_nc = []
 w_temp = "15.0"
@@ -65,7 +65,8 @@ t_temp = "0"
 t_temp_cach = "0"
 temp_1 = 11.5
 temp_3 = 11.5
-temp_4 = 11.5
+temp_4 = 11.
+valve_movement = "off"
 
 battery_name = "empty"
 battery_window_1 = "0"
@@ -156,6 +157,7 @@ def ini():
     client.publish(thermostat_4_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
     client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
     client.publish(thermostat_4_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
+    client.publish("tgn/thermostat/valve_movement","off",qos=0,retain=True)
 
 def decode_window(decode_data,num,typ):
     #print(decode_data+" Number:"+num+" Typ:"+typ)
@@ -260,6 +262,9 @@ def on_message(client, userdata, message):
     global door_1_cach
     global ir_botton
     global w_temp
+    global valve_movement
+    if(message.topic=="tgn/thermostat/valve_movement"):
+        valve_movement = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/sol_temp"):
         t_temp = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/weather/temp"):
@@ -335,6 +340,32 @@ def main_prog():
                 client.publish("cmnd/tasmota_E3DAF4/IRSend",ir_down,qos=0,retain=True)
             ir_botton = ir_cach
             client.publish("tgn/air_conditioner/button",ir_cach,qos=0,retain=True)
+        if valve_movement == "on" and summermod == "on":
+            print("Valve moving")
+            client.publish("tgn/battery_empty","Valve moving on",qos=0,retain=True)
+            time.sleep(5)
+            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            time.sleep(10)
+            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            time.sleep(10)
+            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            time.sleep(10)
+            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+            client.publish("tgn/thermostat/valve_movement","off",qos=0,retain=True)
+        elif valve_movement == "on" and summermod == "off":
+            client.publish("tgn/thermostat/valve_movement","off",qos=0,retain=True)
         if summermod != summermod_cach or t_temp != t_temp_cach or window_1 != window_cach:
             if summermod == "on":
                 summermod_cach = summermod
