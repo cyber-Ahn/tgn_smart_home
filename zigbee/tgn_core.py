@@ -12,7 +12,7 @@ client = mqtt.Client("zigbee")
 client.connect(get_ip())
 
 bat_low = 25
-cou = 5
+cou = 25
 summertemp = "7"
 summermod_cach = ""
 data_nc = []
@@ -25,6 +25,18 @@ window_1_cach = "empty"
 window_cach = ""
 window_1 = "closed"
 window_1_stat = "xx"
+
+motion_1_id = "0"
+motion_1_timeout = "20"
+motion_1_cach = "empty"
+motion_1_activ = "False"
+motion_1_ilu = "bright"
+motion_1_stat = "off"
+
+light_1_id = "0"
+light_1_bri = "254"
+light_1_behavor = "previous"
+light_1_cach = "empty"
 
 ir_cach = "nothing"
 ir_botton = "nothing"
@@ -76,6 +88,7 @@ valve_movement = "off"
 battery_name = "empty"
 battery_window_1 = "0"
 battery_door_1 = "0"
+battery_motion_1 = "0"
 battery_thermostat_1 = "0"
 battery_thermostat_2 = "0"
 battery_thermostat_3 = "0"
@@ -98,25 +111,41 @@ else:
         cach_n = line.rstrip()
         if cach_n.split(":")[0] == "window_1":
             window_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
-            print("Window 1:     "+window_1_id)
+            print("Window 1:       "+window_1_id)
         if cach_n.split(":")[0] == "thermostat_1":
             thermostat_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
-            print("Thermostat 1: "+thermostat_1_id)
+            print("Thermostat 1:   "+thermostat_1_id)
         if cach_n.split(":")[0] == "thermostat_2":
             thermostat_2_id = "zigbee2mqtt/"+cach_n.split(":")[1]
-            print("Thermostat 2: "+thermostat_2_id)
+            print("Thermostat 2:   "+thermostat_2_id)
         if cach_n.split(":")[0] == "thermostat_3":
             thermostat_3_id = "zigbee2mqtt/"+cach_n.split(":")[1]
-            print("Thermostat 3: "+thermostat_3_id)
+            print("Thermostat 3:   "+thermostat_3_id)
         if cach_n.split(":")[0] == "thermostat_4":
             thermostat_4_id = "zigbee2mqtt/"+cach_n.split(":")[1]
-            print("Thermostat 4: "+thermostat_4_id)
+            print("Thermostat 4:   "+thermostat_4_id)
         if cach_n.split(":")[0] == "thermostat_5":
             thermostat_5_id = "zigbee2mqtt/"+cach_n.split(":")[1]
-            print("Thermostat 5: "+thermostat_5_id)
+            print("Thermostat 5:   "+thermostat_5_id)
         if cach_n.split(":")[0] == "door_1":
             shelly_1_id = "shellies/"+cach_n.split(":")[1]+"/info"
-            print("Door 1:       "+shelly_1_id)
+            print("Door 1:         "+shelly_1_id)
+        if cach_n.split(":")[0] == "motion_1":
+            motion_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Motion 1:       "+motion_1_id)
+        if cach_n.split(":")[0] == "bat_low":
+            bat_low = int(cach_n.split(":")[1])
+            print("Bat_LOw:        "+str(bat_low))
+        if cach_n.split(":")[0] == "motion_1_timeout":
+            motion_1_timeout = cach_n.split(":")[1]
+            print("Motion TimeOut: "+motion_1_timeout) 
+        if cach_n.split(":")[0] == "light_1":
+            light_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Light 1:        "+light_1_id)
+        if cach_n.split(":")[0] == "light_1_bri":
+            light_1_bri = cach_n.split(":")[1]
+            print("Li.1 brightness:"+light_1_bri)
+    print("--------------------------------------------")
 
 try:
     print(">>Load system.config")
@@ -171,10 +200,15 @@ def ini():
     #client.publish(thermostat_5_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
     #client.publish(thermostat_5_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
     #client.publish(thermostat_5_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
+    time.sleep(0.3)
     client.publish("tgn/thermostat/valve_movement","off",qos=0,retain=True)
+    client.publish(motion_1_id+"/set",'{"motion_timeout": '+motion_1_timeout+'}',qos=0,retain=True)
+    client.publish(light_1_id+"/set",'{"brightness": '+light_1_bri+'}',qos=0,retain=True)
+    client.publish(light_1_id+"/set",'{"power_on_behavior": "'+light_1_behavor+'"}',qos=0,retain=True)
+    client.publish(light_1_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+    print("ini end")
 
 def decode_window(decode_data,num,typ):
-    #print(decode_data+" Number:"+num+" Typ:"+typ)
     cach = json.loads(decode_data)
     global window_1
     global thermo_is_1
@@ -199,11 +233,14 @@ def decode_window(decode_data,num,typ):
     global battery_thermostat_3
     global battery_thermostat_4
     global battery_thermostat_5
+    global battery_motion_1
     global status_thermostat_1
     global status_thermostat_2
     global status_thermostat_3
     global status_thermostat_4
     global status_thermostat_5
+    global motion_1_activ
+    global motion_1_ilu
     if typ == "window" and num == "1":
         try:
             window_1 = cach['contact']
@@ -277,6 +314,18 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/door_1_bat",battery_door_1,qos=0,retain=True)
         client.publish("tgn/thermostat/door_1",cach['sensor']['state'],qos=0,retain=True)
         client.publish("tgn/thermostat/door_1_temp",cach['tmp']['value'],qos=0,retain=True)
+    if typ == "motion":
+        battery_motion_1 = cach['battery']
+        motion_1_ilu = cach['illumination']
+        motion_1_activ = cach['occupancy']
+        client.publish("tgn/thermostat/motion_1_bat",battery_motion_1,qos=0,retain=True)
+        client.publish("tgn/thermostat/motion_1_ilumi",motion_1_ilu,qos=0,retain=True)
+        client.publish("tgn/thermostat/motion_1_timeout",cach['motion_timeout'],qos=0,retain=True)
+        client.publish("tgn/thermostat/motion_1_detected",motion_1_activ,qos=0,retain=True)
+    if typ == "light":
+        client.publish("tgn/thermostat/ligh_1_state",cach['state'],qos=0,retain=True)
+        client.publish("tgn/thermostat/ligh_1_bri",cach['brightness'],qos=0,retain=True)
+        client.publish("tgn/thermostat/ligh_1_behavior",cach['power_on_behavior'],qos=0,retain=True)
 
 def on_message(client, userdata, message):
     global t_temp
@@ -295,6 +344,8 @@ def on_message(client, userdata, message):
     global ir_botton
     global w_temp
     global valve_movement
+    global motion_1_cach
+    global light_1_cach
     if(message.topic=="tgn/thermostat/valve_movement"):
         valve_movement = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/sol_temp"):
@@ -334,6 +385,12 @@ def on_message(client, userdata, message):
     if(message.topic==shelly_1_id):
         door_1_cach = (message.payload.decode("utf-8"))
         decode_window(door_1_cach,"1","door")
+    if(message.topic==motion_1_id):
+        motion_1_cach = (message.payload.decode("utf-8"))
+        decode_window(motion_1_cach,"1","motion")
+    if(message.topic==light_1_id):
+        light_1_cach = (message.payload.decode("utf-8"))
+        decode_window(light_1_cach,"1","light")
 
 def main_prog():
     print("Start zigbee modul")
@@ -345,6 +402,7 @@ def main_prog():
     global ir_botton
     global accuracy_cach
     global accuracy_mode
+    global motion_1_stat
     while True:
         client.on_message=on_message
         client.loop_start()
@@ -353,7 +411,6 @@ def main_prog():
         client.subscribe([(she_topic,0)])
         time.sleep(2)
         client.loop_stop()
-        time.sleep(5)
         if ir_botton != ir_cach:
             print("send IR:"+ir_botton)
             if ir_botton == "power":
@@ -424,12 +481,14 @@ def main_prog():
                 client.publish(thermostat_4_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
                 #client.publish(thermostat_5_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
                 if window_1 == "open":
+                    logging_tgn("Window open","zigbee.log")
                     client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
                     client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
                     client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
                     client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
                     #client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
                 elif window_1 == "closed":
+                    logging_tgn("Window closed","zigbee.log")
                     t_temp_cach = t_temp
                     client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
                     client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
@@ -455,6 +514,8 @@ def main_prog():
             battery_name ="thermostat_5"
         if int(battery_door_1) < bat_low:
             battery_name ="door_1"
+        if int(battery_motion_1) < bat_low:
+            battery_name ="Motion_1"
         if window_1 != window_1_stat:
             window_1_stat = window_1
             if window_1 == "closed":
@@ -463,9 +524,9 @@ def main_prog():
                 battery_name = "Window_1 open"
         print(battery_name)
         client.publish("tgn/battery_empty",battery_name,qos=0,retain=True)
-        if cou == 8:
+        if cou == 30:
             if log == "on":
-                logging_tgn("Radiator 1:"+status_thermostat_1+"|"+"Radiator 2:"+status_thermostat_2+"|"+"Radiator 3:"+status_thermostat_3+"|"+"Radiator 4:"+status_thermostat_4+"|","radiator.log")
+                logging_tgn("Radiator 1:"+status_thermostat_1+"|"+"Radiator 2:"+status_thermostat_2+"|"+"Radiator 3:"+status_thermostat_3+"|"+"Radiator 4:"+status_thermostat_4+"|","zigbee.log")
             ocor_1 = round(temp_1 - float(thermo_is_1),2)
             ocor_2 = round(temp_1 - float(thermo_is_2),2)
             ocor_3 = round(temp_3 - float(thermo_is_3),2)
@@ -497,7 +558,7 @@ def main_prog():
             cou = 0
         cou += 1
         print("Step:"+str(cou))
-        if float(w_temp) <= 9.0:
+        if float(w_temp) <= 8.0:
             accuracy_mode = "0"
             client.publish("tgn/thermostat/accuracy","-0.5",qos=0,retain=True)
         else:
@@ -507,6 +568,7 @@ def main_prog():
             accuracy_cach = accuracy_mode
             if accuracy_mode == "1":
                 print("accuracy: -1")
+                logging_tgn("accuracy:-1","zigbee.log")
                 client.publish(thermostat_1_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
                 client.publish(thermostat_2_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
                 client.publish(thermostat_3_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
@@ -514,10 +576,23 @@ def main_prog():
                 #client.publish(thermostat_5_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
             elif accuracy_mode == "0":
                 print("accuracy: -0,5")
+                logging_tgn("accuracy:-0.5","zigbee.log")
                 client.publish(thermostat_1_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
                 client.publish(thermostat_2_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
                 client.publish(thermostat_3_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
                 client.publish(thermostat_4_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
                 #client.publish(thermostat_5_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
+        #light mode
+        if motion_1_ilu == "dim" and motion_1_activ == True and motion_1_stat == "off":
+            print("light on")
+            logging_tgn("Motion_1_Light_on","zigbee.log")
+            client.publish(light_1_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+            motion_1_stat = "on"
+        elif motion_1_stat == "on" and motion_1_activ == False:
+            print("Light off")
+            logging_tgn("Motion_1_Light_off","zigbee.log")
+            client.publish(light_1_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            motion_1_stat = "off"
 ini()
 main_prog()
+            
