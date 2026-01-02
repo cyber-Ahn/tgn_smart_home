@@ -686,7 +686,7 @@ def main_prog():
             tim_state = "on"
             motion_1_is_cach = "on"
             client.publish(light_2_id+"/set",'{"state": "ON"}',qos=0,retain=True)
-        elif motion_1_ilu == "dim" and motion_1_activ == True and light_2_is == "ON" and motion_1_is_cach == "off":
+        if motion_1_ilu == "dim" and motion_1_activ == True and light_2_is == "ON" and motion_1_is_cach == "off":
             print("timer off")
             tim_state = "off"
             tim_cou = 0
