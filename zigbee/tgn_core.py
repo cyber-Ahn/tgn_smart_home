@@ -33,6 +33,10 @@ motion_1_activ = "False"
 motion_1_ilu = "bright"
 motion_1_stat = "off"
 
+button_1_id = "0"
+button_1_action = "empty"
+button_1_cach = "empty"
+
 light_1_id = "0"
 light_1_bri = "254"
 light_1_behavor = "previous"
@@ -42,12 +46,7 @@ light_2_id = "0"
 light_2_bri = "254"
 light_2_behavor = "on"
 light_2_cach = "empty"
-
-light_2_is = "OFF"
-tim_cou = 0
-tim_state = "off"
-tim_sol = 20
-motion_1_is_cach = "off"
+light_2_state= "OFF"
 
 tgn_1_id = "0"
 tgn_1_cach = "empty"
@@ -105,6 +104,7 @@ battery_name = "empty"
 battery_window_1 = "0"
 battery_door_1 = "0"
 battery_motion_1 = "0"
+battery_button_1 = "0"
 battery_thermostat_1 = "0"
 battery_thermostat_2 = "0"
 battery_thermostat_3 = "0"
@@ -170,9 +170,9 @@ else:
         if cach_n.split(":")[0] == "light_2_bri":
             light_2_bri = cach_n.split(":")[1]
             print("Li.2 brightness:"+light_2_bri)
-        if cach_n.split(":")[0] == "timer_sol":
-            tim_sol = int(cach_n.split(":")[1])
-            print("Timer Sol:      "+str(tim_sol))
+        if cach_n.split(":")[0] == "button_1":
+            button_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Button 1:        "+button_1_id)
     print("--------------------------------------------")
 
 try:
@@ -241,11 +241,11 @@ def ini():
     client.publish(light_2_id+"/set",'{"power_on_behavior": "'+light_2_behavor+'"}',qos=0,retain=True)
     client.publish(light_1_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
     client.publish(light_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
-    client.publish(tgn_1_id+"/set",'{"state_1": "ON"}',qos=0,retain=True)
-    client.publish(tgn_1_id+"/set",'{"state_14": "ON"}',qos=0,retain=True)
-    time.sleep(3)
-    client.publish(tgn_1_id+"/set",'{"state_1": "OFF"}',qos=0,retain=True)
-    client.publish(tgn_1_id+"/set",'{"state_14": "OFF"}',qos=0,retain=True)
+    #client.publish(tgn_1_id+"/set",'{"state_1": "ON"}',qos=0,retain=True)
+    #client.publish(tgn_1_id+"/set",'{"state_14": "ON"}',qos=0,retain=True)
+    #time.sleep(3)
+    #client.publish(tgn_1_id+"/set",'{"state_1": "OFF"}',qos=0,retain=True)
+    #client.publish(tgn_1_id+"/set",'{"state_14": "OFF"}',qos=0,retain=True)
     time.sleep(3)
     tgn_1_sate_1 = "OFF"
     tgn_1_sate_14 = "OFF"
@@ -277,6 +277,7 @@ def decode_window(decode_data,num,typ):
     global battery_thermostat_4
     global battery_thermostat_5
     global battery_motion_1
+    global battery_button_1
     global status_thermostat_1
     global status_thermostat_2
     global status_thermostat_3
@@ -286,6 +287,8 @@ def decode_window(decode_data,num,typ):
     global motion_1_ilu
     global tgn_1_sate_1
     global tgn_1_sate_14
+    global button_1_action
+    global light_2_state
     if typ == "window" and num == "1":
         try:
             window_1 = cach['contact']
@@ -372,7 +375,8 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/ligh_1_bri",cach['brightness'],qos=0,retain=True)
         client.publish("tgn/thermostat/ligh_1_behavior",cach['power_on_behavior'],qos=0,retain=True)
     if typ == "light" and num == "2":
-        client.publish("tgn/thermostat/ligh_2_state",cach['state'],qos=0,retain=True)
+        light_2_state = cach['state']
+        client.publish("tgn/thermostat/ligh_2_state",light_2_state,qos=0,retain=True)
         client.publish("tgn/thermostat/ligh_2_bri",cach['brightness'],qos=0,retain=True)
         client.publish("tgn/thermostat/ligh_2_behavior",cach['power_on_behavior'],qos=0,retain=True)
     if typ == "tgn" and num == "1":
@@ -387,6 +391,11 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/tgn_modul_1/outlet",tgn_1_sate_1,qos=0,retain=True)
         client.publish("tgn/tgn_modul_1/bulb",tgn_1_sate_14,qos=0,retain=True)
         client.publish("tgn/tgn_modul_1/temp",cach['temperature_10'],qos=0,retain=True)
+    if typ == "button" and num == "1":
+        button_1_action = cach['action']
+        battery_button_1 = cach['battery']
+        client.publish("tgn/thermostat/button_1_state",button_1_action,qos=0,retain=True)
+        client.publish("tgn/thermostat/button_1_bat",battery_button_1,qos=0,retain=True)
 
 def on_message(client, userdata, message):
     global t_temp
@@ -411,9 +420,7 @@ def on_message(client, userdata, message):
     global tgn_1_sate_1
     global tgn_1_sate_14
     global light_2_cach
-    global light_2_is
-    if(message.topic=="tgn/thermostat/ligh_2_state"):
-        light_2_is = message.payload.decode("utf-8")
+    global button_1_cach
     if(message.topic=="tgn/thermostat/valve_movement"):
         valve_movement = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/sol_temp"):
@@ -459,6 +466,9 @@ def on_message(client, userdata, message):
     if(message.topic==motion_1_id):
         motion_1_cach = (message.payload.decode("utf-8"))
         decode_window(motion_1_cach,"1","motion")
+    if(message.topic==button_1_id):
+        button_1_cach = (message.payload.decode("utf-8"))
+        decode_window(button_1_cach,"1","button")
     if(message.topic==light_1_id):
         light_1_cach = (message.payload.decode("utf-8"))
         decode_window(light_1_cach,"1","light")
@@ -488,9 +498,6 @@ def main_prog():
     global accuracy_cach
     global accuracy_mode
     global motion_1_stat
-    global motion_1_is_cach
-    global tim_cou
-    global tim_state
     while True:
         client.on_message=on_message
         client.loop_start()
@@ -604,6 +611,8 @@ def main_prog():
             battery_name ="door_1"
         if int(battery_motion_1) < bat_low:
             battery_name ="Motion_1"
+        if int(battery_button_1) < bat_low:
+            battery_name ="Button_1"
         if window_1 != window_1_stat:
             window_1_stat = window_1
             if window_1 == "closed":
@@ -681,26 +690,12 @@ def main_prog():
             logging_tgn("Motion_1_Light_off","zigbee.log")
             client.publish(light_1_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
             motion_1_stat = "off"
-        if motion_1_ilu == "dim" and motion_1_activ == True and light_2_is == "OFF" and motion_1_is_cach == "off":
-            print("timer on")
-            tim_state = "on"
-            motion_1_is_cach = "on"
+        if button_1_action == "double" and light_2_state == "OFF":
+            print("light on")
             client.publish(light_2_id+"/set",'{"state": "ON"}',qos=0,retain=True)
-        if motion_1_ilu == "dim" and motion_1_activ == True and light_2_is == "ON" and motion_1_is_cach == "off":
-            print("timer off")
-            tim_state = "off"
-            tim_cou = 0
-            motion_1_is_cach = "on"
+        elif button_1_action == "long" and light_2_state == "ON":
+            print("light off")
             client.publish(light_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
-        if motion_1_activ == False:
-            motion_1_is_cach = "off"
-        if tim_state == "on":
-            if tim_cou == tim_sol:
-                print("timer")
-                tim_state = "off"
-                tim_cou = 0
-                client.publish(light_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
-            tim_cou += 1
 ini()
 main_prog()
             
