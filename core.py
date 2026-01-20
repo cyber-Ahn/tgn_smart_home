@@ -969,7 +969,8 @@ def read_infos():
 	os.system(setn)
 	
 def browser_start():
-	subprocess.call('chromium  --password-store=basic  --kiosk http://192.168.0.98:8082/vis/index.html#Start', shell=True)
+	#subprocess.call('chromium  --password-store=basic  --kiosk http://192.168.0.98:8082/vis/index.html#Start', shell=True)
+	subprocess.call('firefox -kiosk --new-window http://192.168.0.98:8082/vis/index.html#Start', shell=True)
 
 def remove_var(name_b_c):
 	if "s_" in name_b_c or "p_" in name_b_c or "y_" in name_b_c or "t_" in name_b_c :
