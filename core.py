@@ -178,6 +178,8 @@ ir_dry = "x"
 ir_up = "x"
 ir_down = "x"
 ir_topic = "x"
+# blind
+is_pos = "x"
 
 
 #---funktions---
@@ -1130,6 +1132,7 @@ def on_message(client, userdata, message):
 	global hum_3
 	global hum_4
 	global shelly_cach
+	global is_pos
 	if(message.topic=="shellies/shellydw2-1B7C9D/info"):
 		shelly_cach = (message.payload.decode("utf-8"))
 	if(message.topic=="tgn/air_conditioner/power"):
@@ -1171,6 +1174,8 @@ def on_message(client, userdata, message):
 		esp_rssi_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/analog/sensor_1"):
 		esp_li_2 = str(message.payload.decode("utf-8"))
+	if(message.topic=="tgn/blind_1/is_pos"):
+		is_pos = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_2/button/b1"):
 		esp_b1_2 = str(message.payload.decode("utf-8"))
 	if(message.topic=="tgn/esp_1/temp/sensor_1"):
@@ -1579,6 +1584,12 @@ def main_prog():
 		#---------------------------------
 		if counter_loop == make_loop:
 			print("20m loop")
+			if int(esp_li_2) >= 450 and int(esp_li_2) <= 960 and is_pos== "down":
+				print("Blind open")
+				client.publish("tgn/blind_1/set","up",qos=0,retain=True)
+			elif is_pos == "up":
+				print("Blind close")
+				client.publish("tgn/blind_1/set","down",qos=0,retain=True)
 			#Sun  2025/12/21 09:53:42
 			ch_day = trigger.split(" ")[0]
 			ch_hour = trigger.split(" ")[3].split(":")[0]
