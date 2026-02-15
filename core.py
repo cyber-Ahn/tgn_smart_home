@@ -1584,7 +1584,7 @@ def main_prog():
 		#---------------------------------
 		if counter_loop == make_loop:
 			print("20m loop")
-			if int(esp_li_2) >= 450 and int(esp_li_2) <= 960 and is_pos== "down":
+			if int(esp_li_2) >= 350 and int(esp_li_2) <= 960 and is_pos== "down":
 				print("Blind open")
 				client.publish("tgn/blind_1/set","up",qos=0,retain=True)
 			elif is_pos == "up":
