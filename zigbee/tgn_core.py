@@ -1,7 +1,7 @@
 import json
 import paho.mqtt.client as mqtt
 import time
-from tgnLIB import get_ip, logging_tgn
+from tgnLIB import get_ip, logging_tgn, pcf8563ReadTime
 
 zig_topic = "zigbee2mqtt/#"
 tgn_topic = "tgn/#"
@@ -36,6 +36,12 @@ motion_1_stat = "off"
 button_1_id = "0"
 button_1_action = "empty"
 button_1_cach = "empty"
+
+meter_1_id = "0"
+meter_1_cach = "empty"
+meter_1_power = "0"
+meter_1_energy = "0"
+meter_log = "0"
 
 light_1_id = "0"
 light_1_bri = "254"
@@ -105,6 +111,7 @@ battery_window_1 = "0"
 battery_door_1 = "0"
 battery_motion_1 = "0"
 battery_button_1 = "0"
+battery_meter_1 = "0"
 battery_thermostat_1 = "0"
 battery_thermostat_2 = "0"
 battery_thermostat_3 = "0"
@@ -173,6 +180,9 @@ else:
         if cach_n.split(":")[0] == "button_1":
             button_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
             print("Button 1:        "+button_1_id)
+        if cach_n.split(":")[0] == "meter_1":
+            meter_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Meter 1:         "+meter_1_id)
     print("--------------------------------------------")
 
 try:
@@ -246,6 +256,7 @@ def ini():
     #time.sleep(3)
     #client.publish(tgn_1_id+"/set",'{"state_1": "OFF"}',qos=0,retain=True)
     #client.publish(tgn_1_id+"/set",'{"state_14": "OFF"}',qos=0,retain=True)
+    client.publish(meter_1_id+"/set",'{"pulse_configuration": 10000}',qos=0,retain=True)
     time.sleep(3)
     tgn_1_sate_1 = "OFF"
     tgn_1_sate_14 = "OFF"
@@ -278,6 +289,7 @@ def decode_window(decode_data,num,typ):
     global battery_thermostat_5
     global battery_motion_1
     global battery_button_1
+    global battery_meter_1
     global status_thermostat_1
     global status_thermostat_2
     global status_thermostat_3
@@ -289,6 +301,8 @@ def decode_window(decode_data,num,typ):
     global tgn_1_sate_14
     global button_1_action
     global light_2_state
+    global meter_1_power
+    global meter_1_energy
     if typ == "window" and num == "1":
         try:
             window_1 = cach['contact']
@@ -396,6 +410,14 @@ def decode_window(decode_data,num,typ):
         battery_button_1 = cach['battery']
         client.publish("tgn/thermostat/button_1_state",button_1_action,qos=0,retain=True)
         client.publish("tgn/thermostat/button_1_bat",battery_button_1,qos=0,retain=True)
+    if typ == "meter" and num == "1":
+        battery_meter_1 = cach['battery']
+        meter_1_power = cach['power']
+        meter_1_energy = cach['energy']
+        client.publish("tgn/frient/ElecMeter_1/battery",battery_meter_1,qos=0,retain=True)
+        client.publish("tgn/frient/ElecMeter_1/power",meter_1_power,qos=0,retain=True)
+        client.publish("tgn/frient/ElecMeter_1/energy",meter_1_energy,qos=0,retain=True)
+        client.publish("tgn/frient/ElecMeter_1/impulse",cach['pulse_configuration'],qos=0,retain=True)
 
 def on_message(client, userdata, message):
     global t_temp
@@ -421,6 +443,7 @@ def on_message(client, userdata, message):
     global tgn_1_sate_14
     global light_2_cach
     global button_1_cach
+    global meter_1_cach
     if(message.topic=="tgn/thermostat/valve_movement"):
         valve_movement = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/sol_temp"):
@@ -485,6 +508,9 @@ def on_message(client, userdata, message):
         if(msg != tgn_1_sate_14):
             client.publish(tgn_1_id+"/set",'{"state_14": "'+msg+'"}',qos=0,retain=True)
             tgn_1_sate_14 = msg
+    if(message.topic==meter_1_id):
+        meter_1_cach = (message.payload.decode("utf-8"))
+        decode_window(meter_1_cach,"1","meter")
     
 
 def main_prog():
@@ -613,6 +639,8 @@ def main_prog():
             battery_name ="Motion_1"
         if int(battery_button_1) < bat_low:
             battery_name ="Button_1"
+        if int(battery_meter_1) < bat_low:
+            battery_name ="Meter_1"
         if window_1 != window_1_stat:
             window_1_stat = window_1
             if window_1 == "closed":
@@ -654,7 +682,7 @@ def main_prog():
                 #client.publish(thermostat_5_id+"/set",'{"local_temperature_calibration": '+str(ocor_5)+'}',qos=0,retain=True)
             cou = 0
         cou += 1
-        print("Step:"+str(cou))
+        #print("Step:"+str(cou))
         if float(w_temp) <= 8.0:
             accuracy_mode = "0"
             client.publish("tgn/thermostat/accuracy","-0.5",qos=0,retain=True)
@@ -696,6 +724,14 @@ def main_prog():
         elif button_1_action == "long" and light_2_state == "ON":
             print("light off")
             client.publish(light_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+        g_time = pcf8563ReadTime()
+        #print(g_time.split(" ")[3].split(":")[1])
+        if g_time.split(" ")[3].split(":")[1] == "00" or g_time.split(" ")[3].split(":")[1] == "30":
+            if meter_log == "0":
+                logging_tgn(str(meter_1_power)+"|"+str(meter_1_energy),"ElecMeter.log")
+                meter_log = "1"
+        else:
+            meter_log = "0"
 ini()
 main_prog()
             
