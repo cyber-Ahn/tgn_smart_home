@@ -180,7 +180,10 @@ ir_down = "x"
 ir_topic = "x"
 # blind
 is_pos = "x"
-
+open_hour = 0
+close_hour = 0
+blind_time = "open"
+auto_time = "0"
 
 #---funktions---
 def ini():
@@ -809,6 +812,21 @@ def ini():
 			if count_d == 42:
 				global ir_topic
 				ir_topic = str(line.rstrip().split("*")[1])
+			if count_d == 47:
+				global auto_time
+				global open_hour
+				global close_hour
+				bl_cach = str(line.rstrip().split("*")[1])
+				auto_time = bl_cach.split("|")[0]
+				open_hour = int(bl_cach.split("|")[1])
+				close_hour = int(bl_cach.split("|")[2])
+				print(auto_time)
+				print(open_hour)
+				print(close_hour)
+				client.publish("tgn/blind/auto_time",auto_time,qos=0,retain=True)
+				client.publish("tgn/blind/open_time",open_hour,qos=0,retain=True)
+				client.publish("tgn/blind/close_time",close_hour,qos=0,retain=True)
+			
 		print(onoff_day)
 	except IOError:
 		print("cannot open system.config.... file not found")
@@ -1066,33 +1084,34 @@ def mc_check(ipadd, ipV6add):
 		client.publish("tgn/mc_server/ipV6",ipV6add,qos=0,retain=True)
 
 def get_pihole_data(url, pw):
-    global DNSQUERIES
-    global ADSBLOCKED
-    global CLIENTS
-    global DNSONLIST
-    global PIHOLECSTATUS
-    try:
-        session = requests.Session()
-        session.post(url+"/admin/login", {'pw': pw})
-        response_data = session.get(url+"/api.php")
-        dataPIhole = json.loads(response_data.text)
-        DNSQUERIES = dataPIhole['dns_queries_today']
-        ADSBLOCKED = dataPIhole['ads_blocked_today']
-        CLIENTS = dataPIhole['unique_clients']
-        DNSONLIST = dataPIhole['domains_being_blocked']
-        PIHOLECSTATUS = dataPIhole['status']
-        client.publish("tgn/pihole/adBlock",ADSBLOCKED,qos=0,retain=True)
-        client.publish("tgn/pihole/queries",DNSQUERIES,qos=0,retain=True)
-        client.publish("tgn/pihole/clients",CLIENTS,qos=0,retain=True)
-        client.publish("tgn/pihole/dnslist",DNSONLIST,qos=0,retain=True)
-        client.publish("tgn/pihole/status",PIHOLECSTATUS,qos=0,retain=True)
-    except: 
-        print("Pihole not found")
-        DNSQUERIES = "xxx"
-        ADSBLOCKED = "xxx"
-        CLIENTS = "xxx"
-        DNSONLIST = "xxx"
-        PIHOLECSTATUS = "0"
+	global DNSQUERIES
+	global ADSBLOCKED
+	global CLIENTS
+	global DNSONLIST
+	global PIHOLECSTATUS
+	try:
+		session = requests.Session()
+		session.post(url+"/admin/login", {'pw': pw})
+		response_data = session.get(url+"/api.php")
+		dataPIhole = json.loads(response_data.text)
+		DNSQUERIES = dataPIhole['dns_queries_today']
+		ADSBLOCKED = dataPIhole['ads_blocked_today']
+		CLIENTS = dataPIhole['unique_clients']
+		DNSONLIST = dataPIhole['domains_being_blocked']
+		PIHOLECSTATUS = dataPIhole['status']
+		client.publish("tgn/pihole/adBlock",ADSBLOCKED,qos=0,retain=True)
+		client.publish("tgn/pihole/queries",DNSQUERIES,qos=0,retain=True)
+		client.publish("tgn/pihole/clients",CLIENTS,qos=0,retain=True)
+		client.publish("tgn/pihole/dnslist",DNSONLIST,qos=0,retain=True)
+		client.publish("tgn/pihole/status",PIHOLECSTATUS,qos=0,retain=True)
+	except:
+		print("Pihole not found")
+		client.publish("tgn/pihole/status","Offline - No connection",qos=0,retain=True)
+		DNSQUERIES = "xxx"
+		ADSBLOCKED = "xxx"
+		CLIENTS = "xxx"
+		DNSONLIST = "xxx"
+		PIHOLECSTATUS = "0"
 
 def on_message(client, userdata, message):
 	global esp_temp
@@ -1133,6 +1152,9 @@ def on_message(client, userdata, message):
 	global hum_4
 	global shelly_cach
 	global is_pos
+	global auto_time
+	if(message.topic=="tgn/blind/auto_time"):
+		auto_time = (message.payload.decode("utf-8"))
 	if(message.topic=="shellies/shellydw2-1B7C9D/info"):
 		shelly_cach = (message.payload.decode("utf-8"))
 	if(message.topic=="tgn/air_conditioner/power"):
@@ -1439,7 +1461,9 @@ def pcf8563ReadTimeB():
 		min = strftime("%M", localtime())
 		h1 = hour.find("0")
 		m1 = min.find("0")
-		if h1 == 0:
+		if hour == "00" or hour == "0":
+			hour = "0"
+		elif h1 == 0:
 			h2 = hour.split("0")
 			hour = h2[1]
 		if m1 == 0:
@@ -1453,6 +1477,15 @@ def pcf8563ReadTimeB():
 		on()
 	if ond == "yes" and (cach_time == off1 or cach_time == off2):
 		off()
+	print(hour)
+	global blind_time
+	if (auto_time == "1"):
+		if (int(hour) >= close_hour) or (int(hour) <= open_hour-1):
+			blind_time = "close"
+		else:
+			blind_time = "open"
+		print("Hour:"+str(int(hour)))
+		client.publish("tgn/blind/blind_time",blind_time,qos=0,retain=True)
 	return(time_out)
 
 def air_conditioner_check():
@@ -1584,12 +1617,26 @@ def main_prog():
 		#---------------------------------
 		if counter_loop == make_loop:
 			print("20m loop")
-			if int(esp_li_2) >= 350 and int(esp_li_2) <= 960 and is_pos== "down":
+			if int(esp_li_2) >= 350 and int(esp_li_2) <= 960 and is_pos== "down" and auto_time == "0":
 				print("Blind open")
 				client.publish("tgn/blind_1/set","up",qos=0,retain=True)
-			elif is_pos == "up":
+				client.publish("tgn/blind_2/set","up",qos=0,retain=True)
+				client.publish("tgn/blind_3/set","up",qos=0,retain=True)
+			elif is_pos == "up" and auto_time == "0":
 				print("Blind close")
 				client.publish("tgn/blind_1/set","down",qos=0,retain=True)
+				client.publish("tgn/blind_2/set","down",qos=0,retain=True)
+				client.publish("tgn/blind_3/set","down",qos=0,retain=True)
+			if auto_time == "1" and blind_time == "close" and is_pos == "up":
+				print("Blind close")
+				client.publish("tgn/blind_1/set","down",qos=0,retain=True)
+				client.publish("tgn/blind_2/set","down",qos=0,retain=True)
+				client.publish("tgn/blind_3/set","down",qos=0,retain=True)
+			if auto_time == "1" and blind_time == "open" and is_pos == "down":
+				print("Blind open")
+				client.publish("tgn/blind_1/set","up",qos=0,retain=True)
+				client.publish("tgn/blind_2/set","up",qos=0,retain=True)
+				client.publish("tgn/blind_3/set","up",qos=0,retain=True)
 			#Sun  2025/12/21 09:53:42
 			ch_day = trigger.split(" ")[0]
 			ch_hour = trigger.split(" ")[3].split(":")[0]
@@ -1599,7 +1646,7 @@ def main_prog():
 				client.publish("tgn/thermostat/valve_movement","on",qos=0,retain=True)
 			counter_loop = 0
 			temp_data = "Room Luxmeter:"
-			get_pihole_data(pihole_url, pihole_pw)
+			#get_pihole_data(pihole_url, pihole_pw)
 			if is_connected(REMOTE_SERVER)=="Online":
 				global esp_ls
 				global rssfeed
