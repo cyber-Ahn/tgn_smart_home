@@ -80,6 +80,12 @@ thermostat_3_cach = "empty"
 thermostat_4_cach = "empty"
 thermostat_5_cach = "empty"
 
+thermostat_1_adj = "0"
+thermostat_2_adj = "0"
+thermostat_3_adj = "0"
+thermostat_4_adj = "0"
+thermostat_5_adj = "0"
+
 thermo_is_1 = "0"
 thermo_out_1 = "0"
 thermo_cal_1 = "0"
@@ -128,7 +134,7 @@ try:
     print(">>Load zigbee.config")
     f = open("/home/pi/tgn_smart_home/zigbee/device.config","r")
 except IOError:
-    print("cannot open system.config.... file not found")
+    print("cannot open device.config.... file not found")
 else:
     for line in f:
         cach_n = line.rstrip()
@@ -182,7 +188,22 @@ else:
             print("Button 1:        "+button_1_id)
         if cach_n.split(":")[0] == "meter_1":
             meter_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
-            print("Meter 1:         "+meter_1_id)
+            print("Meter 1:         "+meter_1_id)  
+        if cach_n.split(":")[0] == "term_1_adj":
+            thermostat_1_adj = cach_n.split(":")[1]
+            print("Thermo. 1 adj:   "+thermostat_1_adj)
+        if cach_n.split(":")[0] == "term_2_adj":
+            thermostat_2_adj = cach_n.split(":")[1]
+            print("Thermo. 2 adj:   "+thermostat_2_adj)
+        if cach_n.split(":")[0] == "term_3_adj":
+            thermostat_3_adj = cach_n.split(":")[1]
+            print("Thermo. 3 adj:   "+thermostat_3_adj)
+        if cach_n.split(":")[0] == "term_4_adj":
+            thermostat_4_adj = cach_n.split(":")[1]
+            print("Thermo. 4 adj:   "+thermostat_4_adj)
+        if cach_n.split(":")[0] == "term_5_adj":
+            thermostat_5_adj = cach_n.split(":")[1]
+            print("Thermo. 5 adj:   "+thermostat_5_adj)
     print("--------------------------------------------")
 
 try:
@@ -215,6 +236,23 @@ else:
             ir_empty = cach_n.split("*")[1]
             print("empty:"+ir_empty)
 
+def update_adj(line_num, new_txt):
+    print("Update ADJ")
+    try:
+        with open("/home/pi/tgn_smart_home/zigbee/device.config", "r") as f:
+            zeilen = f.readlines()
+
+        # 2. Zeile ändern (falls sie existiert)
+        if len(zeilen) > line_num:
+            zeilen[line_num] = new_txt+"\n"
+
+        # 3. Datei zurückschreiben
+        with open("/home/pi/tgn_smart_home/zigbee/device.config", "w") as f:
+            f.writelines(zeilen)
+    except:
+        print("cannot open device.config.... file not found")
+
+
 def ini():
     global tgn_1_sate_1
     global tgn_1_sate_14
@@ -226,6 +264,11 @@ def ini():
     client.publish(thermostat_1_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
     client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
     client.publish(thermostat_1_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
+    client.publish("tgn/thermostat/thermostat_1_adj",thermostat_1_adj,qos=0,retain=True)
+    client.publish("tgn/thermostat/thermostat_2_adj",thermostat_2_adj,qos=0,retain=True)
+    client.publish("tgn/thermostat/thermostat_3_adj",thermostat_3_adj,qos=0,retain=True)
+    client.publish("tgn/thermostat/thermostat_4_adj",thermostat_4_adj,qos=0,retain=True)
+    client.publish("tgn/thermostat/thermostat_5_adj",thermostat_5_adj,qos=0,retain=True)
     time.sleep(0.3)
     client.publish(thermostat_2_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
     client.publish(thermostat_2_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
@@ -327,6 +370,7 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/thermostat_1_setpoint",thermo_out_1,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_1__cal",thermo_cal_1,qos=0,retain=True)
         client.publish("tgn/thermostat/status/1",status_thermostat_1,qos=0,retain=True)
+        client.publish("tgn/thermostat/thermostat_1_lock",cach['child_lock'],qos=0,retain=True)
     if typ == "thermostat" and num == "2":
         thermo_is_2 = cach['local_temperature']
         thermo_out_2 = cach['occupied_heating_setpoint']
@@ -338,6 +382,7 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/thermostat_2_setpoint",thermo_out_2,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_2__cal",thermo_cal_2,qos=0,retain=True)
         client.publish("tgn/thermostat/status/2",status_thermostat_2,qos=0,retain=True)
+        client.publish("tgn/thermostat/thermostat_2_lock",cach['child_lock'],qos=0,retain=True)
     if typ == "thermostat" and num == "3":
         thermo_is_3 = cach['local_temperature']
         thermo_out_3 = cach['occupied_heating_setpoint']
@@ -349,6 +394,7 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/thermostat_3_setpoint",thermo_out_3,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_3__cal",thermo_cal_3,qos=0,retain=True)
         client.publish("tgn/thermostat/status/3",status_thermostat_3,qos=0,retain=True)
+        client.publish("tgn/thermostat/thermostat_3_lock",cach['child_lock'],qos=0,retain=True)
     if typ == "thermostat" and num == "4":
         thermo_is_4 = cach['local_temperature']
         thermo_out_4 = cach['occupied_heating_setpoint']
@@ -360,6 +406,7 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/thermostat_4_setpoint",thermo_out_4,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_4__cal",thermo_cal_4,qos=0,retain=True)
         client.publish("tgn/thermostat/status/4",status_thermostat_4,qos=0,retain=True)
+        client.publish("tgn/thermostat/thermostat_4_lock",cach['child_lock'],qos=0,retain=True)
     if typ == "thermostat" and num == "5":
         thermo_is_5 = cach['local_temperature']
         thermo_out_5 = cach['occupied_heating_setpoint']
@@ -371,6 +418,7 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/thermostat/thermostat_5_setpoint",thermo_out_5,qos=0,retain=True)
         client.publish("tgn/thermostat/thermostat_5__cal",thermo_cal_5,qos=0,retain=True)
         client.publish("tgn/thermostat/status/5",status_thermostat_5,qos=0,retain=True)
+        client.publish("tgn/thermostat/thermostat_5_lock",cach['child_lock'],qos=0,retain=True)
     if typ == "door" and num == "1":
         battery_door_1 = cach['bat']['value']
         client.publish("tgn/thermostat/door_1_bat",battery_door_1,qos=0,retain=True)
@@ -444,6 +492,21 @@ def on_message(client, userdata, message):
     global light_2_cach
     global button_1_cach
     global meter_1_cach
+    global thermostat_1_adj
+    global thermostat_2_adj
+    global thermostat_3_adj
+    global thermostat_4_adj
+    global thermostat_5_adj
+    if(message.topic=="tgn/thermostat/thermostat_1_adj"):
+        thermostat_1_adj = (message.payload.decode("utf-8"))
+    if(message.topic=="tgn/thermostat/thermostat_2_adj"):
+        thermostat_2_adj = (message.payload.decode("utf-8"))
+    if(message.topic=="tgn/thermostat/thermostat_3_adj"):
+        thermostat_3_adj = (message.payload.decode("utf-8"))
+    if(message.topic=="tgn/thermostat/thermostat_4_adj"):
+        thermostat_4_adj = (message.payload.decode("utf-8"))
+    if(message.topic=="tgn/thermostat/thermostat_5_adj"):
+        thermostat_5_adj = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/valve_movement"):
         valve_movement = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/sol_temp"):
@@ -611,11 +674,11 @@ def main_prog():
                 elif window_1 == "closed":
                     logging_tgn("Window closed","zigbee.log")
                     t_temp_cach = t_temp
-                    client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-                    client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-                    client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)-0.0)+'}',qos=0,retain=True)
-                    #client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+                    client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_1_adj))+'}',qos=0,retain=True)
+                    client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_2_adj))+'}',qos=0,retain=True)
+                    client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_3_adj))+'}',qos=0,retain=True)
+                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_4_adj))+'}',qos=0,retain=True)
+                    #client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_5_adj))+'}',qos=0,retain=True)
         if float(t_temp) > temp_1:
             client.publish("tgn/thermostat/heater","On",qos=0,retain=True)
         else:
@@ -680,6 +743,16 @@ def main_prog():
                 #ocor_5 = float(thermo_cal_5 + ocor_4)
                 #print("T4:"+str(ocor_5))
                 #client.publish(thermostat_5_id+"/set",'{"local_temperature_calibration": '+str(ocor_5)+'}',qos=0,retain=True)
+            update_adj(18-1, "term_1_adj:"+thermostat_1_adj)
+            time.sleep(0.3)
+            update_adj(19-1, "term_2_adj:"+thermostat_2_adj)
+            time.sleep(0.3)
+            update_adj(20-1, "term_3_adj:"+thermostat_3_adj)
+            time.sleep(0.3)
+            update_adj(21-1, "term_4_adj:"+thermostat_4_adj)
+            time.sleep(0.3)
+            update_adj(22-1, "term_5_adj:"+thermostat_5_adj)
+            time.sleep(0.3)
             cou = 0
         cou += 1
         #print("Step:"+str(cou))

@@ -127,6 +127,11 @@ def on_message(client, userdata, message):
     if(message.topic=="tele/"+tasmo_id+"/LWT"):
         panel_status = (message.payload.decode("utf-8"))
         ini()
+    if(message.topic=="tgn/system/ns-reboot"):
+        if (message.payload.decode("utf-8")) == "1":
+            panel_status = "Offline"
+            client.publish("tgn/system/ns-reboot","0",qos=0,retain=True)
+            ini()
     if(message.topic=="tgn/esp_1/temp/sensor_1"):
         temp = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/esp_1/temp/sensor_2"):

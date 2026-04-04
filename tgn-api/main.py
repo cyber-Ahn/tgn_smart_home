@@ -13,6 +13,10 @@ def apidecoder():
 def readapi():
     return api.read_data(request.args)
 
+@app.route("/api/ns", methods=["GET"])
+def nsapi():
+    return api.nsreset(request.args)
+
 @app.route("/api/pdf", methods=["GET"])
 def pdf():
     build_log_file_new()

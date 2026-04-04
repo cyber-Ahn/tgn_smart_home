@@ -71,6 +71,8 @@ weather_t = -0.41
 weather_c = 0
 weather_w = 4.1
 weather_h = 10
+sunup = 1
+sundown = 1
 we_cach = "no data"
 cpu_t = 57.458
 s1 = "0"
@@ -861,6 +863,8 @@ def set_mqtt_start():
 	client.publish("tgn/bot/shutdown","0",qos=0,retain=True)
 	client.publish("tgn/bot/status","offline",qos=0,retain=True)
 	client.publish("tgn/system/weather","0",qos=0,retain=True)
+	client.publish("tgn/weather/sunup","0",qos=0,retain=True)
+	client.publish("tgn/weather/sundown","0",qos=0,retain=True)
 	client.publish("tgn/system/mic","0",qos=0,retain=True)
 	client.publish("tgn/system/clock","0",qos=0,retain=True)
 	client.publish("tgn/esp_1/analog/sensor_1","50",qos=0,retain=True)
@@ -1477,14 +1481,12 @@ def pcf8563ReadTimeB():
 		on()
 	if ond == "yes" and (cach_time == off1 or cach_time == off2):
 		off()
-	print(hour)
 	global blind_time
 	if (auto_time == "1"):
 		if (int(hour) >= close_hour) or (int(hour) <= open_hour-1):
 			blind_time = "close"
 		else:
 			blind_time = "open"
-		print("Hour:"+str(int(hour)))
 		client.publish("tgn/blind/blind_time",blind_time,qos=0,retain=True)
 	return(time_out)
 
@@ -1677,10 +1679,14 @@ def main_prog():
 					global weather_c
 					global weather_w
 					global weather_h
+					global sunup
+					global sundown
 					weather_t = float(data['temp'])
 					weather_c = int(data['cloudiness'])
 					weather_w = float(data['wind'])
 					weather_h = int(data['humidity'])
+					sunup = weather_h = int(data['sunrise'].split(":")[0])
+					sundown = weather_h = int(data['sunset'].split(":")[0])+12
 					client.publish("tgn/weather/temp_min",float(data['temp_min']),qos=0,retain=True)
 					client.publish("tgn/weather/temp_max",float(data['temp_max']),qos=0,retain=True)
 					client.publish("tgn/weather/temp",weather_t,qos=0,retain=True)
@@ -1690,6 +1696,16 @@ def main_prog():
 					client.publish("tgn/room/temp",temp_data,qos=0,retain=True)
 					client.publish("tgn/room/light",readLight(),qos=0,retain=True)
 					client.publish("tgn/weather/icon",str(data['icon']),qos=0,retain=True)
+					client.publish("tgn/weather/sunup",sunup,qos=0,retain=True)
+					client.publish("tgn/weather/sundown",sundown,qos=0,retain=True)
+					global open_hour
+					global close_hour
+					open_hour = sunup
+					close_hour = sundown
+					if close_hour == 24:
+						close_hour = 0
+					client.publish("tgn/blind/open_time",open_hour,qos=0,retain=True)
+					client.publish("tgn/blind/close_time",close_hour,qos=0,retain=True)
 				else:
 					print("Wrong Key!!")
 				channel = thingspeak.Channel(id=channel_id, write_key=write_key, api_key=read_key)

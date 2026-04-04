@@ -40,6 +40,26 @@ class api:
     
     def on_message(client, userdata, message):
         api.add_dict(message.topic, message.payload.decode("utf-8"))
+    
+    def nsreset(data):
+        data_cach = []
+        data_cach.append(data.get("key"))
+        uidd = data_cach[0]
+        data_read = []
+        try:
+            f_d = open("/home/pi/tgn_smart_home/tgn-api/api.db","r")
+            for line in f_d:
+                data_read.append(line.rstrip())
+            f_d.close()
+            if( uidd in data_read):
+                client = mqtt.Client("TGN API")
+                client.connect(get_ip())
+                client.loop_start()
+                client.publish("tgn/system/ns-reboot","1",qos=0,retain=True)
+                client.loop_stop()
+                return("NS-Panel reboot start")
+        except IOError:
+            return("cannot open api.db.... file not found - Please start master_key.py")
 
     def read_data(data):
         data_cach = []
