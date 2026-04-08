@@ -122,13 +122,13 @@ API use
 .. |Python versions| image:: https://cyber-ahn.com//images/python.png
    :target: https://cyber-ahn.com/
 
-.. |Bild_1| image:: https://cyber-ahn.com//Smart_Home_Images/IMG_20181101_174128.jpg
+.. |Bild_1| image:: https://cyber-ahn.com/Smart_Home_Images/IMG_20181101_174128.jpg
    :target: https://github.com/cyber-Ahn/tgn_smart_home
-.. |Bild_2| image:: https://cyber-ahn.com//Smart_Home_Images/IMG_20180602_215043.jpg
+.. |Bild_2| image:: https://cyber-ahn.com/Smart_Home_Images/IMG_20180602_215043.jpg
    :target: https://github.com/cyber-Ahn/tgn_smart_home
-.. |Bild_3| image:: https://cyber-ahn.com//Smart_Home_Images/Smart_Home_Comunications.jpg
+.. |Bild_3| image:: https://cyber-ahn.com/Smart_Home_Images/Smart_Home_Comunications.jpg
    :target: https://github.com/cyber-Ahn/tgn_smart_home
-.. |Bild_4| image:: hhttps://cyber-ahn.com//Smart_Home_Images/IMG_20180602_214845.jpg
+.. |Bild_4| image:: https://cyber-ahn.com/Smart_Home_Images/IMG_20180602_214845.jpg
    :target: https://github.com/cyber-Ahn/tgn_smart_home
-.. |Bild_5| image:: https://cyber-ahn.com//Smart_Home_Images/IMG_20180602_214958.jpg
+.. |Bild_5| image:: https://cyber-ahn.com/Smart_Home_Images/IMG_20180602_214958.jpg
    :target: https://github.com/cyber-Ahn/tgn_smart_home
