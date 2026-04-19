@@ -8,7 +8,7 @@ youtube_dl==2019.7.16
 spotipy==2.25.1
 FFmpeg==1.4
 websockets==7.0
-aiohttp==3.10.11
+aiohttp==3.13.4
 python-dateutil==2.8.0
 selenium==3.141.0
 paho-mqtt==1.4.0
@@ -17,7 +17,7 @@ py-enigma==0.1
 discord.py==2.1.0
 SQLAlchemy==1.2.19
 joblib==1.3.2
-ChatterBot==0.8.7
+ChatterBot==1.2.13
 chatterbot-corpus==1.1.4
 opencv-python==4.8.1.78
 pushbullet.py==0.11.0
@@ -37,5 +37,5 @@ pyHS100==0.3.5.2
 ShellyPy==0.2.0
 Adafruit-Blinka==8.9.0
 adafruit-circuitpython-gps==3.10.7
-Flask==2.3.3
+Flask==3.1.3
 openpyxl==3.1.5
