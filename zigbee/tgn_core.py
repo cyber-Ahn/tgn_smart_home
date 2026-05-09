@@ -241,17 +241,12 @@ def update_adj(line_num, new_txt):
     try:
         with open("/home/pi/tgn_smart_home/zigbee/device.config", "r") as f:
             zeilen = f.readlines()
-
-        # 2. Zeile ändern (falls sie existiert)
         if len(zeilen) > line_num:
             zeilen[line_num] = new_txt+"\n"
-
-        # 3. Datei zurückschreiben
         with open("/home/pi/tgn_smart_home/zigbee/device.config", "w") as f:
             f.writelines(zeilen)
     except:
         print("cannot open device.config.... file not found")
-
 
 def ini():
     global tgn_1_sate_1
@@ -575,7 +570,6 @@ def on_message(client, userdata, message):
         meter_1_cach = (message.payload.decode("utf-8"))
         decode_window(meter_1_cach,"1","meter")
     
-
 def main_prog():
     print("Start zigbee modul")
     global summermod_cach
@@ -780,7 +774,6 @@ def main_prog():
                 client.publish(thermostat_3_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
                 client.publish(thermostat_4_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
                 #client.publish(thermostat_5_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
-        #light mode
         if motion_1_ilu == "dim" and motion_1_activ == True and motion_1_stat == "off":
             print("light on")
             logging_tgn("Motion_1_Light_on","zigbee.log")
@@ -798,7 +791,6 @@ def main_prog():
             print("light off")
             client.publish(light_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
         g_time = pcf8563ReadTime()
-        #print(g_time.split(" ")[3].split(":")[1])
         if g_time.split(" ")[3].split(":")[1] == "00" or g_time.split(" ")[3].split(":")[1] == "30":
             if meter_log == "0":
                 logging_tgn(str(meter_1_power)+"|"+str(meter_1_energy),"ElecMeter.log")
