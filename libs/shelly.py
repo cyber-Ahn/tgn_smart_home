@@ -52,7 +52,8 @@ def set_socket():
                 device.relay(0, turn=False)
                 client.publish("tgn/android/pmsg","Shelly "+str(modul_num)+" Off",qos=0,retain=True)
         except:
-            print("Shelly "+str(modul_num)+" not Online")
+            print("Shelly "+str(modul_num)+" not Online ; IP:"+socket_ip)
+            client.publish("tgn/android/pmsg","Shelly "+str(modul_num)+" not Online",qos=0,retain=True)
     if(modul_status == "info"):
         socket_ip = data_ip[(modul_num-1)].rstrip()
         print("Read Data from: " + socket_ip)

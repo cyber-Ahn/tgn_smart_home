@@ -1685,8 +1685,8 @@ def main_prog():
 					weather_c = int(data['cloudiness'])
 					weather_w = float(data['wind'])
 					weather_h = int(data['humidity'])
-					sunup = weather_h = int(data['sunrise'].split(":")[0])
-					sundown = weather_h = int(data['sunset'].split(":")[0])+12
+					sunup = int(data['sunrise'].split(":")[0])
+					sundown = int(data['sunset'].split(":")[0])+12
 					client.publish("tgn/weather/temp_min",float(data['temp_min']),qos=0,retain=True)
 					client.publish("tgn/weather/temp_max",float(data['temp_max']),qos=0,retain=True)
 					client.publish("tgn/weather/temp",weather_t,qos=0,retain=True)
