@@ -117,6 +117,7 @@ t_temp_cach = "0"
 temp_1 = 11.5
 temp_3 = 11.5
 temp_4 = 11.5
+temp_5 = 11.5
 valve_movement = "off"
 
 battery_name = "empty"
@@ -137,6 +138,25 @@ status_thermostat_2 = "0"
 status_thermostat_3 = "0"
 status_thermostat_4 = "0"
 status_thermostat_5 = "0"
+
+switch_1_id = "empty"
+switch_2_id = "empty"
+switch_3_id = "empty"
+switch_4_id = "empty"
+switch_5_id = "empty"
+switch_6_id = "empty"
+switch_7_id = "empty"
+switch_8_id = "empty"
+switch_9_id = "empty"
+switch_1_st = "0"
+switch_2_st = "0"
+switch_3_st = "0"
+switch_4_st = "0"
+switch_5_st = "0"
+switch_6_st = "0"
+switch_7_st = "0"
+switch_8_st = "0"
+switch_9_st = "0"
 
 try:
     print(">>Load zigbee.config")
@@ -172,16 +192,16 @@ else:
             print("Motion 1:       "+motion_1_id)
         if cach_n.split(":")[0] == "motion_2":
             motion_2_id = "zigbee2mqtt/"+cach_n.split(":")[1]
-            print("Motion 2:       "+motion_2_id)
+            print("Motion 2:        "+motion_2_id)
         if cach_n.split(":")[0] == "bat_low":
             bat_low = int(cach_n.split(":")[1])
             print("Bat_LOw:        "+str(bat_low))
         if cach_n.split(":")[0] == "motion_1_timeout":
             motion_1_timeout = cach_n.split(":")[1]
-            print("Motion TimeOut: "+motion_1_timeout)
+            print("Motion 1 TimeOut:"+motion_1_timeout)
         if cach_n.split(":")[0] == "motion_2_timeout":
             motion_2_timeout = cach_n.split(":")[1]
-            print("Motion TimeOut: "+motion_2_timeout)
+            print("Motion 2 TimeOut:"+motion_2_timeout)
         if cach_n.split(":")[0] == "light_1":
             light_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
             print("Light 1:        "+light_1_id)
@@ -218,6 +238,33 @@ else:
         if cach_n.split(":")[0] == "term_5_adj":
             thermostat_5_adj = cach_n.split(":")[1]
             print("Thermo. 5 adj:   "+thermostat_5_adj)
+        if cach_n.split(":")[0] == "switch_1_id":
+            switch_1_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Switch 1 ID:     "+switch_1_id)
+        if cach_n.split(":")[0] == "switch_2_id":
+            switch_2_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Switch 2 ID:     "+switch_2_id)
+        if cach_n.split(":")[0] == "switch_3_id":
+            switch_3_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Switch 3 ID:     "+switch_3_id)
+        if cach_n.split(":")[0] == "switch_4_id":
+            switch_4_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Switch 4 ID:     "+switch_4_id)
+        if cach_n.split(":")[0] == "switch_5_id":
+            switch_5_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Switch 5 ID:     "+switch_5_id)
+        if cach_n.split(":")[0] == "switch_6_id":
+            switch_6_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Switch 6 ID:     "+switch_6_id)
+        if cach_n.split(":")[0] == "switch_7_id":
+            switch_7_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Switch 7 ID:     "+switch_7_id)
+        if cach_n.split(":")[0] == "switch_8_id":
+            switch_8_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Switch 8 ID:     "+switch_8_id)
+        if cach_n.split(":")[0] == "switch_9_id":
+            switch_9_id = "zigbee2mqtt/"+cach_n.split(":")[1]
+            print("Switch 9 ID:     "+switch_9_id)
     print("--------------------------------------------")
 
 try:
@@ -265,50 +312,61 @@ def update_adj(line_num, new_txt):
 def ini():
     global tgn_1_sate_1
     global tgn_1_sate_14
+    if switch_1_id != "zigbee2mqtt/empty": client.publish(switch_1_id+"/set",'{"power_on_behavior": "previous"}',qos=0,retain=True)
+    if switch_2_id != "zigbee2mqtt/empty": client.publish(switch_2_id+"/set",'{"power_on_behavior": "previous"}',qos=0,retain=True)
+    if switch_3_id != "zigbee2mqtt/empty": client.publish(switch_3_id+"/set",'{"power_on_behavior": "previous"}',qos=0,retain=True)
+    if switch_4_id != "zigbee2mqtt/empty": client.publish(switch_4_id+"/set",'{"power_on_behavior": "previous"}',qos=0,retain=True)
+    if switch_5_id != "zigbee2mqtt/empty": client.publish(switch_5_id+"/set",'{"power_on_behavior": "previous"}',qos=0,retain=True)
+    if switch_6_id != "zigbee2mqtt/empty": client.publish(switch_6_id+"/set",'{"power_on_behavior": "previous"}',qos=0,retain=True)
+    if switch_7_id != "zigbee2mqtt/empty": client.publish(switch_7_id+"/set",'{"power_on_behavior": "previous"}',qos=0,retain=True)
+    if switch_8_id != "zigbee2mqtt/empty": client.publish(switch_8_id+"/set",'{"power_on_behavior": "previous"}',qos=0,retain=True)
+    if switch_9_id != "zigbee2mqtt/empty": client.publish(switch_9_id+"/set",'{"power_on_behavior": "previous"}',qos=0,retain=True)
+    time.sleep(0.3)
     client.publish("tgn/tgn_modul_1/outlet_set","OFF",qos=0,retain=True)
     client.publish("tgn/tgn_modul_1/bulb_set","OFF",qos=0,retain=True)
     client.publish("tgn/thermostat/summer_temp",summertemp,qos=0,retain=True)
     client.publish("tgn/thermostat/window_1",window_1,qos=0,retain=True)
     client.publish("tgn/air_conditioner/button",ir_cach,qos=0,retain=True)
-    client.publish(thermostat_1_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
-    client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
-    client.publish(thermostat_1_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
+    time.sleep(0.3)
+    if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
+    if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
+    if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
     client.publish("tgn/thermostat/thermostat_1_adj",thermostat_1_adj,qos=0,retain=True)
     client.publish("tgn/thermostat/thermostat_2_adj",thermostat_2_adj,qos=0,retain=True)
     client.publish("tgn/thermostat/thermostat_3_adj",thermostat_3_adj,qos=0,retain=True)
     client.publish("tgn/thermostat/thermostat_4_adj",thermostat_4_adj,qos=0,retain=True)
     client.publish("tgn/thermostat/thermostat_5_adj",thermostat_5_adj,qos=0,retain=True)
     time.sleep(0.3)
-    client.publish(thermostat_2_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
-    client.publish(thermostat_2_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
-    client.publish(thermostat_2_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
+    if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
+    if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
+    if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
     time.sleep(0.3)
-    client.publish(thermostat_3_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
-    client.publish(thermostat_3_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
-    client.publish(thermostat_3_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
+    if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
+    if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
+    if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
     time.sleep(0.3)
-    client.publish(thermostat_4_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
-    client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
-    client.publish(thermostat_4_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
+    if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
+    if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
+    if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
     time.sleep(0.3)
-    #client.publish(thermostat_5_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
-    #client.publish(thermostat_5_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
-    #client.publish(thermostat_5_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
+    if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"child_lock": "LOCK"}',qos=0,retain=True)
+    if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"local_temperature_calibration": 0.0}',qos=0,retain=True)
+    if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"open_window": "OFF"}',qos=0,retain=True)
     time.sleep(0.3)
     client.publish("tgn/thermostat/valve_movement","off",qos=0,retain=True)
-    client.publish(motion_1_id+"/set",'{"motion_timeout": '+motion_1_timeout+'}',qos=0,retain=True)
-    client.publish(motion_2_id+"/set",'{"motion_timeout": '+motion_2_timeout+'}',qos=0,retain=True)
-    client.publish(light_1_id+"/set",'{"brightness": '+light_1_bri+'}',qos=0,retain=True)
-    client.publish(light_1_id+"/set",'{"power_on_behavior": "'+light_1_behavor+'"}',qos=0,retain=True)
-    client.publish(light_2_id+"/set",'{"brightness": '+light_2_bri+'}',qos=0,retain=True)
-    client.publish(light_2_id+"/set",'{"power_on_behavior": "'+light_2_behavor+'"}',qos=0,retain=True)
-    client.publish(light_1_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
-    client.publish(light_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
-    #client.publish(tgn_1_id+"/set",'{"state_1": "ON"}',qos=0,retain=True)
-    #client.publish(tgn_1_id+"/set",'{"state_14": "ON"}',qos=0,retain=True)
-    #time.sleep(3)
-    #client.publish(tgn_1_id+"/set",'{"state_1": "OFF"}',qos=0,retain=True)
-    #client.publish(tgn_1_id+"/set",'{"state_14": "OFF"}',qos=0,retain=True)
+    if motion_1_id != "zigbee2mqtt/empty": client.publish(motion_1_id+"/set",'{"motion_timeout": '+motion_1_timeout+'}',qos=0,retain=True)
+    if motion_2_id != "zigbee2mqtt/empty": client.publish(motion_2_id+"/set",'{"motion_timeout": '+motion_2_timeout+'}',qos=0,retain=True)
+    if light_1_id != "zigbee2mqtt/empty": client.publish(light_1_id+"/set",'{"brightness": '+light_1_bri+'}',qos=0,retain=True)
+    if light_1_id != "zigbee2mqtt/empty": client.publish(light_1_id+"/set",'{"power_on_behavior": "'+light_1_behavor+'"}',qos=0,retain=True)
+    if light_2_id != "zigbee2mqtt/empty": client.publish(light_2_id+"/set",'{"brightness": '+light_2_bri+'}',qos=0,retain=True)
+    if light_2_id != "zigbee2mqtt/empty": client.publish(light_2_id+"/set",'{"power_on_behavior": "'+light_2_behavor+'"}',qos=0,retain=True)
+    if light_1_id != "zigbee2mqtt/empty": client.publish(light_1_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+    if light_2_id != "zigbee2mqtt/empty": client.publish(light_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+    if tgn_1_id != "zigbee2mqtt/empty": client.publish(tgn_1_id+"/set",'{"state_1": "ON"}',qos=0,retain=True)
+    if tgn_1_id != "zigbee2mqtt/empty": client.publish(tgn_1_id+"/set",'{"state_14": "ON"}',qos=0,retain=True)
+    if tgn_1_id != "zigbee2mqtt/empty": time.sleep(3)
+    if tgn_1_id != "zigbee2mqtt/empty": client.publish(tgn_1_id+"/set",'{"state_1": "OFF"}',qos=0,retain=True)
+    if tgn_1_id != "zigbee2mqtt/empty": client.publish(tgn_1_id+"/set",'{"state_14": "OFF"}',qos=0,retain=True)
     client.publish(meter_1_id+"/set",'{"pulse_configuration": 10000}',qos=0,retain=True)
     time.sleep(3)
     tgn_1_sate_1 = "OFF"
@@ -494,6 +552,16 @@ def on_message(client, userdata, message):
     global temp_1
     global temp_3
     global temp_4
+    global temp_5
+    global switch_1_st
+    global switch_2_st
+    global switch_3_st
+    global switch_4_st
+    global switch_5_st
+    global switch_6_st
+    global switch_7_st
+    global switch_8_st
+    global switch_9_st
     global summermod
     global window_1_cach
     global thermostat_1_cach
@@ -519,6 +587,69 @@ def on_message(client, userdata, message):
     global thermostat_3_adj
     global thermostat_4_adj
     global thermostat_5_adj
+    if(message.topic=="tgn/buttons/status/1"):
+        if switch_1_st != (message.payload.decode("utf-8")):
+            switch_1_st = (message.payload.decode("utf-8"))
+            if switch_1_st == "0":
+                if switch_1_id != "zigbee2mqtt/empty": client.publish(switch_1_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            elif switch_1_st == "1":
+                if switch_1_id != "zigbee2mqtt/empty": client.publish(switch_1_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+    if(message.topic=="tgn/buttons/status/2"):
+        if switch_2_st != (message.payload.decode("utf-8")):
+            switch_2_st = (message.payload.decode("utf-8"))
+            if switch_2_st == "0":
+                if switch_2_id != "zigbee2mqtt/empty": client.publish(switch_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            elif switch_2_st == "1":
+                if switch_2_id != "zigbee2mqtt/empty": client.publish(switch_2_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+    if(message.topic=="tgn/buttons/status/3"):
+        if switch_3_st != (message.payload.decode("utf-8")):
+            switch_3_st = (message.payload.decode("utf-8"))
+            if switch_3_st == "0":
+                if switch_3_id != "zigbee2mqtt/empty": client.publish(switch_3_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            elif switch_3_st == "1":
+                if switch_3_id != "zigbee2mqtt/empty": client.publish(switch_3_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+    if(message.topic=="tgn/buttons/status/4"):
+        if switch_4_st != (message.payload.decode("utf-8")):
+            switch_4_st = (message.payload.decode("utf-8"))
+            if switch_4_st == "0":
+                if switch_4_id != "zigbee2mqtt/empty": client.publish(switch_4_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            elif switch_4_st == "1":
+                if switch_4_id != "zigbee2mqtt/empty": client.publish(switch_4_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+    if(message.topic=="tgn/buttons/status/5"):
+        if switch_5_st != (message.payload.decode("utf-8")):
+            switch_5_st = (message.payload.decode("utf-8"))
+            if switch_5_st == "0":
+                if switch_5_id != "zigbee2mqtt/empty": client.publish(switch_5_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            elif switch_5_st == "1":
+                if switch_5_id != "zigbee2mqtt/empty": client.publish(switch_5_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+    if(message.topic=="tgn/buttons/status/6"):
+        if switch_6_st != (message.payload.decode("utf-8")):
+            switch_6_st = (message.payload.decode("utf-8"))
+            if switch_6_st == "0":
+                if switch_6_id != "zigbee2mqtt/empty": client.publish(switch_6_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            elif switch_6_st == "1":
+                if switch_6_id != "zigbee2mqtt/empty": client.publish(switch_6_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+    if(message.topic=="tgn/buttons/status/7"):
+        if switch_7_st != (message.payload.decode("utf-8")):
+            switch_7_st = (message.payload.decode("utf-8"))
+            if switch_7_st == "0":
+                if switch_7_id != "zigbee2mqtt/empty": client.publish(switch_7_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            elif switch_7_st == "1":
+                if switch_7_id != "zigbee2mqtt/empty": client.publish(switch_7_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+    if(message.topic=="tgn/buttons/status/8"):
+        if switch_8_st != (message.payload.decode("utf-8")):
+            switch_8_st = (message.payload.decode("utf-8"))
+            if switch_8_st == "0":
+                if switch_8_id != "zigbee2mqtt/empty": client.publish(switch_8_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            elif switch_8_st == "1":
+                if switch_8_id != "zigbee2mqtt/empty": client.publish(switch_8_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+    if(message.topic=="tgn/buttons/status/9"):
+        if switch_9_st != (message.payload.decode("utf-8")):
+            switch_9_st = (message.payload.decode("utf-8"))
+            if switch_9_st == "0":
+                if switch_9_id != "zigbee2mqtt/empty": client.publish(switch_9_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            elif switch_9_st == "1":
+                if switch_9_id != "zigbee2mqtt/empty": client.publish(switch_9_id+"/set",'{"state": "ON"}',qos=0,retain=True)
     if(message.topic=="tgn/thermostat/thermostat_1_adj"):
         thermostat_1_adj = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/thermostat/thermostat_2_adj"):
@@ -543,6 +674,8 @@ def on_message(client, userdata, message):
         temp_3 = float((message.payload.decode("utf-8")))
     if(message.topic=="tgn/pico_5/temp/sensor_1"):
         temp_4 = float((message.payload.decode("utf-8")))
+    if(message.topic=="tgn/pico_1/temp/sensor_1"):
+        temp_5 = float((message.payload.decode("utf-8")))
     if(message.topic=="tgn/thermostat/summer_mod"):
         summermod = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/air_conditioner/button"):
@@ -589,12 +722,12 @@ def on_message(client, userdata, message):
     if(message.topic=="tgn/tgn_modul_1/outlet_set"):
         msg = message.payload.decode("utf-8")
         if(msg != tgn_1_sate_1):
-            client.publish(tgn_1_id+"/set",'{"state_1": "'+msg+'"}',qos=0,retain=True)
+            if tgn_1_id != "zigbee2mqtt/empty": client.publish(tgn_1_id+"/set",'{"state_1": "'+msg+'"}',qos=0,retain=True)
             tgn_1_sate_1 = msg
     if(message.topic=="tgn/tgn_modul_1/bulb_set"):
         msg = message.payload.decode("utf-8")
         if(msg != tgn_1_sate_14):
-            client.publish(tgn_1_id+"/set",'{"state_14": "'+msg+'"}',qos=0,retain=True)
+            if tgn_1_id != "zigbee2mqtt/empty": client.publish(tgn_1_id+"/set",'{"state_14": "'+msg+'"}',qos=0,retain=True)
             tgn_1_sate_14 = msg
     if(message.topic==meter_1_id):
         meter_1_cach = (message.payload.decode("utf-8"))
@@ -619,7 +752,7 @@ def main_prog():
         client.subscribe([(zig_topic,0)])
         client.subscribe([(tgn_topic,0)])
         client.subscribe([(she_topic,0)])
-        time.sleep(2)
+        time.sleep(3)
         client.loop_stop()
         if ir_botton != ir_cach:
             print("send IR:"+ir_botton)
@@ -646,29 +779,29 @@ def main_prog():
             print("Valve moving")
             client.publish("tgn/battery_empty","Valve moving on",qos=0,retain=True)
             time.sleep(5)
-            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
-            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
-            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
-            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
-            #client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
             time.sleep(10)
-            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-            #client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+            if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
             time.sleep(10)
-            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
-            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
-            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
-            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
-            #client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
+            if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": 35}',qos=0,retain=True)
             time.sleep(10)
-            client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-            client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-            client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-            client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
-            #client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+            if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+            if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+            if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+            if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
+            if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": '+t_temp+'}',qos=0,retain=True)
             client.publish("tgn/thermostat/valve_movement","off",qos=0,retain=True)
         elif valve_movement == "on" and summermod == "off":
             client.publish("tgn/thermostat/valve_movement","off",qos=0,retain=True)
@@ -676,35 +809,35 @@ def main_prog():
             if summermod == "on":
                 summermod_cach = summermod
                 client.publish("tgn/thermostat/sol_temp",summertemp,qos=0,retain=True)
-                client.publish(thermostat_1_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
-                client.publish(thermostat_2_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
-                client.publish(thermostat_3_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
-                client.publish(thermostat_4_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
-                #client.publish(thermostat_5_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+                if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+                if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+                if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+                if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
+                if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"system_mode": "off"}',qos=0,retain=True)
             elif summermod == "off":
                 summermod_cach = summermod
                 window_cach = window_1
                 client.publish("tgn/thermostat/sol_temp",t_temp,qos=0,retain=True)
-                client.publish(thermostat_1_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
-                client.publish(thermostat_2_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
-                client.publish(thermostat_3_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
-                client.publish(thermostat_4_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
-                #client.publish(thermostat_5_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+                if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+                if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+                if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+                if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
+                if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"system_mode": "heat"}',qos=0,retain=True)
                 if window_1 == "open":
                     logging_tgn("Window open","zigbee.log")
-                    client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-                    client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-                    client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
-                    #client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                    if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                    if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                    if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                    if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
+                    if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": 10}',qos=0,retain=True)
                 elif window_1 == "closed":
                     logging_tgn("Window closed","zigbee.log")
                     t_temp_cach = t_temp
-                    client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_1_adj))+'}',qos=0,retain=True)
-                    client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_2_adj))+'}',qos=0,retain=True)
-                    client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_3_adj))+'}',qos=0,retain=True)
-                    client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_4_adj))+'}',qos=0,retain=True)
-                    #client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_5_adj))+'}',qos=0,retain=True)
+                    if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_1_adj))+'}',qos=0,retain=True)
+                    if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_2_adj))+'}',qos=0,retain=True)
+                    if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_3_adj))+'}',qos=0,retain=True)
+                    if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_4_adj))+'}',qos=0,retain=True)
+                    if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"occupied_heating_setpoint": '+str(float(t_temp)+float(thermostat_5_adj))+'}',qos=0,retain=True)
         if float(t_temp) > temp_1:
             client.publish("tgn/thermostat/heater","On",qos=0,retain=True)
         else:
@@ -747,30 +880,30 @@ def main_prog():
             ocor_2 = round(temp_1 - float(thermo_is_2),2)
             ocor_3 = round(temp_3 - float(thermo_is_3),2)
             ocor_4 = round(temp_4 - float(thermo_is_4),2)
-            #ocor_5 = round(temp_4 - float(thermo_is_4),2)
+            ocor_5 = round(temp_5 - float(thermo_is_5),2)
             if abs(ocor_1) >= 0.5:
-                ocor_1 = float(thermo_cal_1 + ocor_1)
+                ocor_1 = float(float(thermo_cal_1) + ocor_1)
                 print("T1:"+str(ocor_1))
-                client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": '+str(ocor_1)+'}',qos=0,retain=True)
+                if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"local_temperature_calibration": '+str(ocor_1)+'}',qos=0,retain=True)
                 time.sleep(0.3)
             if abs(ocor_2) >= 0.5:
-                ocor_2 = float(thermo_cal_2 + ocor_2)
+                ocor_2 = float(float(thermo_cal_2) + ocor_2)
                 print("T2:"+str(ocor_2))
-                client.publish(thermostat_2_id+"/set",'{"local_temperature_calibration": '+str(ocor_2)+'}',qos=0,retain=True)
+                if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"local_temperature_calibration": '+str(ocor_2)+'}',qos=0,retain=True)
                 time.sleep(0.3)
             if abs(ocor_3) >= 0.5:
-                ocor_3 = float(thermo_cal_3 + ocor_3)
+                ocor_3 = float(float(thermo_cal_3) + ocor_3)
                 print("T3:"+str(ocor_3))
-                client.publish(thermostat_3_id+"/set",'{"local_temperature_calibration": '+str(ocor_3)+'}',qos=0,retain=True)
+                if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"local_temperature_calibration": '+str(ocor_3)+'}',qos=0,retain=True)
                 time.sleep(0.3)
             if abs(ocor_4) >= 0.5:
-                ocor_4 = float(thermo_cal_4 + ocor_4)
+                ocor_4 = float(float(thermo_cal_4) + ocor_4)
                 print("T4:"+str(ocor_4))
-                client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": '+str(ocor_4)+'}',qos=0,retain=True)
-            #if abs(ocor_5) >= 0.5:
-                #ocor_5 = float(thermo_cal_5 + ocor_4)
-                #print("T4:"+str(ocor_5))
-                #client.publish(thermostat_5_id+"/set",'{"local_temperature_calibration": '+str(ocor_5)+'}',qos=0,retain=True)
+                if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"local_temperature_calibration": '+str(ocor_4)+'}',qos=0,retain=True)
+            if abs(ocor_5) >= 0.5:
+                ocor_5 = float(float(thermo_cal_5) + ocor_5)
+                print("T5:"+str(ocor_5))
+                if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"local_temperature_calibration": '+str(ocor_5)+'}',qos=0,retain=True)
             update_adj(18-1, "term_1_adj:"+thermostat_1_adj)
             time.sleep(0.3)
             update_adj(19-1, "term_2_adj:"+thermostat_2_adj)
@@ -795,37 +928,37 @@ def main_prog():
             if accuracy_mode == "1":
                 print("accuracy: -1")
                 logging_tgn("accuracy:-1","zigbee.log")
-                client.publish(thermostat_1_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
-                client.publish(thermostat_2_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
-                client.publish(thermostat_3_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
-                client.publish(thermostat_4_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
-                #client.publish(thermostat_5_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
+                if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
+                if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
+                if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
+                if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
+                if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"temperature_accuracy": '+str("-1")+'}',qos=0,retain=True)
             elif accuracy_mode == "0":
                 print("accuracy: -0,5")
                 logging_tgn("accuracy:-0.5","zigbee.log")
-                client.publish(thermostat_1_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
-                client.publish(thermostat_2_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
-                client.publish(thermostat_3_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
-                client.publish(thermostat_4_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
-                #client.publish(thermostat_5_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
+                if thermostat_1_id != "zigbee2mqtt/empty": client.publish(thermostat_1_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
+                if thermostat_2_id != "zigbee2mqtt/empty": client.publish(thermostat_2_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
+                if thermostat_3_id != "zigbee2mqtt/empty": client.publish(thermostat_3_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
+                if thermostat_4_id != "zigbee2mqtt/empty": client.publish(thermostat_4_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
+                if thermostat_5_id != "zigbee2mqtt/empty": client.publish(thermostat_5_id+"/set",'{"temperature_accuracy": '+str("-0.5")+'}',qos=0,retain=True)
         if motion_1_ilu == "dim" and motion_1_activ == True and motion_1_stat == "off":
             print("light on")
             logging_tgn("Motion_1_Light_on","zigbee.log")
-            client.publish(light_1_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+            if light_1_id!= "zigbee2mqtt/empty": client.publish(light_1_id+"/set",'{"state": "ON"}',qos=0,retain=True)
             motion_1_stat = "on"
         elif motion_1_stat == "on" and motion_1_activ == False:
             print("Light off")
             logging_tgn("Motion_1_Light_off","zigbee.log")
-            client.publish(light_1_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            if light_1_id != "zigbee2mqtt/empty": client.publish(light_1_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
             motion_1_stat = "off"
         if button_1_action == "double" and light_2_state == "OFF" and motion_2_ilu == "dim" and motion_2_activ == True:
             print("light on")
-            client.publish(light_2_id+"/set",'{"state": "ON"}',qos=0,retain=True)
+            if light_2_id != "zigbee2mqtt/empty": client.publish(light_2_id+"/set",'{"state": "ON"}',qos=0,retain=True)
         elif button_1_action == "long" and light_2_state == "ON":
             print("light off")
         elif motion_2_activ == False and light_2_state == "ON":
             print("light off")
-            client.publish(light_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
+            if light_2_id != "zigbee2mqtt/empty": client.publish(light_2_id+"/set",'{"state": "OFF"}',qos=0,retain=True)
         g_time = pcf8563ReadTime()
         if g_time.split(" ")[3].split(":")[1] == "00" or g_time.split(" ")[3].split(":")[1] == "30":
             if meter_log == "0":

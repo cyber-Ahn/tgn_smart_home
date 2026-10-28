@@ -18,6 +18,8 @@ ROM_CACH = 0x00
 CLOCK_CACH = 0x00
 GPS_CACH = 0x00
 
+#overwrite set 0 for release
+overwrite = "1"
 #thing speak
 channel_id = 43245
 write_key = "1234567890"
@@ -908,7 +910,7 @@ def set_mqtt_start():
 	client.publish("tgn/pico_5/temp/sensor_1","21.0",qos=0,retain=True)
 	client.publish("tgn/pico_6/temp/sensor_2","40.0",qos=0,retain=True)
 	client.publish("tgn/pico_6/temp/sensor_1","21.0",qos=0,retain=True)
-	client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
+	#client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
 	client.publish("tgn/android/pmsg","V1.9",qos=0,retain=True)
 	client.publish("tgn/i2c/add/gps",GPS_CACH,qos=0,retain=True)
 	client.publish("tgn/i2c/add/rom",ROM_CACH,qos=0,retain=True)
@@ -1058,13 +1060,13 @@ def off():
 		pb_send_text(pushbulletkey,"Automatic Off")
 		logging_tgn("AutomaticOff","tgn_smart_home.log")
 		if s1 != "0":
-			client.publish("tgn/buttons/status/"+s1,"0",qos=0,retain=True)
+			client.publish("tgn/buttons/status/"+s1,overwrite,qos=0,retain=True)
 		if s2 != "0":
-			client.publish("tgn/buttons/status/"+s2,"0",qos=0,retain=True)
+			client.publish("tgn/buttons/status/"+s2,overwrite,qos=0,retain=True)
 		if s3 != "0":
-			client.publish("tgn/buttons/status/"+s3,"0",qos=0,retain=True)
+			client.publish("tgn/buttons/status/"+s3,overwrite,qos=0,retain=True)
 		if s4 != "0":
-			client.publish("tgn/buttons/status/"+s4,"0",qos=0,retain=True)
+			client.publish("tgn/buttons/status/"+s4,overwrite,qos=0,retain=True)
 		if(su==1):
 			Process(target=TextToSpeech, args=((data[24].rstrip()),spr)).start()
 		client.publish("tgn/system/automatic","0",qos=0,retain=True)
@@ -1243,6 +1245,13 @@ def on_message(client, userdata, message):
 				os.system(setn)
 			elif "y_" in buttons[8]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/shelly.py 9 " + str(b9)
+				os.system(setn)
+			elif "z_" in buttons[8]:
+				client.publish("tgn/android/pmsg","Zigbee Plug 9",qos=0,retain=True)
+			else:
+				send(9,b9)
+			write_eeprom(1,ROM_ADDRESS,0x02,0x6c,str(b9))
+			if(su==1):
 				Process(target=TextToSpeech, args=(buttons[8].split("_")[1],spr)).start()
 	if(message.topic=="tgn/buttons/status/8"):
 		if(int(message.payload.decode("utf-8")) != b8):
@@ -1258,6 +1267,8 @@ def on_message(client, userdata, message):
 			elif "y_" in buttons[7]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/shelly.py 8 " + str(b8)
 				os.system(setn)
+			elif "z_" in buttons[7]:
+				client.publish("tgn/android/pmsg","Zigbee Plug 8",qos=0,retain=True)
 			else:
 				send(8,b8)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6b,str(b8))
@@ -1277,6 +1288,8 @@ def on_message(client, userdata, message):
 			elif "y_" in buttons[6]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/shelly.py 7 " + str(b7)
 				os.system(setn)
+			elif "z_" in buttons[6]:
+				client.publish("tgn/android/pmsg","Zigbee Plug 7",qos=0,retain=True)
 			else:
 				send(7,b7)
 			write_eeprom(1,ROM_ADDRESS,0x02,0x6a,str(b7))
@@ -1296,6 +1309,8 @@ def on_message(client, userdata, message):
 			elif "y_" in buttons[5]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/shelly.py 6 " + str(b6)
 				os.system(setn)
+			elif "z_" in buttons[5]:
+				client.publish("tgn/android/pmsg","Zigbee Plug 6",qos=0,retain=True)
 			else:
 				send(6,b6)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x06,str(b6))
@@ -1315,6 +1330,8 @@ def on_message(client, userdata, message):
 			elif "y_" in buttons[4]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/shelly.py 5 " + str(b5)
 				os.system(setn)
+			elif "z_" in buttons[4]:
+				client.publish("tgn/android/pmsg","Zigbee Plug 5",qos=0,retain=True)
 			else:
 				send(5,b5)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x05,str(b5))
@@ -1334,6 +1351,8 @@ def on_message(client, userdata, message):
 			elif "y_" in buttons[3]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/shelly.py 4 " + str(b4)
 				os.system(setn)
+			elif "z_" in buttons[3]:
+				client.publish("tgn/android/pmsg","Zigbee Plug 4",qos=0,retain=True)
 			else:
 				send(4,b4)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x04,str(b4))
@@ -1353,6 +1372,8 @@ def on_message(client, userdata, message):
 			elif "y_" in buttons[2]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/shelly.py 3 " + str(b3)
 				os.system(setn)
+			elif "z_" in buttons[2]:
+				client.publish("tgn/android/pmsg","Zigbee Plug 3",qos=0,retain=True)
 			else:
 				send(3,b3)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x03,str(b3))
@@ -1372,6 +1393,8 @@ def on_message(client, userdata, message):
 			elif "y_" in buttons[1]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/shelly.py 2 " + str(b2)
 				os.system(setn)
+			elif "z_" in buttons[1]:
+				client.publish("tgn/android/pmsg","Zigbee Plug 2",qos=0,retain=True)
 			else:
 				send(2,b2)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x02,str(b2))
@@ -1388,9 +1411,11 @@ def on_message(client, userdata, message):
 			elif "p_" in buttons[0]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/kasa_hs100.py 1 " + str(b1)
 				os.system(setn)
-			elif "y_" in buttons[8]:
+			elif "y_" in buttons[0]:
 				setn = "python3 /home/pi/tgn_smart_home/libs/shelly.py 1 " + str(b1)
 				os.system(setn)
+			elif "z_" in buttons[0]:
+				client.publish("tgn/android/pmsg","Zigbee Plug 1",qos=0,retain=True)
 			else:
 				send(1,b1)
 			write_eeprom(1,ROM_ADDRESS,0x00,0x01,str(b1))
@@ -1565,7 +1590,7 @@ def hum_check(time_in):
 			print("Off Hum")
 			client.publish("tgn/system/autohum","0",qos=0,retain=True)
 			autohum_stat = 0
-			client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
+			#client.publish("tgn/buttons/status/8","0",qos=0,retain=True)
 	if ((float(esp_hum) >= float(autohum_on_var)) and (day_c == "Sun" or day_c == "Sat") and str(esp_temp) != "nan"):
 		if (autohum_stat_b == 0):
 			print("On Hum Day")
@@ -1583,7 +1608,7 @@ def hum_check(time_in):
 			print("Off Hum")
 			client.publish("tgn/system/autohum_b","0",qos=0,retain=True)
 			autohum_stat_b = 0
-			client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
+			#client.publish("tgn/buttons/status/9","0",qos=0,retain=True)
 	air_conditioner_check()
 
 def main_prog():

@@ -73,6 +73,7 @@ Button Name Configuration for set System
  * p_buttonname = Kasa HS100
  * y_buttonname = Shelly
  * t_buttonname = Tasmota
+ * z_buttonname = Zigbee (Sonoff) 
 
 API use
 
