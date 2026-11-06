@@ -87,6 +87,16 @@ thermostat_3_cach = "empty"
 thermostat_4_cach = "empty"
 thermostat_5_cach = "empty"
 
+switch_1_cach = "empty"
+switch_2_cach = "empty"
+switch_3_cach = "empty"
+switch_4_cach = "empty"
+switch_5_cach = "empty"
+switch_6_cach = "empty"
+switch_7_cach = "empty"
+switch_8_cach = "empty"
+switch_9_cach = "empty"
+
 thermostat_1_adj = "0"
 thermostat_2_adj = "0"
 thermostat_3_adj = "0"
@@ -545,6 +555,11 @@ def decode_window(decode_data,num,typ):
         client.publish("tgn/frient/ElecMeter_1/power",meter_1_power,qos=0,retain=True)
         client.publish("tgn/frient/ElecMeter_1/energy",meter_1_energy,qos=0,retain=True)
         client.publish("tgn/frient/ElecMeter_1/impulse",cach['pulse_configuration'],qos=0,retain=True)
+    if typ == "switch":
+        client.publish("tgn/buttons/zigbee/"+num+"/power",cach['power'],qos=0,retain=True)
+        client.publish("tgn/buttons/zigbee/"+num+"/current",cach['current'],qos=0,retain=True)
+        client.publish("tgn/buttons/zigbee/"+num+"/voltage",cach['voltage'],qos=0,retain=True)
+        client.publish("tgn/buttons/zigbee/"+num+"/state",cach['state'],qos=0,retain=True)
 
 def on_message(client, userdata, message):
     global t_temp
@@ -587,6 +602,16 @@ def on_message(client, userdata, message):
     global thermostat_3_adj
     global thermostat_4_adj
     global thermostat_5_adj
+    global switch_1_cach
+    global switch_2_cach
+    global switch_3_cach
+    global switch_4_cach
+    global switch_5_cach
+    global switch_6_cach
+    global switch_7_cach
+    global switch_8_cach
+    global switch_9_cach
+
     if(message.topic=="tgn/buttons/status/1"):
         if switch_1_st != (message.payload.decode("utf-8")):
             switch_1_st = (message.payload.decode("utf-8"))
@@ -680,6 +705,33 @@ def on_message(client, userdata, message):
         summermod = (message.payload.decode("utf-8"))
     if(message.topic=="tgn/air_conditioner/button"):
         ir_botton = (message.payload.decode("utf-8"))
+    if(message.topic==switch_1_id):
+        switch_1_cach = (message.payload.decode("utf-8"))
+        decode_window(switch_1_cach,"1","switch")
+    if(message.topic==switch_2_id):
+        switch_2_cach = (message.payload.decode("utf-8"))
+        decode_window(switch_2_cach,"2","switch")
+    if(message.topic==switch_3_id):
+        switch_3_cach = (message.payload.decode("utf-8"))
+        decode_window(switch_3_cach,"3","switch")
+    if(message.topic==switch_4_id):
+        switch_4_cach = (message.payload.decode("utf-8"))
+        decode_window(switch_4_cach,"4","switch")
+    if(message.topic==switch_5_id):
+        switch_5_cach = (message.payload.decode("utf-8"))
+        decode_window(switch_5_cach,"5","switch")
+    if(message.topic==switch_6_id):
+        switch_6_cach = (message.payload.decode("utf-8"))
+        decode_window(switch_6_cach,"6","switch")
+    if(message.topic==switch_7_id):
+        switch_7_cach = (message.payload.decode("utf-8"))
+        decode_window(switch_7_cach,"7","switch")
+    if(message.topic==switch_8_id):
+        switch_8_cach = (message.payload.decode("utf-8"))
+        decode_window(switch_8_cach,"8","switch")
+    if(message.topic==switch_9_id):
+        switch_9_cach = (message.payload.decode("utf-8"))
+        decode_window(switch_9_cach,"9","switch")
     if(message.topic==window_1_id):
         window_1_cach = (message.payload.decode("utf-8"))
         decode_window(window_1_cach,"1","window")
